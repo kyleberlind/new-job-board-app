@@ -1,0 +1,8 @@
+.submitButton {
+    margin-top: 8px;
+}
+
+.formInput {
+    display: flex;
+    flex-direction: row;
+}

@@ -1,12 +1,15 @@
+
+import logo from './logo.svg';
+import {getHelloWorldMessageService} from "./services/HelloWorldServices"
+import LoginContainer from './login/LoginContainer.react.js';
+import './App.css';
 import React, { useState } from "react";
-import { getHelloWorldMessage } from "./services/HelloWorldServices";
 
 function App() {
   const [helloMessage, setHelloMessage] = useState("");
   const handleButtonClick = () => {
-    getHelloWorldMessage()
+    getHelloWorldMessageService()
     .then((response) => {
-      console.log("kyle")
       console.log(response)
     }).catch((error) => {
       console.log(error)
@@ -14,10 +17,7 @@ function App() {
   };
   return (
     <div className="App">
-      <header className="App-header">
-        <button onClick={handleButtonClick}>Press to Connect to Backend</button>
-        {helloMessage}
-      </header>
+      <LoginContainer />
     </div>
   );
 }
