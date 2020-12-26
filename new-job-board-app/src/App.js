@@ -1,5 +1,4 @@
 // Components
-import LoginContainer from "./components/login/LoginContainer.react.js";
 import Applicant from "./components/applicant/Applicant.js";
 import Employer from "./components/employer/Employer.js";
 import Home from "./components/home/Home.js";
