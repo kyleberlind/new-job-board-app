@@ -1,5 +1,4 @@
 use user;
-
 create table tbl_user (
 	id INT NOT NULL AUTO_INCREMENT,
 	password NVARCHAR(128) NOT NULL,
@@ -7,7 +6,8 @@ create table tbl_user (
 	last_name NVARCHAR(64),
 	email_address NVARCHAR(64) NOT NULL,
     user_type INT NOT NULL,
-    sign_up_date datetime NOT NULL,
+    sign_up_date datetime Default Now(),
+    salt NVARCHAR(128) NOT NULL,
     primary key (id)
 );
 
@@ -16,4 +16,3 @@ on tbl_user (id, email_address);
 
 CREATE UNIQUE INDEX unique_email_address_index
 on tbl_user (email_address);
-
