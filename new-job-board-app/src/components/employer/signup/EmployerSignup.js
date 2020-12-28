@@ -5,8 +5,6 @@ import FormControl from 'react-bootstrap/FormControl';
 
 import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 
-import axios from 'axios';
-
 import React, { useState } from 'react';
 
 import './css/EmployerSignup.css';
