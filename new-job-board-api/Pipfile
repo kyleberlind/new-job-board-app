@@ -13,6 +13,14 @@ flask-cors = "*"
 flask-bcrypt = "*"
 
 [dev-packages]
+flask = "*"
+boto3 = "*"
+pydantic = "*"
+auto-py-to-exe = "*"
+flask-mysqldb = "*"
+flask-cors = "*"
+flask-bcrypt = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.7"

@@ -26,8 +26,7 @@ def login_user():
     account_model = AccountModel()
     try:
         user = UserModel(**user_data)
-        return jsonify({"user_id": account_model.login_user(user)})
+        return jsonify({"userId": account_model.login_user(user)})
     except Exception as error:
-
-         #TODO what do we want to return in these?
+        #TODO what do we want to return in these?
         return False
