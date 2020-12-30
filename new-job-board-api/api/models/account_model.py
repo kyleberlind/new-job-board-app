@@ -22,7 +22,7 @@ class AccountModel():
                 )
             return False
         except Exception as error:
-            return False
+            raise Exception(error)
 
     def login_user(self, user: UserModel):
         """
@@ -32,10 +32,10 @@ class AccountModel():
             salt = str.encode(
                 self.dao.get_salt_from_email_address(user.email_address))
             if not salt:
-                return False
+                raise Exception("No User found with that account information")
             user.load_hashed_password_data(salt=salt)
             return self.dao.get_user_id_from_email_and_password(
                 user.email_address, user.hashed_password_data.get_hashed_password()
             )
         except Exception as error:
-            return False
+            raise Exception(error)

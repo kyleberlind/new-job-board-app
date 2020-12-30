@@ -11,4 +11,3 @@ From new-job-board-api run
 4. 'flask run'
 
 This will start the flask backend in the virtual environment on http://localhost:5000/
-
