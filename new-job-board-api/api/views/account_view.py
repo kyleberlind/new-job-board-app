@@ -4,10 +4,10 @@ from ..models.account_model import AccountModel
 from ..models.user_model import UserModel
 from ..utilities.response import LoginResponse, SignUpResponse
 
-main = Blueprint("main", __name__)
+account_view = Blueprint("account_view", __name__)
 
 
-@main.route("/sign_up_user", methods=["POST"])
+@account_view.route("/sign_up_user", methods=["POST"])
 def sign_up_user():
     """End point for signing up a new user"""
     user_data = json.loads(request.data)
@@ -24,7 +24,7 @@ def sign_up_user():
         ).json(by_alias=True)
 
 
-@main.route("/login_user", methods=["GET"])
+@account_view.route("/login_user", methods=["GET"])
 def login_user():
     """Endpoint for logging in a user"""
     user_data = json.loads(request.data)
