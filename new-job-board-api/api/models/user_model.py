@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, validator
 from ..utilities.hashed_password_data import HashedPasswordData
 from ..utilities.response import snake_to_camel_case
+from ..constants.account_constants import EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE
 
 
 class UserModel(BaseModel):
@@ -26,7 +27,7 @@ class UserModel(BaseModel):
     def validate_email_address_length(cls, value):
         """validates the length of the email address"""
         if len(value) > 64:
-            raise ValueError("Email address must be less than 64 characters.")
+            raise ValueError(EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE)
         return value
 
     def load_hashed_password_data(self, salt=None):
