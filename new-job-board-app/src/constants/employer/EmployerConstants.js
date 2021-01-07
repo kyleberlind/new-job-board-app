@@ -1,0 +1,1 @@
+export const EMPLOYER_USER_TYPE = 2

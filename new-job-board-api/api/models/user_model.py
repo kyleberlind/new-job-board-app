@@ -13,7 +13,7 @@ class UserModel(BaseModel):
     """
     email_address: str
     password: str
-    user_type: int
+    user_type: Optional[int]
     hashed_password_data: Optional[HashedPasswordData]
 
     class Config:

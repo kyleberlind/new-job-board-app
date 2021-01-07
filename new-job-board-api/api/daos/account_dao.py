@@ -35,12 +35,18 @@ class AccountDao():
         except Exception as error:
             raise Exception(error)
 
-    def get_user_id_from_email_and_password(self, email: str, password: str):
+    def get_user_info_from_email_and_password(self, email: str, password: str):
         """Gets the User ID for the given email and password combo if a user exists."""
         try:
-            cursor = self.db.cursor()
+            cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute(
-                "SELECT id FROM user.tbl_user WHERE email_address = %s AND password = %s",
+                """
+                    SELECT id AS user_id,
+                           user_type AS user_type
+                      FROM user.tbl_user
+                     WHERE email_address = %s
+                       AND password = %s
+                """,
                 [
                     email,
                     password
@@ -48,12 +54,12 @@ class AccountDao():
             )
             results = cursor.fetchone()
             if results:
-                new_user_id = results[0]
+                user_information = results
                 cursor.close()
             else:
                 cursor.close()
-                raise Exception("Incorrect Password for Email")
-            return new_user_id
+                raise Exception("Incorrect email or password")
+            return user_information
 
         except Exception as error:
             raise Exception(error)
@@ -61,14 +67,18 @@ class AccountDao():
     def get_salt_from_email_address(self, email_address: str):
         """Gets the salt associated with the email address"""
         try:
-            cursor = self.db.cursor()
+            cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute(
-                "SELECT salt FROM user.tbl_user WHERE email_address = %s",
+                """
+                    SELECT salt
+                      FROM user.tbl_user
+                     WHERE email_address = %s
+                """,
                 [email_address]
             )
             results = cursor.fetchone()
             if results:
-                salt = results[0]
+                salt = results["salt"]
                 cursor.close()
             else:
                 cursor.close()
