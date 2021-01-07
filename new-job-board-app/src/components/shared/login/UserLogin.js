@@ -1,6 +1,5 @@
 import { Button, InputGroup, Form, FormControl, Toast } from "react-bootstrap";
 import { loginUserService } from "../../../services/AccountServices";
-import { Redirect } from "react-router-dom";
 import React, { useState } from "react";
 
 import "./css/EmployerLogin.css";
@@ -10,7 +9,7 @@ function UserLogin() {
   const [password, setPassword] = useState("");
   const [validated, setValidated] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [validationMessage, setValidationMessage] = useState("");
 
   const onEmailChange = (input) => {
     setEmail(input.target.value);
@@ -29,7 +28,7 @@ function UserLogin() {
         .then((response) => {
           response.json().then((data) => {
             if (data["hasError"] === true) {
-              setErrorMessage(data["errorMessage"]);
+              setValidationMessage(data["errorMessage"]);
               setShowToast(true);
             } else {
               if (data["userType"] === 1) {
@@ -41,7 +40,7 @@ function UserLogin() {
           });
         })
         .catch((error) => {
-          setErrorMessage(error);
+          setValidationMessage(error);
         });
     }
     setValidated(true);
@@ -84,22 +83,12 @@ function UserLogin() {
             Submit
           </Button>
         </Form>
+        {validationMessage.length !== 0 && (
+          <div class="alert alert-danger" role="alert">
+            {validationMessage}
+          </div>
+        )}
       </div>
-      <Toast
-        show={showToast}
-        onClose={() => {
-          setShowToast(false);
-        }}
-      >
-        <Toast.Header>
-          <strong className="mr-auto">
-            Oops! Something went Wrong.
-          </strong>
-        </Toast.Header>
-        <Toast.Body>
-          <small>{errorMessage}</small>
-        </Toast.Body>
-      </Toast>
     </div>
   );
 }
