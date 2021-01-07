@@ -28,6 +28,7 @@ class BaseResponse(BaseModel):
 class LoginResponse(BaseResponse):
     """Response for login request"""
     user_id: Optional[int]
+    user_type: Optional[int]
     has_error: Optional[bool]
     error_message: Optional[str]
 
@@ -35,5 +36,6 @@ class LoginResponse(BaseResponse):
 class SignUpResponse(BaseResponse):
     """Response for sign up request"""
     new_user_id: Optional[int]
+    user_type: Optional[int]
     has_error: Optional[bool] = False
     error_message: Optional[str]

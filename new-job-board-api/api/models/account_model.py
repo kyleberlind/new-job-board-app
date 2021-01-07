@@ -18,7 +18,7 @@ class AccountModel():
         try:
             user.load_hashed_password_data()
             if self.dao.save_new_user(user):
-                return self.dao.get_user_id_from_email_and_password(
+                return self.dao.get_user_info_from_email_and_password(
                     user.email_address, user.hashed_password_data.get_hashed_password()
                 )
             return False
@@ -35,7 +35,7 @@ class AccountModel():
             if not salt:
                 raise Exception(NO_USER_FOUND_WITH_EMAIL_ACCOUNT_ERROR_MESSAGE)
             user.load_hashed_password_data(salt=salt)
-            return self.dao.get_user_id_from_email_and_password(
+            return self.dao.get_user_info_from_email_and_password(
                 user.email_address, user.hashed_password_data.get_hashed_password()
             )
         except Exception as error:
