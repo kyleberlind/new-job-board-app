@@ -1,6 +1,9 @@
 import { Button, InputGroup, Form, FormControl, Toast } from "react-bootstrap";
-import { loginUserService } from "../../../services/AccountServices";
-import React, { useState } from "react";
+import {
+  loginUserService,
+  getSessionService,
+} from "../../../services/AccountServices";
+import React, { useState, useEffect } from "react";
 
 import "./css/EmployerLogin.css";
 
@@ -8,8 +11,21 @@ function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [validated, setValidated] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
+
+  useEffect(() => {
+    getSessionService().then((response) => {
+      response.json().then((data) => {
+        if (data["session"]) {
+          if (data["session"]["user_type"] === 1) {
+            window.location.assign("user-console");
+          } else {
+            window.location.assign("employer-console");
+          }
+        }
+      });
+    });
+  }, []);
 
   const onEmailChange = (input) => {
     setEmail(input.target.value);
@@ -29,7 +45,6 @@ function UserLogin() {
           response.json().then((data) => {
             if (data["hasError"] === true) {
               setValidationMessage(data["errorMessage"]);
-              setShowToast(true);
             } else {
               if (data["userType"] === 1) {
                 window.location.assign("applicant-console");

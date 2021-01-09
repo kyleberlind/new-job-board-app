@@ -16,7 +16,8 @@ def sign_up():
         user = UserModel(**user_data)
         new_user_info = account_model.sign_up_user(user)
         # replace with JWT token
-        session['token'] = new_user_info
+        session["token"] = new_user_info["user_id"]
+        session["user_type"] = new_user_info["user_type"]
         return SignUpResponse(**new_user_info).json(by_alias=True)
     except Exception as error:
         return SignUpResponse(
@@ -33,7 +34,9 @@ def login():
     try:
         user = UserModel(**user_data)
         user_info = account_model.login_user(user)
-        session['token'] = user_info
+        # replace with JWT token
+        session["token"] = user_info["user_id"]
+        session["user_type"] = user_info["user_type"]
         return LoginResponse(**user_info).json(by_alias=True)
     except Exception as error:
         return LoginResponse(
@@ -46,9 +49,9 @@ def login():
 def get_session():
     """Endpoint for logging in a user"""
     if 'token' in session:
-        return jsonify({'session': session['response']})
+        return jsonify({'session': session["user_type"]})
     else:
-        return jsonify({'session': 'nothin'})
+        return jsonify({'session': False})
 
 
 @account_view.route("/logout", methods=["GET"])
