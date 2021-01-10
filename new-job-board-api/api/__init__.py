@@ -8,10 +8,12 @@ def create_app():
     app.secret_key = "super_secret"
 
     from .views.account_view import account_view
-    from .views.hello_world_view import hello_world_view
+    from .views.employer_view import employer_view
+    from .views.applicant_view import applicant_view
 
     app.register_blueprint(account_view)
-    app.register_blueprint(hello_world_view)
+    app.register_blueprint(employer_view)
+    app.register_blueprint(applicant_view)
     CORS(app)
 
     return app

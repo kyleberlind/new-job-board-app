@@ -1,19 +1,20 @@
-import { Container, Button } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import {
-  loadEmployerDataService,
+  loadApplicantDataService,
   logoutService,
 } from "../../../services/AccountServices";
-import EmployerConsoleNavBar from "./EmployerConsoleNavBar"
-const EmployerConsole = () => {
+import ApplicantConsoleNavBar from "./ApplicantConsoleNavBar";
+
+const ApplicantConsole = () => {
   const [userId, setUserId] = useState(null);
   useEffect(() => {
-    loadEmployerDataService().then((response) => {
+    loadApplicantDataService().then((response) => {
       response.json().then((data) => {
-        if (!data["employerData"]) {
+        if (!data["applicantData"]) {
           window.location.assign("login");
         } else {
-          setUserId(data["employerData"]);
+          setUserId(data["applicantData"]);
         }
       });
     });
@@ -31,10 +32,10 @@ const EmployerConsole = () => {
 
   return (
     <Container fluid>
-      <EmployerConsoleNavBar handleLogout={handleLogout}/>
+      <ApplicantConsoleNavBar handleLogout={handleLogout} />
       {userId}
     </Container>
   );
 };
 
-export default EmployerConsole;
+export default ApplicantConsole;
