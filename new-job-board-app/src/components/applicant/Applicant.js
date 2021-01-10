@@ -1,5 +1,6 @@
 import ApplicantLogin from "./login/ApplicantLogin.js";
 import ApplicantSignup from "./signup/ApplicantSignup.js";
+import ApplicantConsole from "./console/ApplicantConsole";
 
 import React, { useState } from 'react';
 import {
@@ -17,6 +18,7 @@ function Applicant() {
         </Route>
         <Route path="/applicant/signup" component={ApplicantSignup} />
         <Route path="/applicant/login" component={ApplicantLogin} />
+        <Route path="/applicant/applicant-console" component={ApplicantConsole} />
       </Switch>
     </Router>
   );

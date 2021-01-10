@@ -57,5 +57,8 @@ def get_session():
 @account_view.route("/logout", methods=["GET"])
 def logout():
     """Endpoint for logging a user out"""
-    session.pop('token', None)
-    return 'OK', 201
+    if 'token' in session:
+        session.pop('token', None)
+        return 'OK', 201
+    else:
+        return 'ERROR', 401

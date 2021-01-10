@@ -9,9 +9,11 @@ def create_app():
 
     from .views.account_view import account_view
     from .views.employer_view import employer_view
+    from .views.applicant_view import applicant_view
 
     app.register_blueprint(account_view)
     app.register_blueprint(employer_view)
+    app.register_blueprint(applicant_view)
     CORS(app)
 
     return app

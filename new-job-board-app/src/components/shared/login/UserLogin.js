@@ -18,9 +18,9 @@ function UserLogin() {
       response.json().then((data) => {
         if (data["session"]) {
           if (data["session"]["user_type"] === 1) {
-            window.location.assign("user-console");
+            window.location.assign("/applicant/applicant-console");
           } else {
-            window.location.assign("employer-console");
+            window.location.assign("/employer/employer-console");
           }
         }
       });
@@ -47,9 +47,9 @@ function UserLogin() {
               setValidationMessage(data["errorMessage"]);
             } else {
               if (data["userType"] === 1) {
-                window.location.assign("applicant-console");
+                window.location.assign("/applicant/applicant-console");
               } else {
-                window.location.assign("employer-console");
+                window.location.assign("/employer/employer-console");
               }
             }
           });
@@ -63,7 +63,7 @@ function UserLogin() {
 
   return (
     <div className="root">
-      <h1>Employer Login</h1>
+      <h1>Login</h1>
       <div className="form">
         <Form
           noValidate
@@ -99,7 +99,7 @@ function UserLogin() {
           </Button>
         </Form>
         {validationMessage.length !== 0 && (
-          <div class="alert alert-danger" role="alert">
+          <div className="alert alert-danger" role="alert">
             {validationMessage}
           </div>
         )}

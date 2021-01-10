@@ -18,10 +18,14 @@ export const loadEmployerDataService = () => {
   return fetch("/load_employer_info");
 };
 
-export const getSessionService = () => { 
-  return fetch("/get_session");
+export const loadApplicantDataService = () => {
+  return fetch("/load_applicant_info");
 }
 
-export const logoutService = () => { 
+export const getSessionService = () => {
+  return fetch("/get_session");
+};
+
+export const logoutService = () => {
   return fetch("/logout");
-}
+};

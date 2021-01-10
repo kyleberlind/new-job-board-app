@@ -12,6 +12,7 @@ import "./App.css";
 // React
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import UserLogin from "./components/shared/login/UserLogin.js";
 
 // TODO: should probably move all routing to a separate file
 
@@ -19,18 +20,10 @@ function App() {
   return (
     <Router>
       <div>
-        <Navbar bg="light" expand="lg">
-          <Navbar.Brand href="/">New Job Board Application</Navbar.Brand>
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto">
-              <Nav.Link href="/">Home</Nav.Link>
-              <Nav.Link href="/about">About</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
         <Route path="/" exact component={Home} />
         <Route path="/employer" component={Employer} />
         <Route path="/applicant" component={Applicant} />
+        <Route path="/login" component={UserLogin} />
         <Route path="/about" component={About} />
       </div>
     </Router>
