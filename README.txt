@@ -11,3 +11,7 @@ From new-job-board-api run
 4. 'flask run'
 
 This will start the flask backend in the virtual environment on http://localhost:5000/
+
+How to run unit tests:
+
+from new-job-board-api run python -m unittest discover -s tests -p '*_test.py'
