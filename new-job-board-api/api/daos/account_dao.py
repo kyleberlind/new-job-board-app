@@ -7,7 +7,8 @@ class AccountDao():
     """Data Access object for account information"""
 
     def __init__(self, db=None):
-        self.db = db or MySQLdb.connect(
+        self.db = db or MySQLdb
+        self.connection = self.db.connect(
             host=AWS_HOSTNAME,
             user=AWS_USER_NAME,
             password=AWS_PASSWORD,
@@ -17,9 +18,10 @@ class AccountDao():
     def save_new_user(self, user: UserModel):
         """Enters a new user into the database and returns their user ID if successful"""
         try:
-            cursor = self.db.cursor()
+            cursor = self.connection.cursor()
             cursor.execute(
-                "INSERT INTO user.tbl_user (email_address, user_type, password, salt) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO user.tbl_user (email_address, user_type, password, salt)\
+                 VALUES (%s, %s, %s, %s)",
                 (
                     user.email_address,
                     user.user_type,
@@ -28,7 +30,7 @@ class AccountDao():
                 )
             )
             cursor.close()
-            self.db.commit()
+            self.connection.commit()
 
             return True
 
@@ -38,7 +40,7 @@ class AccountDao():
     def get_user_info_from_email_and_password(self, email: str, password: str):
         """Gets the User ID for the given email and password combo if a user exists."""
         try:
-            cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
+            cursor = self.connection.cursor(self.db.cursors.DictCursor)
             cursor.execute(
                 """
                     SELECT id AS user_id,
@@ -67,7 +69,7 @@ class AccountDao():
     def get_salt_from_email_address(self, email_address: str):
         """Gets the salt associated with the email address"""
         try:
-            cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
+            cursor = self.connection.cursor(self.db.cursors.DictCursor)
             cursor.execute(
                 """
                     SELECT salt

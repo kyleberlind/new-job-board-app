@@ -1,29 +1,25 @@
 import unittest
 from api.models.user_model import UserModel
 from unittest.mock import MagicMock
+from api.constants.account_constants import\
+    EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE, PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE
+
 
 TEST_EMAIL = "test@test.com"
 TEST_PASSWORD = "testpassword"
 TEST_USER_TYPE = 1
+TEST_USER_INFO = {
+    "email_address": TEST_EMAIL,
+    "password": TEST_PASSWORD,
+    "user_type": TEST_USER_TYPE
+}
 
 
-class UserModeTest(unittest.TestCase):
-    """test for the user model"""
-    _user_model: UserModel
-    def setUp(self):
-
-        self._user_model = UserModel(
-            email = TEST_EMAIL,
-            password = TEST_PASSWORD,
-            user_type = TEST_USER_TYPE
-        )
-
-    def test_validate_email_address_length_too_long(self):
-        self.assertTrue(True)
-
-    def test_load_hashed_password_data(self):
-        self._user_model.load_hashed_password_data()
-
+class UserModelTest(unittest.TestCase):
+    """Tests for the user model"""
+    _user_model: UserModel(
+        **TEST_USER_INFO
+    )
 
 if __name__ == '__main__':
     unittest.main()

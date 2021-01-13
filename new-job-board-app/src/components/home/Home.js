@@ -7,7 +7,7 @@ import "./css/Home.css";
 function Home() {
   return (
     <Container fluid>
-      <HomeNavBar logout/>
+      <HomeNavBar/>
       <div className="root">
         <div className="buttonContainer">
           <Button

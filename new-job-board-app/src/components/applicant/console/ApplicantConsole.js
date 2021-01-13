@@ -1,15 +1,13 @@
 import { Container } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import {
-  loadApplicantDataService,
-  logoutService,
-} from "../../../services/AccountServices";
-import ApplicantConsoleNavBar from "./ApplicantConsoleNavBar";
+  loadApplicantInfoService,
+} from "../../../services/applicant/ApplicantServices";
 
 const ApplicantConsole = () => {
   const [userId, setUserId] = useState(null);
   useEffect(() => {
-    loadApplicantDataService().then((response) => {
+    loadApplicantInfoService().then((response) => {
       response.json().then((data) => {
         if (!data["applicantData"]) {
           window.location.assign("login");
@@ -20,19 +18,8 @@ const ApplicantConsole = () => {
     });
   });
 
-  const handleLogout = () => {
-    logoutService()
-      .then(() => {
-        window.location.assign("/");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   return (
     <Container fluid>
-      <ApplicantConsoleNavBar handleLogout={handleLogout} />
       {userId}
     </Container>
   );

@@ -1,38 +1,32 @@
-import { Container, Button } from "react-bootstrap";
+import { Container, Button, Row, Col, Card } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import {
-  loadEmployerDataService,
-  logoutService,
-} from "../../../services/AccountServices";
-import EmployerConsoleNavBar from "./EmployerConsoleNavBar"
+import { loadEmployerInfoService } from "../../../services/employer/EmployerServices";
+
 const EmployerConsole = () => {
-  const [userId, setUserId] = useState(null);
+  const [token, setToken] = useState(null);
+
   useEffect(() => {
-    loadEmployerDataService().then((response) => {
+    loadEmployerInfoService().then((response) => {
       response.json().then((data) => {
         if (!data["employerData"]) {
           window.location.assign("login");
         } else {
-          setUserId(data["employerData"]);
+          setToken(data["employerData"]["token"]);
         }
       });
     });
   });
 
-  const handleLogout = () => {
-    logoutService()
-      .then(() => {
-        window.location.assign("/");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   return (
     <Container fluid>
-      <EmployerConsoleNavBar handleLogout={handleLogout}/>
-      {userId}
+      <Row noGutters>
+        <Col>
+          <Card>
+            <Card.Title>My Job Postings</Card.Title>
+            <Card.Body>{token}</Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 };

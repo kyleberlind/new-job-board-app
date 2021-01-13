@@ -5,7 +5,7 @@ import "./css/HomeNavBar.css";
 const HomeNavBar = props => {
   return (
     <div className="homeNavBar">
-      <Navbar bg="dark" variant="dark" expand="lg" fill>
+      <Navbar bg="dark" variant="dark" expand="lg">
         <Navbar.Brand href="/">New Job Board Application</Navbar.Brand>
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">

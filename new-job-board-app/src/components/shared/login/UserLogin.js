@@ -5,7 +5,7 @@ import {
 } from "../../../services/AccountServices";
 import React, { useState, useEffect } from "react";
 
-import "./css/EmployerLogin.css";
+import "./css/UserLogin.css";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -64,7 +64,7 @@ function UserLogin() {
   return (
     <div className="root">
       <h1>Login</h1>
-      <div className="form">
+      <div className="loginForm">
         <Form
           noValidate
           validated={validated}

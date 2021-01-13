@@ -4,17 +4,13 @@ from ..constants.account_constants import NO_USER_FOUND_WITH_EMAIL_ACCOUNT_ERROR
 
 
 class AccountModel():
-    """
-    Model to handle account logic
-    """
+    """Model to handle account logic"""
 
-    def __init__(self):
-        self.dao = AccountDao()
+    def __init__(self, dao=None):
+        self.dao = dao or AccountDao()
 
     def sign_up_user(self, user: UserModel):
-        """
-        Sign up a new user
-        """
+        """Sign up a new user"""
         try:
             user.load_hashed_password_data()
             if self.dao.save_new_user(user):
@@ -26,9 +22,7 @@ class AccountModel():
             raise Exception(error)
 
     def login_user(self, user: UserModel):
-        """
-        Login a returning user
-        """
+        """Login a returning user"""
         try:
             salt = str.encode(
                 self.dao.get_salt_from_email_address(user.email_address))

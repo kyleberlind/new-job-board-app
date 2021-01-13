@@ -39,7 +39,7 @@ function EmployerSignup() {
           });
         })
         .catch((error) => {
-          setValidationMessage(error["errorMessage"])
+          setValidationMessage(error["errorMessage"]);
         });
       setValidationMessage("");
     }
@@ -57,6 +57,7 @@ function EmployerSignup() {
     }
     return form.checkValidity();
   };
+
   return (
     <div className="root">
       <h1>Employer Signup</h1>

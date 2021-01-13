@@ -4,13 +4,11 @@ from typing import Optional
 from pydantic import BaseModel, validator
 from ..utilities.hashed_password_data import HashedPasswordData
 from ..utilities.response import snake_to_camel_case
-from ..constants.account_constants import EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE
+from ..constants.account_constants import EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE, PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE
 
 
 class UserModel(BaseModel):
-    """
-    Model to represent the user
-    """
+    """Model to represent the user"""
     email_address: str
     password: str
     user_type: Optional[int]
@@ -30,9 +28,18 @@ class UserModel(BaseModel):
             raise ValueError(EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE)
         return value
 
+    @classmethod
+    @validator("password")
+    def validate_password_length(cls, value):
+        """validates the length of the password"""
+        if len(value) > 128:
+            raise ValueError(PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE)
+        return value
+
     def load_hashed_password_data(self, salt=None):
         """
         Loads the models hashed password data from its plain text password and
         an optional salt
         """
-        self.hashed_password_data = HashedPasswordData(self.password, salt)
+        if not self.hashed_password_data:
+            self.hashed_password_data = HashedPasswordData(self.password, salt)

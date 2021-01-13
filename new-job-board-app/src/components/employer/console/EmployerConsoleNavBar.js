@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Navbar, Nav, Container } from "react-bootstrap";
+import React from "react";
+import { Button, Navbar, Nav } from "react-bootstrap";
 
 function EmployerConsoleNavBar(props) {
   return (
@@ -7,7 +7,7 @@ function EmployerConsoleNavBar(props) {
       <Navbar.Brand href="/employer/employer-console">Console</Navbar.Brand>
       <Navbar.Collapse id="basic-navbar-nav">
       <Nav.Link href="/employer/account"> Account</Nav.Link>
-      <Nav.Link onClick={null}> Create Job Posting</Nav.Link>
+      <Nav.Link href="/employer/create-job-posting"> Create Job Posting</Nav.Link>
 
       </Navbar.Collapse>
       <Button onClick={props.handleLogout}>Logout</Button>
