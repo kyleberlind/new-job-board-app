@@ -2,9 +2,7 @@
 import Applicant from "./components/applicant/Applicant.js";
 import Employer from "./components/employer/Employer.js";
 import Home from "./components/home/Home.js";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // css
 import "./App.css";

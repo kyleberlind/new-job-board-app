@@ -12,6 +12,7 @@ flask-mysqldb = "*"
 flask-cors = "*"
 flask-bcrypt = "*"
 autopep8 = "*"
+awscli = "*"
 
 [dev-packages]
 flask = "*"

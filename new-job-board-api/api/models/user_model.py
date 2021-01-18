@@ -3,7 +3,7 @@
 from typing import Optional
 from pydantic import BaseModel, validator
 from ..utilities.hashed_password_data import HashedPasswordData
-from ..utilities.response import snake_to_camel_case
+from ..utilities.alias_generators import snake_to_camel_case
 from ..constants.account_constants import EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE, PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE
 
 

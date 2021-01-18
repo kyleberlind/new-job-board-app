@@ -1,21 +1,19 @@
-import Button from "react-bootstrap/Button";
-import InputGroup from "react-bootstrap/InputGroup";
-import Form from "react-bootstrap/Form";
-import FormControl from "react-bootstrap/FormControl";
-import { EMPLOYER_USER_TYPE } from "../../../constants/employer/EmployerConstants";
-import { signUpUserService } from "../../../services/AccountServices";
-import { useFormFields } from "../../../libs/hooks/useFormFields.js";
-
 import React, { useState } from "react";
+import { Button, Form } from "react-bootstrap";
+import { EMPLOYER_USER_TYPE } from "../../../constants/employer/EmployerConstants";
+import { signUpEmployerService } from "../../../services/AccountServices";
+import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 
 import "./css/EmployerSignup.css";
 
 function EmployerSignup() {
   const [fields, handleFieldChange] = useFormFields({
-    email: "",
-    confirmEmail: "",
+    emailAddress: "",
+    confirmEmailAddress: "",
     password: "",
     confirmPassword: "",
+    employerName: "",
+    employerSize: "0-10",
   });
   const [validationMessage, setValidationMessage] = useState("");
   const [validated, setValidated] = useState(false);
@@ -24,7 +22,7 @@ function EmployerSignup() {
     event.preventDefault();
     event.stopPropagation();
     if (validate(event.currentTarget)) {
-      signUpUserService(fields.email, fields.password, EMPLOYER_USER_TYPE)
+      signUpEmployerService(fields, EMPLOYER_USER_TYPE)
         .then((response) => {
           response.json().then((data) => {
             if (data["hasError"] === true) {
@@ -47,7 +45,7 @@ function EmployerSignup() {
   };
 
   const validate = (form) => {
-    if (fields.email !== fields.confirmEmail) {
+    if (fields.emailAddress !== fields.confirmEmailAddress) {
       setValidationMessage("Emails must match");
       return false;
     }
@@ -67,26 +65,50 @@ function EmployerSignup() {
         validated={validated}
         onSubmit={handleSubmitButtonClick}
       >
-        <Form.Group controlId="email">
+        <Form.Group controlId="employerName">
+          <Form.Label>Company Name</Form.Label>
+          <Form.Control
+            required
+            placeholder="Enter company name"
+            value={fields.employerName}
+            onChange={handleFieldChange}
+          />
+          <Form.Control.Feedback type="invalid">
+            Please enter a Company Name
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group controlId="employerSize">
+          <Form.Label>Company Size</Form.Label>
+          <Form.Control as="select" onChange={handleFieldChange}>
+            <option value="0-10">0-10</option>
+            <option value="10-500">10-50</option>
+            <option value="10-500">50-500</option>
+            <option value="500-1000">500-1000</option>
+            <option value="1000-3000">1000-3000</option>
+            <option value="1000-3000">3000-10000</option>
+            <option value="1000-3000">{">"}10000</option>
+          </Form.Control>
+        </Form.Group>
+        <Form.Group controlId="emailAddress">
           <Form.Label>Email address</Form.Label>
           <Form.Control
             required
             type="email"
             placeholder="Enter email"
-            value={fields.email}
+            value={fields.emailAddress}
             onChange={handleFieldChange}
           />
           <Form.Control.Feedback type="invalid">
             Please enter an email
           </Form.Control.Feedback>
         </Form.Group>
-        <Form.Group controlId="confirmEmail">
+        <Form.Group controlId="confirmEmailAddress">
           <Form.Label>Confirm email address</Form.Label>
           <Form.Control
             required
             type="email"
             placeholder="Confirm email"
-            value={fields.confirmEmail}
+            value={fields.confirmEmailAddress}
             onChange={handleFieldChange}
           />
           <Form.Control.Feedback type="invalid">
@@ -123,7 +145,7 @@ function EmployerSignup() {
           Sign Up
         </Button>
         {validationMessage.length !== 0 && (
-          <div class="alert alert-danger" role="alert">
+          <div className="alert alert-danger" role="alert">
             {validationMessage}
           </div>
         )}

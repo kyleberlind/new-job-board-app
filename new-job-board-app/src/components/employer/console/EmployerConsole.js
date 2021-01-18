@@ -1,34 +1,70 @@
-import { Container, Button, Row, Col, Card } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import { loadEmployerInfoService } from "../../../services/employer/EmployerServices";
+import { Container, Button, Row, Col, Card } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-const EmployerConsole = () => {
-  const [token, setToken] = useState(null);
+import Spinner from "react-bootstrap/Spinner";
+import PropTypes from "prop-types";
+import { loadJobPostingsByEmployerId } from "../../../services/employer/EmployerServices";
+import JobPostingCard from "../jobPosting/JobPostingCard";
+
+const EmployerConsole = (props) => {
+  const [jobPostings, setJobPostings] = useState([]);
+  const [areJobPostingsLoading, setAreJobPostingsLoading] = useState(true);
 
   useEffect(() => {
-    loadEmployerInfoService().then((response) => {
-      response.json().then((data) => {
-        if (!data["employerData"]) {
-          window.location.assign("login");
-        } else {
-          setToken(data["employerData"]["token"]);
-        }
-      });
-    });
-  });
+    if (
+      Object.keys(props.employer).length !== 0 &&
+      props.employer.employerId !== ""
+    ) {
+      setAreJobPostingsLoading(true);
+      loadJobPostingsByEmployerId(props.employer.employerId)
+        .then((response) => {
+          response.json().then((data) => {
+            if (data["jobPostings"].length > 0) {
+              setJobPostings(data["jobPostings"]);
+            }
+            setAreJobPostingsLoading(false);
+          });
+        })
+        .catch((error) => {
+          setAreJobPostingsLoading(false);
+          console.log(error);
+        });
+    }
+  }, [props.employer]);
+
+  const generateJobPostings = () => {
+    return jobPostings.length > 0 ? (
+      jobPostings.map((jobPosting) => {
+        return <JobPostingCard key={jobPosting.id} jobPosting={jobPosting} />;
+      })
+    ) : (
+      <Card>You dont have any postings yet</Card>
+    );
+  };
 
   return (
     <Container fluid>
-      <Row noGutters>
+      <Row>
         <Col>
           <Card>
-            <Card.Title>My Job Postings</Card.Title>
-            <Card.Body>{token}</Card.Body>
+            <Card.Header>My Job Postings</Card.Header>
+            <Card.Body>
+              {areJobPostingsLoading ? (
+                <Spinner animation="border" role="status" size={"lg"}></Spinner>
+              ) : (
+                generateJobPostings()
+              )}
+            </Card.Body>
           </Card>
         </Col>
       </Row>
     </Container>
   );
+};
+
+EmployerConsole.propTypes = {
+  employer: PropTypes.object.isRequired,
 };
 
 export default EmployerConsole;
