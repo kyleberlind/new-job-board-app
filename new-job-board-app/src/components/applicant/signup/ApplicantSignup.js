@@ -3,6 +3,8 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 
+import { APPLICANT_USER_TYPE } from "../../../constants/applicant/ApplicantConstants.js";
+import { signUpUserService } from "../../../services/AccountServices";
 import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 
 import React, { useState } from 'react';
@@ -19,44 +21,60 @@ function ApplicantSignup() {
     confirmPassword: "",
   });
   const [resumeFile, setResumeFile] = useState();
-  const [fieldValidationMessage, setFieldValidationMessage] = useState("");
-  const [areFieldsValid, setAreFieldsValid] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
+  const [validated, setValidated] = useState(false);
+
+  const handleSubmitButtonClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (validate(event.currentTarget)) {
+      signUpUserService(fields.email, fields.password, APPLICANT_USER_TYPE)
+        .then((response) => {
+          response.json().then((data) => {
+            console.log(data);
+            if (data["hasError"]) {
+              setValidationMessage(data["errorMessage"]);
+            } else {
+              console.log(data["userType"]);
+              window.location.assign("applicant-console");
+            }
+          });
+        })
+        .catch((error) => {
+          setValidationMessage(error["errorMessage"]);
+        });
+      setValidationMessage("");
+    }
+    setValidated(true);
+  };
 
   const onResumeUpload = e => {
     setResumeFile(e.target.files[0]);
   };
 
-  const onSubmit = () => {
-    // validate fields
-    if (fields.firstName.length === 0) {
-      setFieldValidationMessage("Please enter a first name");
-    } else if (fields.lastName.length === 0) {
-      setFieldValidationMessage("Please enter a last name");
-    } else if (fields.email.length === 0) {
-      setFieldValidationMessage("Please enter a email");
-    } else if (fields.confirmEmail.length === 0) {
-      setFieldValidationMessage("Please confirm your email");
-    } else if (fields.email !== fields.confirmEmail) {
-      setFieldValidationMessage("Please ensure your emails match");
-    } else if (fields.password.length < 6) {
-      setFieldValidationMessage("Please enter a password of 6 characters or longer");
-    } else if (fields.password !== fields.confirmPassword) {
-      setFieldValidationMessage("Please ensure your passwords match");
-    } else if (resumeFile === null) {
-      setFieldValidationMessage("Please upload a resume");
-    } else {
-        // TODO: Hook up with backend and actually sign up this user
-      setFieldValidationMessage("");
-      setAreFieldsValid(true);
+  const validate = (form) => {
+    if (fields.email !== fields.confirmEmail) {
+      setValidationMessage("Emails must match");
+      return false;
     }
-  }
+    if (fields.password !== fields.confirmPassword) {
+      setValidationMessage("Passwords must match");
+      return false;
+    }
+    return form.checkValidity();
+  };
 
   return (
     <div className="root">
       <h1>
         Applicant Signup
       </h1>
-      <Form className="form">
+      <Form
+        noValidate
+        className="form"
+        validated={validated}
+        onSubmit={handleSubmitButtonClick}
+      >
         <Form.Group controlId="firstName">
           <Form.Label>First name</Form.Label>
           <Form.Control
@@ -101,34 +119,25 @@ function ApplicantSignup() {
             onChange={handleFieldChange}
           />
         </Form.Group>
-        <Form.Group controlId="confrimPassword">
+        <Form.Group controlId="confirmPassword">
           <Form.Label>Confirm password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Confirm Password"
-            value={fields.confrimPassword}
+            value={fields.confirmPassword}
             onChange={handleFieldChange}
           />
         </Form.Group>
         <Form.Label>Resume</Form.Label>
         <input type="file" onChange={onResumeUpload}/>
-        <Button className="button" onClick={onSubmit} variant="primary">
+        <Button className="button" type="submit" variant="primary">
           Sign Up
         </Button>
-        {
-          fieldValidationMessage.length !== 0
-            &&
-            <div class="alert alert-danger" role="alert">
-              {fieldValidationMessage}
-            </div>
-        }
-        {
-          areFieldsValid
-            &&
-            <div class="alert alert-success" role="alert">
-              Success!
-            </div>
-        }
+        {validationMessage.length !== 0 && (
+          <div class="alert alert-danger" role="alert">
+            {validationMessage}
+          </div>
+        )}
       </Form>
     </div>
   );
