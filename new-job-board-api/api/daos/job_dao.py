@@ -116,7 +116,7 @@ class JobDao():
 
     def search_job_postings(self, job_posting_search_query, job_location_search_query):
         """Loads the job postings for the employer by their ID"""
-        if len(job_posting_search_query) == 0 & len(job_location_search_query) == 0:
+        if (len(job_posting_search_query) == 0) & (len(job_location_search_query) == 0):
             raise Exception(
                     "No search query input data provided")
         cursor = self.job_connection.cursor(self.db.cursors.DictCursor)
@@ -136,7 +136,7 @@ class JobDao():
                 INNER JOIN user.tbl_employer employer
                         ON job_posting.employer_id = employer.employer_id
             """
-        if len(job_posting_search_query) > 0 & len(job_location_search_query) > 0:
+        if (len(job_posting_search_query) > 0) & (len(job_location_search_query) > 0):
             job_posting_search_query = "%" + job_posting_search_query.lower() + "%"
             job_location_search_query = "%" + job_location_search_query.lower() + "%"
             query += """
@@ -182,8 +182,6 @@ class JobDao():
                 job_location_search_query
             ]
         try:
-            print(query)
-            print(params)
             cursor.execute(
                 query,
                 params
@@ -193,7 +191,6 @@ class JobDao():
             if results:
                 return list(results)
             else:
-                raise Exception(
-                    "No job postings found for the given search query")
+                return []
         except Exception as error:
             raise Exception(error)

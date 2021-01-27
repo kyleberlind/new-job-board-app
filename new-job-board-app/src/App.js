@@ -2,7 +2,6 @@
 import Applicant from "./components/applicant/Applicant.js";
 import Employer from "./components/employer/Employer.js";
 import Home from "./components/home/Home.js";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 // css
 import "./App.css";

@@ -12,51 +12,58 @@ import './css/ApplicantConsole.css';
 const ApplicantConsoleSearchResultsContainer = (props) => {
   return (
     <div className="jobApplicationsContainer">
-      <Tab.Container id="list-group-tabs-example">
-        <Row>
-          <Col sm={6}>
-            <ListGroup>
-              {props.jobPostings.map(posting =>
-                  <ListGroup.Item action href={"#search_result_posting".concat(posting.id)}>
-                    <div className="jobApplicationListItemHeader">
-                      <div className="jobApplicationListItemMain">
+      {props.jobPostings.length === 0
+        ?
+          <div>
+            No job postings found
+          </div>
+        :
+          <Tab.Container id="list-group-tabs-example">
+            <Row>
+              <Col sm={6}>
+                <ListGroup>
+                  {props.jobPostings.map(posting =>
+                      <ListGroup.Item action href={"#search_result_posting".concat(posting.id)}>
+                        <div className="jobApplicationListItemHeader">
+                          <div className="jobApplicationListItemMain">
+                            {posting.role}
+                          </div>
+                          <div className="jobApplicationListItemMeta jobApplicationListItemMetaEnd">
+                            {posting.city}
+                          </div>
+                        </div>
+                        <div className="jobApplicationListItemFooter">
+                          <div className="jobApplicationListItemMeta">
+                            {posting.dateCreated}
+                          </div>
+                        </div>
+                      </ListGroup.Item>
+                  )}
+                </ListGroup>
+              </Col>
+              <Col sm={6}>
+                <Tab.Content>
+                  {props.jobPostings.map(posting =>
+                    <Tab.Pane eventKey={"#search_result_posting".concat(posting.id)}>
+                      <h1>
                         {posting.role}
-                      </div>
-                      <div className="jobApplicationListItemMeta jobApplicationListItemMetaEnd">
+                      </h1>
+                      <h3>
                         {posting.city}
-                      </div>
-                    </div>
-                    <div className="jobApplicationListItemFooter">
-                      <div className="jobApplicationListItemMeta">
-                        {posting.dateCreated}
-                      </div>
-                    </div>
-                  </ListGroup.Item>
-              )}
-            </ListGroup>
-          </Col>
-          <Col sm={6}>
-            <Tab.Content>
-              {props.jobPostings.map(posting =>
-                <Tab.Pane eventKey={"#search_result_posting".concat(posting.id)}>
-                  <h1>
-                    {posting.role}
-                  </h1>
-                  <h3>
-                    {posting.city}
-                  </h3>
-                  <h4>
-                    {posting.state}
-                  </h4>
-                  <p>
-                    {posting.description}
-                  </p>
-                </Tab.Pane>
-              )}
-            </Tab.Content>
-          </Col>
-        </Row>
-      </Tab.Container>
+                      </h3>
+                      <h4>
+                        {posting.state}
+                      </h4>
+                      <p>
+                        {posting.description}
+                      </p>
+                    </Tab.Pane>
+                  )}
+                </Tab.Content>
+              </Col>
+            </Row>
+          </Tab.Container>
+        }
     </div>
   );
 };
