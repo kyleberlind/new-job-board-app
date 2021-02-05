@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 
 import { APPLICANT_USER_TYPE } from "../../../constants/applicant/ApplicantConstants.js";
-import { signUpUserService } from "../../../services/AccountServices";
+import { signUpApplicantService } from "../../../services/AccountServices";
 import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 
 import React, { useState } from 'react';
@@ -15,8 +15,8 @@ function ApplicantSignup() {
   const [fields, handleFieldChange] = useFormFields({
     firstName: "",
     lastName: "",
-    email: "",
-    confirmEmail: "",
+    emailAddress: "",
+    confirmEmailAddress: "",
     password: "",
     confirmPassword: "",
   });
@@ -28,7 +28,7 @@ function ApplicantSignup() {
     event.preventDefault();
     event.stopPropagation();
     if (validate(event.currentTarget)) {
-      signUpUserService(fields.email, fields.password, APPLICANT_USER_TYPE)
+      signUpApplicantService(fields, APPLICANT_USER_TYPE)
         .then((response) => {
           response.json().then((data) => {
             console.log(data);
@@ -53,7 +53,7 @@ function ApplicantSignup() {
   };
 
   const validate = (form) => {
-    if (fields.email !== fields.confirmEmail) {
+    if (fields.emailAddress !== fields.confirmEmailAddress) {
       setValidationMessage("Emails must match");
       return false;
     }
@@ -92,21 +92,21 @@ function ApplicantSignup() {
             onChange={handleFieldChange}
           />
           </Form.Group>
-          <Form.Group controlId="email">
+          <Form.Group controlId="emailAddress">
         <Form.Label>Email address</Form.Label>
           <Form.Control
             type="email"
             placeholder="Enter email"
-            value={fields.email}
+            value={fields.emailAddress}
             onChange={handleFieldChange}
           />
           </Form.Group>
-        <Form.Group controlId="confirmEmail">
+        <Form.Group controlId="confirmEmailAddress">
           <Form.Label>Confirm email address</Form.Label>
           <Form.Control
             type="email"
             placeholder="Confirm email"
-            value={fields.confirmEmail}
+            value={fields.confirmEmailAddress}
             onChange={handleFieldChange}
           />
         </Form.Group>

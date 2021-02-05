@@ -8,9 +8,9 @@ from ..utilities.response import LoginResponse, SignUpResponse
 account_view = Blueprint("account_view", __name__)
 
 
-@account_view.route("/sign_up", methods=["POST"])
+@account_view.route("/sign_up_applicant", methods=["POST"])
 def sign_up():
-    """End point for signing up a new user"""
+    """End point for signing up a new applicant user"""
     user_data = json.loads(request.data)
     account_model = AccountModel()
     try:

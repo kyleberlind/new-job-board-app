@@ -11,6 +11,8 @@ class UserModel(BaseModel):
     """Model to represent the user"""
     email_address: str
     password: str
+    first_name: str
+    last_name: str
     user_type: Optional[int]
     hashed_password_data: Optional[HashedPasswordData]
 

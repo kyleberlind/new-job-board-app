@@ -6,9 +6,9 @@ export const loginUserService = (emailAddress, password) => {
   });
 };
 
-export const signUpUserService = (emailAddress, password, userType) => {
-  const user_data = { emailAddress, password, userType };
-  return fetch("/sign_up", {
+export const signUpApplicantService = (applicantData, userType) => {
+  const user_data = { ...applicantData, userType };
+  return fetch("/sign_up_applicant", {
     method: "POST",
     body: JSON.stringify(user_data),
   });

@@ -30,6 +30,13 @@ class SignUpResponse(BaseResponse):
     user_type: Optional[int]
 
 
+class ApplicantInfoResponse(BaseResponse):
+    """Response for employer info"""
+    applicant_id: Optional[int]
+    email_address: Optional[str]
+    first_name: Optional[str]
+    last_name: Optional[str]
+
 class EmployerInfoResponse(BaseResponse):
     """Response for employer info"""
     employer_id: Optional[int]
