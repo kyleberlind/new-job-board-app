@@ -45,18 +45,23 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
                 <Tab.Content>
                   {props.jobPostings.map(posting =>
                     <Tab.Pane eventKey={"#search_result_posting".concat(posting.id)}>
-                      <h1>
-                        {posting.role}
-                      </h1>
-                      <h3>
-                        {posting.city}
-                      </h3>
-                      <h4>
-                        {posting.state}
-                      </h4>
-                      <p>
-                        {posting.description}
-                      </p>
+                      <div className={"searchResultPosting"}>
+                        <Button onClick={() => {}} className={"jobPostingAddToJobCartButton"}>
+                          Add to Job Cart
+                        </Button>
+                        <h1>
+                          {posting.role}
+                        </h1>
+                        <h3>
+                          {posting.city}
+                        </h3>
+                        <h4>
+                          {posting.state}
+                        </h4>
+                        <p>
+                          {posting.description}
+                        </p>
+                      </div>
                     </Tab.Pane>
                   )}
                 </Tab.Content>

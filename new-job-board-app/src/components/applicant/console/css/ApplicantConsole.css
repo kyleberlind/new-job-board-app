@@ -56,3 +56,12 @@
 .navBarButton {
   margin: 8px;
 }
+
+.searchResultPosting {
+  display: flex;
+  flex-direction: column;
+}
+
+.jobPostingAddToJobCartButton {
+  margin-left: auto;
+}
