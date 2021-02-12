@@ -1,15 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { Container, Button, Row, Col, Card } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-
+import {
+  Container,
+  Button,
+  Row,
+  Col,
+  Card,
+  InputGroup,
+  FormControl,
+  Accordion,
+} from "react-bootstrap";
 import Spinner from "react-bootstrap/Spinner";
 import PropTypes from "prop-types";
-import { loadJobPostingsByEmployerId } from "../../../services/employer/EmployerServices";
+import EditJobPostingModal from "../jobPosting/EditJobPostingModal";
+import {
+  loadJobPostingsByEmployerId,
+  updateJobPostingService,
+} from "../../../services/employer/EmployerServices";
 import JobPostingCard from "../jobPosting/JobPostingCard";
+import {
+  NO_JOB_POSTINGS_MESSAGE,
+  MY_JOB_POSTINGS_TITLE,
+} from "../constants/EmployerConstants";
 
 const EmployerConsole = (props) => {
   const [jobPostings, setJobPostings] = useState([]);
   const [areJobPostingsLoading, setAreJobPostingsLoading] = useState(true);
+  const [showEditJobPostingModal, setShowEditJobPostingModal] = useState(false);
+  const [selectedJobPosting, setSelectedJobPosting] = useState({})
 
   useEffect(() => {
     if (
@@ -36,10 +53,58 @@ const EmployerConsole = (props) => {
   const generateJobPostings = () => {
     return jobPostings.length > 0 ? (
       jobPostings.map((jobPosting) => {
-        return <JobPostingCard key={jobPosting.id} jobPosting={jobPosting} />;
+        return (
+          <Accordion key={jobPosting.id}>
+            <Card>
+              <Accordion.Toggle as={Button} variant="dark" eventKey="0">
+                <JobPostingCard jobPosting={jobPosting} />
+              </Accordion.Toggle>
+              <Accordion.Collapse eventKey="0">
+                <Container fluid>
+                  <Row noGutters>
+                    <Col lg={6}>
+                      <Card>
+                        <Card.Body>
+                          Description: {jobPosting.description}
+                        </Card.Body>
+                        <Card.Footer>
+                          <Container fluid>
+                            <Row>
+                              <Col>
+                                <Button
+                                  block
+                                  variant="primary"
+                                  onClick={() => {
+                                    setShowEditJobPostingModal(true);
+                                    setSelectedJobPosting(jobPosting)
+                                  }}
+                                >
+                                  Edit
+                                </Button>
+                              </Col>
+                              <Col>
+                                <Button block variant="secondary">
+                                  Delete
+                                </Button>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </Card.Footer>
+                      </Card>
+                    </Col>
+                    <Col lg={6}>
+                      <Card>Applicants</Card>
+                    </Col>
+                  </Row>
+                </Container>
+              </Accordion.Collapse>
+            </Card>
+          </Accordion>
+
+        );
       })
     ) : (
-      <Card>You dont have any postings yet</Card>
+      <Card>{NO_JOB_POSTINGS_MESSAGE}</Card>
     );
   };
 
@@ -48,7 +113,13 @@ const EmployerConsole = (props) => {
       <Row>
         <Col>
           <Card>
-            <Card.Header>My Job Postings</Card.Header>
+            <Card.Header>{MY_JOB_POSTINGS_TITLE}</Card.Header>
+            <InputGroup size="sm" className="mb-3">
+              <InputGroup.Prepend>
+                <Button variant="primary">Search</Button>
+              </InputGroup.Prepend>
+              <FormControl aria-label="Small" />
+            </InputGroup>
             <Card.Body>
               {areJobPostingsLoading ? (
                 <Spinner animation="border" role="status" size={"lg"}></Spinner>
@@ -59,6 +130,11 @@ const EmployerConsole = (props) => {
           </Card>
         </Col>
       </Row>
+      <EditJobPostingModal
+        jobPosting={selectedJobPosting}
+        showEditJobPostingModal={showEditJobPostingModal}
+        setShowEditJobPostingModal={setShowEditJobPostingModal}
+      ></EditJobPostingModal>
     </Container>
   );
 };

@@ -1,7 +1,12 @@
+"""
+01/26/2020
+"""
+
 import MySQLdb
 from ..api_secrets.aws_credentials import AWS_PASSWORD, AWS_USER_NAME, AWS_HOSTNAME
 from ..models.job_posting.job_posting_model import JobPostingModel
 from ..models.job_posting.job_location_model import JobLocationModel
+from ..exceptions.dao_exceptions import JobDaoException, NoJobPostingFoundException
 
 
 class JobDao():
@@ -39,14 +44,16 @@ class JobDao():
                     INSERT INTO job.tbl_job_posting (
                                     employer_id,
                                     role,
-                                    description
+                                    description,
+                                    team
                                 )
-                    VALUES (%s, %s, %s)
+                    VALUES (%s, %s, %s, %s)
                 """,
                 (
                     job_posting.employer_id,
                     job_posting.role,
                     job_posting.description,
+                    job_posting.team
                 )
             )
             new_job_id = cursor.lastrowid
@@ -81,6 +88,30 @@ class JobDao():
             self.job_connection.commit()
             return True
         except Exception as error:
+            raise Exception(str(error))
+
+    def update_job_posting_general_info(self, job_posting: JobPostingModel) -> bool:
+        """Updates a job postings general information by ID"""
+        try:
+            cursor = self.job_connection.cursor(self.db.cursors.DictCursor)
+            cursor.execute(
+                """
+                    UPDATE job.tbl_job_posting job_posting
+                    SET    job_posting.role = %s
+                           job_posting.description = %s
+                    WHERE  job_posting.job_id = %s
+                """,
+                (
+                    job_posting.role,
+                    job_posting.description,
+                    job_posting.job_id,
+                    job_posting.team
+                )
+            )
+            cursor.close()
+            self.job_connection.commit()
+            return True
+        except Exception as error:
             raise Exception(error)
 
     def load_job_postings_by_employer_id(self, employer_id):
@@ -93,6 +124,7 @@ class JobDao():
                                job_posting.employer_id,
                                job_posting.role,
                                job_posting.description,
+                               job_posting.team,
                                job_posting.date_created,
                                location.city,
                                location.state,
@@ -109,7 +141,7 @@ class JobDao():
             if results:
                 return list(results)
             else:
-                raise Exception(
+                raise NoJobPostingFoundException(
                     "No job postings found for id " + str(employer_id))
         except Exception as error:
             raise Exception(error)

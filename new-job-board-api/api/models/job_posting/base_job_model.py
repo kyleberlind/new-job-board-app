@@ -1,5 +1,4 @@
-from typing import Optional
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 from ...utilities.alias_generators import snake_to_camel_case
 
 class BaseJobModel(BaseModel):

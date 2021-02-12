@@ -8,6 +8,7 @@ class JobPostingModel(BaseJobModel):
     id: Optional[str]
     employer_id: int
     role: str
+    team: Optional[str]
     location: JobLocationModel
     description:str
     questions: Optional[List[JobPostingQuestionModel]]

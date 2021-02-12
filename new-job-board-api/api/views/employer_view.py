@@ -1,6 +1,5 @@
 import json
-import uuid
-from flask import Blueprint, jsonify, session, request
+from flask import Blueprint, session, request
 from ..daos.account_dao import AccountDao
 from ..daos.job_dao import JobDao
 from ..utilities.response import EmployerInfoResponse, BaseSaveResponse, JobPostingsResponse
@@ -52,6 +51,23 @@ def save_new_job_posting():
             error_message=str(error)
         ).json(by_alias=True)
 
+@employer_view.route("/update_job_postings_by_employer_id", methods=['POST'])
+def update_job_posting():
+    """Updates an existing job posting"""
+    job_posting_data = json.loads(request.data)
+    job_posting_processor = JobPostingProcessorModel()
+    try:
+        job_posting = JobPostingModel(
+            **job_posting_data
+        )
+        result = job_posting_processor.update_job_posting(job_posting)
+        return BaseSaveResponse(success=result).json(by_alias=True)
+    except Exception as error:
+        return BaseSaveResponse(
+            success=False,
+            has_error=True,
+            error_message=str(error)
+        ).json(by_alias=True)
 
 @employer_view.route("/load_job_postings_by_employer_id", methods=['POST'])
 def load_job_postings_by_employer_id():
@@ -68,11 +84,6 @@ def load_job_postings_by_employer_id():
             hasError=True,
             errorMessage=str(error)
         ).json(by_alias=True)
-
-
-def update_job_posting():
-    """Updates an existing job posting"""
-
 
 def delete_job_posting():
     """Deletes an existing job posting"""

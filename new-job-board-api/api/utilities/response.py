@@ -3,8 +3,7 @@ File to hold response objects
 """
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, validator
-from ..models.job_posting.job_posting_model import JobPostingModel
+from pydantic import BaseModel
 from .alias_generators import snake_to_camel_case
 
 class BaseResponse(BaseModel):
@@ -50,8 +49,9 @@ class JobPostingResponse(BaseResponse):
     role: str
     city: str
     state: str
-    zip_code: int
+    zip_code: str
     description: str
+    team: Optional[str]
     date_created: datetime
 
 class JobPostingsResponse(BaseResponse):
