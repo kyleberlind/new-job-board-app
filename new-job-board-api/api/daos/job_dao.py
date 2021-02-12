@@ -145,3 +145,84 @@ class JobDao():
                     "No job postings found for id " + str(employer_id))
         except Exception as error:
             raise Exception(error)
+
+    def search_job_postings(self, job_posting_search_query, job_location_search_query):
+        """Loads the job postings for the employer by their ID"""
+        if (len(job_posting_search_query) == 0) & (len(job_location_search_query) == 0):
+            raise Exception(
+                    "No search query input data provided")
+        cursor = self.job_connection.cursor(self.db.cursors.DictCursor)
+        query = """
+                SELECT      job_posting.id,
+                        job_posting.employer_id,
+                        job_posting.role,
+                        job_posting.description,
+                        job_posting.date_created,
+                        location.city,
+                        location.state,
+                        location.zip_code,
+                        employer.employer_name
+                FROM       job.tbl_job_posting job_posting
+                INNER JOIN job.tbl_job_posting_location location
+                        ON job_posting.id = location.job_id
+                INNER JOIN user.tbl_employer employer
+                        ON job_posting.employer_id = employer.employer_id
+            """
+        if (len(job_posting_search_query) > 0) & (len(job_location_search_query) > 0):
+            job_posting_search_query = "%" + job_posting_search_query.lower() + "%"
+            job_location_search_query = "%" + job_location_search_query.lower() + "%"
+            query += """
+                    WHERE
+                        (
+                            job_posting.role LIKE %s
+                            OR employer.employer_name LIKE  %s
+                        )
+                        AND
+                        (
+                            location.city LIKE %s
+                            OR location.state LIKE %s
+                            OR location.zip_code LIKE %s
+                        )
+                """
+            params = [
+                job_posting_search_query,
+                job_posting_search_query,
+                job_location_search_query,
+                job_location_search_query,
+                job_location_search_query
+            ]
+        elif len(job_posting_search_query) > 0:
+            job_posting_search_query = "%" + job_posting_search_query.lower() + "%"
+            query += """
+                    WHERE   job_posting.role LIKE %s
+                            OR employer.employer_name LIKE  %s
+                """
+            params = [
+                job_posting_search_query,
+                job_posting_search_query
+            ]
+        elif len(job_location_search_query) > 0:
+            job_location_search_query = "%" + job_location_search_query.lower() + "%"
+            query += """
+                WHERE   location.city LIKE %s
+                        OR location.state LIKE %s
+                        OR location.zip_code LIKE %s
+            """
+            params =[
+                job_location_search_query,
+                job_location_search_query,
+                job_location_search_query
+            ]
+        try:
+            cursor.execute(
+                query,
+                params
+            )
+            results = cursor.fetchall()
+            cursor.close()
+            if results:
+                return list(results)
+            else:
+                return []
+        except Exception as error:
+            raise Exception(error)

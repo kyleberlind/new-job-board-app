@@ -1,0 +1,67 @@
+.container {
+
+}
+
+.searchBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchInput {
+  flex-grow: 1;
+  padding: 18px 12px 0px 0px;
+}
+
+.header {
+  font-size: 32px;
+  font-weight: bold;
+  padding: 12px 0px;
+}
+
+.jobApplicationsContainer {
+  padding: 12px 0px 0px 12px;
+}
+
+.jobApplicationListItemHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.jobApplicationListItemFooter {
+  display: flex;
+  flex-direction: row;
+}
+
+.jobApplicationListItemMain {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.jobApplicationListItemMeta {
+  font-size: 12px;
+}
+
+.jobApplicationListItemMetaEnd {
+  margin-left: auto;
+}
+
+.jobApplicationHeader {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.navBarButton {
+  margin: 8px;
+}
+
+.searchResultPosting {
+  display: flex;
+  flex-direction: column;
+}
+
+.jobPostingAddToJobCartButton {
+  margin-left: auto;
+}

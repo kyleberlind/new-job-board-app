@@ -9,6 +9,7 @@ import {
   FormControl,
   Accordion,
 } from "react-bootstrap";
+
 import Spinner from "react-bootstrap/Spinner";
 import PropTypes from "prop-types";
 import EditJobPostingModal from "../jobPosting/EditJobPostingModal";

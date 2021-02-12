@@ -22,12 +22,15 @@ class AccountDao():
     def save_new_user(self, user: UserModel):
         """Enters a new user into the database and returns True if successful"""
         try:
+            print(user)
             cursor = self.user_connection.cursor()
             cursor.execute(
-                "INSERT INTO user.tbl_user (email_address, user_type, password, salt)\
-                 VALUES (%s, %s, %s, %s)",
+                "INSERT INTO user.tbl_user (email_address, first_name, last_name, user_type, password, salt)\
+                 VALUES (%s, %s, %s, %s, %s, %s)",
                 (
                     user.email_address,
+                    user.first_name,
+                    user.last_name,
                     user.user_type,
                     user.hashed_password_data.get_hashed_password(),
                     user.hashed_password_data.get_salt()
@@ -77,6 +80,35 @@ class AccountDao():
                 [
                     email,
                     password
+                ]
+            )
+            results = cursor.fetchone()
+            if results:
+                user_information = results
+                cursor.close()
+            else:
+                cursor.close()
+                raise Exception(INCORRECT_EMAIL_OR_PASSWORD_ERROR_MESSAGE)
+            return user_information
+
+        except Exception as error:
+            raise Exception(error)
+
+    def get_user_info_from_id(self, id):
+        """Gets the user data for id"""
+        try:
+            cursor = self.user_connection.cursor(self.db.cursors.DictCursor)
+            cursor.execute(
+                """
+                    SELECT id as applicant_id,
+                           first_name,
+                           last_name,
+                           email_address
+                      FROM user.tbl_user
+                     WHERE id = %s
+                """,
+                [
+                    id,
                 ]
             )
             results = cursor.fetchone()

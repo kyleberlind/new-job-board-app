@@ -1,6 +1,7 @@
 import ApplicantLogin from "./login/ApplicantLogin.js";
 import ApplicantSignup from "./signup/ApplicantSignup.js";
 import ApplicantConsole from "./console/ApplicantConsole";
+import ApplicantAccount from "./account/ApplicantAccount";
 import { Container } from "react-bootstrap";
 import { logoutService } from "../../services/AccountServices";
 import React from "react";
@@ -26,6 +27,7 @@ function Applicant() {
           <Route path="/applicant" exact>
             <h2>Hello Applicant</h2>
           </Route>
+          <Route path="/applicant/account" component={ApplicantAccount} />
           <Route path="/applicant/signup" component={ApplicantSignup} />
           <Route path="/applicant/login" component={ApplicantLogin} />
           <Route
