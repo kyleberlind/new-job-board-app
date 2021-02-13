@@ -114,7 +114,7 @@ class JobDao():
         except Exception as error:
             raise Exception(error)
 
-    def load_job_postings_by_employer_id(self, employer_id):
+    def load_job_postings_by_employer_id(self, employer_id: int):
         """Loads the job postings for the employer by their ID"""
         try:
             cursor = self.job_connection.cursor(self.db.cursors.DictCursor)
@@ -141,6 +141,7 @@ class JobDao():
             if results:
                 return list(results)
             else:
+                #TODO set up no job postings found exception
                 raise NoJobPostingFoundException(
                     "No job postings found for id " + str(employer_id))
         except Exception as error:
@@ -150,18 +151,18 @@ class JobDao():
         """Loads the job postings for the employer by their ID"""
         if (len(job_posting_search_query) == 0) & (len(job_location_search_query) == 0):
             raise Exception(
-                    "No search query input data provided")
+                "No search query input data provided")
         cursor = self.job_connection.cursor(self.db.cursors.DictCursor)
         query = """
-                SELECT      job_posting.id,
-                        job_posting.employer_id,
-                        job_posting.role,
-                        job_posting.description,
-                        job_posting.date_created,
-                        location.city,
-                        location.state,
-                        location.zip_code,
-                        employer.employer_name
+                SELECT     job_posting.id,
+                           job_posting.employer_id,
+                           job_posting.role,
+                           job_posting.description,
+                           job_posting.date_created,
+                           location.city,
+                           location.state,
+                           location.zip_code,
+                           employer.employer_name
                 FROM       job.tbl_job_posting job_posting
                 INNER JOIN job.tbl_job_posting_location location
                         ON job_posting.id = location.job_id
@@ -208,7 +209,7 @@ class JobDao():
                         OR location.state LIKE %s
                         OR location.zip_code LIKE %s
             """
-            params =[
+            params = [
                 job_location_search_query,
                 job_location_search_query,
                 job_location_search_query

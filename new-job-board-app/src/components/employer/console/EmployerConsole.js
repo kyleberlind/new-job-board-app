@@ -27,7 +27,7 @@ const EmployerConsole = (props) => {
   const [jobPostings, setJobPostings] = useState([]);
   const [areJobPostingsLoading, setAreJobPostingsLoading] = useState(true);
   const [showEditJobPostingModal, setShowEditJobPostingModal] = useState(false);
-  const [selectedJobPosting, setSelectedJobPosting] = useState({})
+  const [selectedJobPosting, setSelectedJobPosting] = useState({});
 
   useEffect(() => {
     if (
@@ -77,7 +77,7 @@ const EmployerConsole = (props) => {
                                   variant="primary"
                                   onClick={() => {
                                     setShowEditJobPostingModal(true);
-                                    setSelectedJobPosting(jobPosting)
+                                    setSelectedJobPosting(jobPosting);
                                   }}
                                 >
                                   Edit
@@ -101,7 +101,6 @@ const EmployerConsole = (props) => {
               </Accordion.Collapse>
             </Card>
           </Accordion>
-
         );
       })
     ) : (
@@ -131,11 +130,13 @@ const EmployerConsole = (props) => {
           </Card>
         </Col>
       </Row>
-      <EditJobPostingModal
-        jobPosting={selectedJobPosting}
-        showEditJobPostingModal={showEditJobPostingModal}
-        setShowEditJobPostingModal={setShowEditJobPostingModal}
-      ></EditJobPostingModal>
+      {Object.keys(selectedJobPosting).length !== 0 && (
+        <EditJobPostingModal
+          jobPosting={selectedJobPosting}
+          showEditJobPostingModal={showEditJobPostingModal}
+          setShowEditJobPostingModal={setShowEditJobPostingModal}
+        ></EditJobPostingModal>
+      )}
     </Container>
   );
 };

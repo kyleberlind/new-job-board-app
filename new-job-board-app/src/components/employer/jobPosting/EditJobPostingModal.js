@@ -22,7 +22,7 @@ const EditJobPostingModal = (props) => {
   const [
     jobPostingGeneralInfo,
     handleJobPostingGeneralInfoChange,
-  ] = useFormFields({...props.jobPosting});
+  ] = useFormFields(props.jobPosting);
   const [
     jobPostingLocationInfo,
     handleJobPostingLocationInfoChange,

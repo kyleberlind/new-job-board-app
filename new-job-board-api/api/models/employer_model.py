@@ -4,6 +4,6 @@ from typing import Optional
 
 class EmployerModel(UserModel):
     """Model to represent the user"""
-    employer_id: int
+    employer_id: Optional[int]
     employer_name: Optional[str]
     employer_size: Optional[str]
