@@ -58,6 +58,7 @@ def login():
         session["user_type"] = user_info["user_type"]
         return LoginResponse(**user_info).json(by_alias=True)
     except Exception as error:
+        print(str(error))
         return LoginResponse(
             has_error=True,
             error_message=str(error)
