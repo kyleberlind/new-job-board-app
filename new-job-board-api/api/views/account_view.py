@@ -78,5 +78,6 @@ def logout():
     """Endpoint for logging a user out"""
     if 'token' in session:
         session.pop('token', None)
+        session.pop('job_cart', None)
         return 'OK', 201
     return 'ERROR', 401

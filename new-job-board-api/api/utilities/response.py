@@ -64,3 +64,7 @@ class JobPostingResponse(BaseResponse):
 class JobPostingsResponse(BaseResponse):
     """Response for multiple job postings"""
     job_postings: List[JobPostingResponse]
+
+class JobCartResponse(BaseResponse):
+    """Response for job cart"""
+    job_cart: Optional[List[JobPostingResponse]]

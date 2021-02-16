@@ -114,6 +114,37 @@ class JobDao():
         except Exception as error:
             raise Exception(error)
 
+    def load_job_posting_by_id(self, job_id):
+        """Loads the job postings for the employer by their ID"""
+        try:
+            cursor = self.job_connection.cursor(self.db.cursors.DictCursor)
+            cursor.execute(
+                """
+                    SELECT     job_posting.id,
+                               job_posting.employer_id,
+                               job_posting.role,
+                               job_posting.description,
+                               job_posting.date_created,
+                               location.city,
+                               location.state,
+                               location.zip_code
+                    FROM       job.tbl_job_posting job_posting
+                    INNER JOIN job.tbl_job_posting_location location
+                            ON job_posting.id = location.job_id
+                    WHERE      job_posting.id = %s
+                """,
+                [job_id]
+            )
+            results = cursor.fetchall()
+            cursor.close()
+            if results:
+                return list(results)
+            else:
+                raise Exception(
+                    "No job postings found for id " + str(job_id))
+        except Exception as error:
+            raise Exception(error)
+
     def search_job_postings(self, job_posting_search_query, job_location_search_query):
         """Loads the job postings for the employer by their ID"""
         if (len(job_posting_search_query) == 0) & (len(job_location_search_query) == 0):
@@ -192,5 +223,28 @@ class JobDao():
                 return list(results)
             else:
                 return []
+        except Exception as error:
+            raise Exception(error)
+
+    def submit_job_applications(self, job_applications, applicant_id):
+        """Loads the job postings for the employer by their ID"""
+        try:
+            cursor = self.job_connection.cursor(self.db.cursors.DictCursor)
+            for job in job_applications:
+                params = [
+                        job['id'],
+                        applicant_id,
+                        job['employer_id'],
+                ]
+                cursor.execute(
+                    """
+                        INSERT INTO job.tbl_job_posting_applications (job_id, applicant_id, employer_id)
+                        VALUES (%s, %s, %s)
+                    """,
+                    params,
+                )
+                # Add some response
+
+            self.job_connection.commit()
         except Exception as error:
             raise Exception(error)
