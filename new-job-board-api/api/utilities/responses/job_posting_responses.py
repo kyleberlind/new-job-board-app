@@ -4,7 +4,6 @@ Responses for job Postings
 """
 from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel
 from .base_responses import BaseResponse
 
 

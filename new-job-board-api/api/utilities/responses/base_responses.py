@@ -14,6 +14,7 @@ class BaseResponse(BaseModel):
 
     class Config:
         """Response Configuration"""
+        allow_population_by_field_name=True
         alias_generator = snake_to_camel_case
         allow_population_by_alias = True
         arbitrary_types_allowed = True

@@ -13,6 +13,7 @@ import {
 } from "react-bootstrap";
 import { updateJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
+import {jobPostingShape} from "../../../shapes/JobPostingShape"
 
 const EditJobPostingModal = (props) => {
   const [validated, setValidated] = useState(false);
@@ -282,21 +283,7 @@ const EditJobPostingModal = (props) => {
 EditJobPostingModal.propTypes = {
   showEditJobPostingModal: PropTypes.bool.isRequired,
   setShowEditJobPostingModal: PropTypes.func.isRequired,
-
-  jobPosting: PropTypes.shape({
-    jobPostingInfo: PropTypes.shape({
-      generalInfo: PropTypes.shape({
-        role: PropTypes.string,
-        team: PropTypes.string,
-        description: PropTypes.string,
-      }),
-      location: PropTypes.shape({
-        city: PropTypes.string,
-        state: PropTypes.string,
-        zipCode: PropTypes.string,
-      }),
-    }),
-  }),
+  jobPosting: jobPostingShape.isRequired
 };
 
 EditJobPostingModal.defaultProps = {

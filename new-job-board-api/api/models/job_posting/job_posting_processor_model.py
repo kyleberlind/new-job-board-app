@@ -38,3 +38,14 @@ class JobPostingProcessorModel:
     def delete_job_posting(self, job_id: int) -> bool:
         """Deletes a job posting by the job ID"""
         return self.dao.delete_job_posting(job_id)
+
+    def search_job_postings(self, job_search_query: str, job_search_location_query: str):
+        """Searches for a job posting by key word or location"""
+        job_postings = self.dao.search_job_postings(
+            job_search_query, job_search_location_query)
+        return map_job_posting_info(job_postings)
+
+    def load_job_posting_by_id(self, job_id: int):
+        """Loads a job posting by ID"""
+        job_postings = self.dao.load_job_posting_by_id(job_id)
+        return map_job_posting_info(job_postings)
