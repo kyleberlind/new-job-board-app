@@ -2,6 +2,7 @@ import ApplicantLogin from "./login/ApplicantLogin.js";
 import ApplicantSignup from "./signup/ApplicantSignup.js";
 import ApplicantConsole from "./console/ApplicantConsole";
 import ApplicantAccount from "./account/ApplicantAccount";
+import ApplicantJobCart from "./job_cart/ApplicantJobCart";
 import { Container } from "react-bootstrap";
 import { logoutService } from "../../services/AccountServices";
 import React from "react";
@@ -33,6 +34,10 @@ function Applicant() {
           <Route
             path="/applicant/applicant-console"
             component={ApplicantConsole}
+          />
+          <Route
+            path="/applicant/job-cart"
+            component={ApplicantJobCart}
           />
         </Switch>
       </Router>

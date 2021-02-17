@@ -2,9 +2,10 @@ import { Button, Container, InputGroup, Form, FormControl, ListGroup, Tab, Col, 
 import React, { useState, useEffect } from "react";
 import {
   loadApplicantInfoService,
+  loadJobCart,
+  searchJobPostings
 } from "../../../services/applicant/ApplicantServices";
 import { useFormFields } from "../../../libs/hooks/useFormFields.js";
-import { searchJobPostings } from "../../../services/applicant/ApplicantServices.js";
 import ApplicantConsoleJobApplicationsContainer from "./ApplicantConsoleJobApplicationsContainer.js"
 import ApplicantConsoleSearchResultsContainer from "./ApplicantConsoleSearchResultsContainer.js"
 
@@ -27,11 +28,9 @@ const ApplicantConsole = () => {
         // TODO: add actual error handling
         response.json().then((data) => {
           if (data["hasError"]) {
-            console.log("ERROR");
-            console.log(data);
+            console.log("ERROR"); // fix this
           } else {
             setSearchResults(data["jobPostings"]);
-            console.log(data["jobPostings"]);
           }
         });
       });
@@ -161,7 +160,7 @@ const ApplicantConsole = () => {
               <div className="header">
                 {'Search results for "'.concat(fields.jobSearchQuery, '" in "', fields.jobSearchLocationQuery, '"')}
               </div>
-              <ApplicantConsoleSearchResultsContainer jobPostings={searchResults} />
+              <ApplicantConsoleSearchResultsContainer applicantId={userId} jobPostings={searchResults} />
             </div>
 
           :

@@ -12,7 +12,7 @@ function ApplicantConsoleNavBar(props) {
       <Nav.Link href="/applicant/applicant-console"> My Applications</Nav.Link>
       </Navbar.Collapse>
       <div className="navBarButton">
-        <Button onClick={() => {}}>Job Cart</Button>
+        <Button href="/applicant/job-cart">Job Cart</Button>
       </div>
       <div className="navBarButton">
         <Button onClick={props.handleLogout}>Logout</Button>

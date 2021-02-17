@@ -2,6 +2,7 @@ import { Button, Container, InputGroup, Form, FormControl, ListGroup, Tab, Col, 
 import React, { useState, useEffect } from "react";
 import {
   loadApplicantInfoService,
+  addPostingToJobCart
 } from "../../../services/applicant/ApplicantServices";
 import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 import PropTypes from 'prop-types';
@@ -10,6 +11,22 @@ import './css/ApplicantConsole.css';
 
 
 const ApplicantConsoleSearchResultsContainer = (props) => {
+  const addToJobCartClick = (applicantId, jobId, employerId) => {
+    addPostingToJobCart({
+      "applicantId" : applicantId,
+      "jobId" : jobId,
+      "employerId" : employerId,
+    }).then((response) => {
+      response.json().then((data) => {
+        if (data["hasError"]) {
+          console.log("ERROR"); // fix this
+        } else {
+          console.log(data);
+        }
+      });
+    });
+  }
+
   return (
     <div className="jobApplicationsContainer">
       {props.jobPostings.length === 0
@@ -23,7 +40,7 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
               <Col sm={6}>
                 <ListGroup>
                   {props.jobPostings.map(posting =>
-                      <ListGroup.Item action href={"#search_result_posting".concat(posting.id)}>
+                      <ListGroup.Item key={posting.id} action href={"#search_result_posting".concat(posting.id)}>
                         <div className="jobApplicationListItemHeader">
                           <div className="jobApplicationListItemMain">
                             {posting.role}
@@ -44,9 +61,14 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
               <Col sm={6}>
                 <Tab.Content>
                   {props.jobPostings.map(posting =>
-                    <Tab.Pane eventKey={"#search_result_posting".concat(posting.id)}>
+                    <Tab.Pane key={posting.id} eventKey={"#search_result_posting".concat(posting.id)}>
                       <div className={"searchResultPosting"}>
-                        <Button onClick={() => {}} className={"jobPostingAddToJobCartButton"}>
+                        <Button
+                          onClick={() => {
+                              addToJobCartClick(props.applicantId, posting.id, posting.employerId)
+                            }
+                          }
+                          className={"jobPostingAddToJobCartButton"}>
                           Add to Job Cart
                         </Button>
                         <h1>
@@ -84,6 +106,7 @@ ApplicantConsoleSearchResultsContainer.propTypes = {
      state: PropTypes.string.isRequired,
      zipCode: PropTypes.number.isRequired,
    })).isRequired,
+   applicantId: PropTypes.number.isRequired,
 }
 
 export default ApplicantConsoleSearchResultsContainer;
