@@ -1,16 +1,21 @@
-from flask import Blueprint, jsonify, session, request
+"""02/14/2021"""
 import json
-from ..utilities.response import JobPostingsResponse, ApplicantInfoResponse
+from flask import Blueprint, jsonify, session, request
+from ..utilities.responses.applicant_responses import ApplicantInfoResponse
+from ..utilities.responses.job_posting_responses import JobPostingsResponse
 from ..daos.account_dao import AccountDao
 from ..daos.job_dao import JobDao
 
 applicant_view = Blueprint('applicant_view', __name__)
 
+
 @applicant_view.route('/load_applicant_info', methods=['GET'])
 def load_applicant_info():
+    """Loads the applicant info"""
     if 'token' not in session:
         return jsonify({'applicantData': False})
     return jsonify({'applicantData': session['token']})
+
 
 @applicant_view.route('/load_applicant_info_from_id', methods=['POST'])
 def load_applicant_info_from_id():
@@ -26,6 +31,7 @@ def load_applicant_info_from_id():
             hasError=True,
             errorMessage=str(error)
         ).json(by_alias=True)
+
 
 @applicant_view.route("/search_job_postings", methods=['POST'])
 def load_job_postings_by_employer_id():

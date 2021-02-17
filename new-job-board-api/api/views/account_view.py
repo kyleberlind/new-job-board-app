@@ -1,9 +1,10 @@
+"""02/14/2021"""
 import json
 from flask import Blueprint, jsonify, request, session
 from ..models.account_model import AccountModel
 from ..models.user_model import UserModel
 from ..models.employer_model import EmployerModel
-from ..utilities.response import LoginResponse, SignUpResponse
+from ..utilities.responses.account_responses import LoginResponse, SignUpResponse
 
 account_view = Blueprint("account_view", __name__)
 
@@ -25,6 +26,7 @@ def sign_up():
             has_error=True,
             error_message=str(error)
         ).json(by_alias=True)
+
 
 @account_view.route("/sign_up_employer", methods=["POST"])
 def sign_up_employer():

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Button,
@@ -11,28 +11,64 @@ import {
   Card,
   Modal,
 } from "react-bootstrap";
-import { useFormFields } from "../../../libs/hooks/useFormFields";
-import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
+import { updateJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
 
 const EditJobPostingModal = (props) => {
   const [validated, setValidated] = useState(false);
   const [validationMessageType, setValidationMessageType] = useState("success");
   const [validationMessage, setValidationMessage] = useState("");
-  const [
-    jobPostingGeneralInfo,
-    handleJobPostingGeneralInfoChange,
-  ] = useFormFields(props.jobPosting);
-  const [
-    jobPostingLocationInfo,
-    handleJobPostingLocationInfoChange,
-  ] = useFormFields(props.jobPosting.locationInfo);
+
+  const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState(
+    props.jobPosting.generalInfo
+  );
+  const [jobPostingLocationInfo, setJobPostingLocationInfo] = useState(
+    props.jobPosting.location
+  );
+  const [jobPostingQuestionInfo, setJobPostingQuestionInfo] = useState(
+    props.jobPosting.questions
+  );
+
+  const handleJobPostingChange = (
+    event,
+    setJobPostingFields,
+    jobPostingInfo
+  ) => {
+    setJobPostingFields({
+      ...jobPostingInfo,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  useEffect(() => {
+    setJobPostingGeneralInfo(props.jobPosting.generalInfo);
+    setJobPostingLocationInfo(props.jobPosting.location);
+    setJobPostingQuestionInfo(props.jobPosting.questions);
+  }, [props.jobPosting]);
 
   const handleSubmitButtonClick = (event) => {
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
     if (form.checkValidity() === true) {
+      updateJobPostingService({
+        generalInfo: jobPostingGeneralInfo,
+        location: jobPostingLocationInfo,
+      }).then((response) => {
+        response.json().then((data) => {
+          if (data["hasError"]) {
+            setValidationMessage(data["errorMessage"]);
+            props.setShowEditJobPostingModal(false);
+          } else if (data["success"]) {
+            setValidationMessageType("success");
+            setValidationMessage("Successfully updated job posting!");
+            window.location.assign("employer-console");
+          } else {
+            setValidationMessageType("danger");
+            setValidationMessage("Failed to updated job posting");
+          }
+        });
+      });
     }
     setValidated(true);
   };
@@ -40,7 +76,9 @@ const EditJobPostingModal = (props) => {
     <div className="root">
       <Modal
         show={props.showEditJobPostingModal}
-        onHide={() => props.setShowEditJobPostingModal(false)}
+        onHide={() => {
+          props.setShowEditJobPostingModal(false);
+        }}
         size="lg"
         centered
       >
@@ -59,12 +97,19 @@ const EditJobPostingModal = (props) => {
                 <Container>
                   <Row>
                     <Col>
-                      <Form.Group controlId="city">
+                      <Form.Group>
                         <Form.Label>City</Form.Label>
                         <Form.Control
+                          name="city"
                           required
-                          value={jobPostingLocationInfo?.city}
-                          onChange={handleJobPostingLocationInfoChange}
+                          value={jobPostingLocationInfo.city}
+                          onChange={(event) => {
+                            handleJobPostingChange(
+                              event,
+                              setJobPostingLocationInfo,
+                              jobPostingLocationInfo
+                            );
+                          }}
                           placeholder="Denver"
                         />
                         <Form.Control.Feedback type="invalid">
@@ -73,23 +118,37 @@ const EditJobPostingModal = (props) => {
                       </Form.Group>
                     </Col>
                     <Col xs={3}>
-                      <Form.Group controlId="state">
+                      <Form.Group>
                         <Form.Label>State</Form.Label>
                         <Form.Control
+                          name="state"
                           required
-                          value={jobPostingLocationInfo?.state}
-                          onChange={handleJobPostingLocationInfoChange}
+                          value={jobPostingLocationInfo.state}
+                          onChange={(event) => {
+                            handleJobPostingChange(
+                              event,
+                              setJobPostingLocationInfo,
+                              jobPostingLocationInfo
+                            );
+                          }}
                           placeholder="CO"
                         />
                       </Form.Group>
                     </Col>
                     <Col xs={3}>
-                      <Form.Group controlId="zipCode">
+                      <Form.Group>
                         <Form.Label>Zip Code</Form.Label>
                         <Form.Control
+                          name="zipCode"
                           required
-                          value={jobPostingLocationInfo?.zipCode}
-                          onChange={handleJobPostingLocationInfoChange}
+                          value={jobPostingLocationInfo.zipCode}
+                          onChange={(event) => {
+                            handleJobPostingChange(
+                              event,
+                              setJobPostingLocationInfo,
+                              jobPostingLocationInfo
+                            );
+                          }}
                           placeholder="80220"
                         />
                       </Form.Group>
@@ -104,12 +163,19 @@ const EditJobPostingModal = (props) => {
                 <Container>
                   <Row>
                     <Col xs={6}>
-                      <Form.Group controlId="role">
+                      <Form.Group>
                         <Form.Label>Job Role</Form.Label>
                         <Form.Control
+                          name="role"
                           required
                           value={jobPostingGeneralInfo?.role}
-                          onChange={handleJobPostingGeneralInfoChange}
+                          onChange={(event) => {
+                            handleJobPostingChange(
+                              event,
+                              setJobPostingGeneralInfo,
+                              jobPostingGeneralInfo
+                            );
+                          }}
                           placeholder="Enter a Job Role"
                         />
                         <Form.Control.Feedback type="invalid">
@@ -118,11 +184,18 @@ const EditJobPostingModal = (props) => {
                       </Form.Group>
                     </Col>
                     <Col xs={6}>
-                      <Form.Group controlId="team">
+                      <Form.Group>
                         <Form.Label>Team</Form.Label>
                         <Form.Control
+                          name="team"
                           value={jobPostingGeneralInfo?.team}
-                          onChange={handleJobPostingGeneralInfoChange}
+                          onChange={(event) => {
+                            handleJobPostingChange(
+                              event,
+                              setJobPostingGeneralInfo,
+                              jobPostingGeneralInfo
+                            );
+                          }}
                           placeholder="Enter a Team"
                         />
                       </Form.Group>
@@ -131,14 +204,21 @@ const EditJobPostingModal = (props) => {
                   <Row>
                     <Col>
                       <div className="textArea">
-                        <Form.Group controlId="description">
+                        <Form.Group>
                           <Form.Label>Job Description</Form.Label>
                           <Form.Control
+                            name="description"
                             as="textarea"
                             rows={6}
                             required
                             value={jobPostingGeneralInfo?.description}
-                            onChange={handleJobPostingGeneralInfoChange}
+                            onChange={(event) => {
+                              handleJobPostingChange(
+                                event,
+                                setJobPostingGeneralInfo,
+                                jobPostingGeneralInfo
+                              );
+                            }}
                             placeholder="Enter Job Description"
                           />
                           <Form.Control.Feedback type="invalid">
@@ -166,7 +246,7 @@ const EditJobPostingModal = (props) => {
               <Row>
                 <Col>
                   <Button className="button" type="submit" variant="primary">
-                    Edit
+                    Save
                   </Button>
                 </Col>
                 <Col>
@@ -202,6 +282,7 @@ const EditJobPostingModal = (props) => {
 EditJobPostingModal.propTypes = {
   showEditJobPostingModal: PropTypes.bool.isRequired,
   setShowEditJobPostingModal: PropTypes.func.isRequired,
+
   jobPosting: PropTypes.shape({
     jobPostingInfo: PropTypes.shape({
       generalInfo: PropTypes.shape({
@@ -209,7 +290,7 @@ EditJobPostingModal.propTypes = {
         team: PropTypes.string,
         description: PropTypes.string,
       }),
-      locationInfo: PropTypes.shape({
+      location: PropTypes.shape({
         city: PropTypes.string,
         state: PropTypes.string,
         zipCode: PropTypes.string,

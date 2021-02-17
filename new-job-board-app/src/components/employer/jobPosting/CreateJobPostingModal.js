@@ -28,7 +28,7 @@ const CreateJobPostingModal = (props) => {
   const [
     jobPostingLocationInfo,
     handleJobPostingLocationInfoChange,
-  ] = useFormFields(props.jobPosting.locationInfo);
+  ] = useFormFields(props.jobPosting.location);
 
   const handleSubmitButtonClick = (event) => {
     const form = event.currentTarget;
@@ -36,15 +36,17 @@ const CreateJobPostingModal = (props) => {
     event.stopPropagation();
     if (form.checkValidity() === true) {
       saveNewJobPostingService({
-        employerId: props.employer.employerId,
         location: jobPostingLocationInfo,
-        ...jobPostingGeneralInfo,
+        generalInfo: {
+          employerId: props.employer.employerId,
+          ...jobPostingGeneralInfo,
+        },
       })
         .then((response) => {
           response.json().then((data) => {
             if (data["hasError"]) {
               setValidationMessage(data["errorMessage"]);
-              props.setShowCreateJobPostingModal(false)
+              props.setShowCreateJobPostingModal(false);
             } else if (data["success"]) {
               setValidationMessageType("success");
               setValidationMessage("Successfully saved job posting!");
@@ -80,7 +82,9 @@ const CreateJobPostingModal = (props) => {
           <Form
             noValidate
             validated={validated}
-            onSubmit={(event) => {handleSubmitButtonClick(event)}}
+            onSubmit={(event) => {
+              handleSubmitButtonClick(event);
+            }}
           >
             <Card>
               <Card.Header>Location</Card.Header>
@@ -237,7 +241,7 @@ CreateJobPostingModal.propTypes = {
         team: PropTypes.string,
         description: PropTypes.string,
       }),
-      locationInfo: PropTypes.shape({
+      location: PropTypes.shape({
         city: PropTypes.string,
         state: PropTypes.string,
         zipCode: PropTypes.string,
@@ -254,7 +258,7 @@ CreateJobPostingModal.defaultProps = {
       team: "",
       description: "",
     },
-    locationInfo: {
+    location: {
       city: "",
       state: "",
       zipCode: "",

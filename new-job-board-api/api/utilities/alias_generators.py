@@ -1,3 +1,4 @@
+"""02/15/2021"""
 def snake_to_camel_case(string: str) -> str:
     """Converts snake case to camel case"""
     split_words, camel_case_words = string.split('_'), ''

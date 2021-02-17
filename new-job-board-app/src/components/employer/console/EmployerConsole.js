@@ -7,26 +7,27 @@ import {
   Card,
   InputGroup,
   FormControl,
-  Accordion,
+  Spinner
 } from "react-bootstrap";
-
-import Spinner from "react-bootstrap/Spinner";
+import DeleteJobPostingConfirmationModal from "../jobPosting/DeleteJobPostingConfirmationModal";
 import PropTypes from "prop-types";
 import EditJobPostingModal from "../jobPosting/EditJobPostingModal";
-import {
-  loadJobPostingsByEmployerId,
-  updateJobPostingService,
-} from "../../../services/employer/EmployerServices";
-import JobPostingCard from "../jobPosting/JobPostingCard";
+import { loadJobPostingsByEmployerIdService } from "../../../services/employer/EmployerServices";
+import JobPostingAccordion from "../jobPosting/JobPostingAccordion";
 import {
   NO_JOB_POSTINGS_MESSAGE,
   MY_JOB_POSTINGS_TITLE,
 } from "../constants/EmployerConstants";
 
+//TODO refactor all of the crud functionality to update a centralized redux state, then create toast confirmational messages
 const EmployerConsole = (props) => {
   const [jobPostings, setJobPostings] = useState([]);
   const [areJobPostingsLoading, setAreJobPostingsLoading] = useState(true);
   const [showEditJobPostingModal, setShowEditJobPostingModal] = useState(false);
+  const [
+    showDeleteJobPostingConfirmationModal,
+    setShowDeleteJobPostingConfirmationModal,
+  ] = useState(false);
   const [selectedJobPosting, setSelectedJobPosting] = useState({});
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const EmployerConsole = (props) => {
       props.employer.employerId !== ""
     ) {
       setAreJobPostingsLoading(true);
-      loadJobPostingsByEmployerId(props.employer.employerId)
+      loadJobPostingsByEmployerIdService(props.employer.employerId)
         .then((response) => {
           response.json().then((data) => {
             if (data["jobPostings"].length > 0) {
@@ -55,52 +56,13 @@ const EmployerConsole = (props) => {
     return jobPostings.length > 0 ? (
       jobPostings.map((jobPosting) => {
         return (
-          <Accordion key={jobPosting.id}>
-            <Card>
-              <Accordion.Toggle as={Button} variant="dark" eventKey="0">
-                <JobPostingCard jobPosting={jobPosting} />
-              </Accordion.Toggle>
-              <Accordion.Collapse eventKey="0">
-                <Container fluid>
-                  <Row noGutters>
-                    <Col lg={6}>
-                      <Card>
-                        <Card.Body>
-                          Description: {jobPosting.description}
-                        </Card.Body>
-                        <Card.Footer>
-                          <Container fluid>
-                            <Row>
-                              <Col>
-                                <Button
-                                  block
-                                  variant="primary"
-                                  onClick={() => {
-                                    setShowEditJobPostingModal(true);
-                                    setSelectedJobPosting(jobPosting);
-                                  }}
-                                >
-                                  Edit
-                                </Button>
-                              </Col>
-                              <Col>
-                                <Button block variant="secondary">
-                                  Delete
-                                </Button>
-                              </Col>
-                            </Row>
-                          </Container>
-                        </Card.Footer>
-                      </Card>
-                    </Col>
-                    <Col lg={6}>
-                      <Card>Applicants</Card>
-                    </Col>
-                  </Row>
-                </Container>
-              </Accordion.Collapse>
-            </Card>
-          </Accordion>
+          <JobPostingAccordion
+            key={jobPosting.generalInfo.id}
+            jobPosting={jobPosting}
+            setSelectedJobPosting={setSelectedJobPosting}
+            setShowEditJobPostingModal={setShowEditJobPostingModal}
+            setShowDeleteJobPostingConfirmationModal={setShowDeleteJobPostingConfirmationModal}
+          />
         );
       })
     ) : (
@@ -131,11 +93,22 @@ const EmployerConsole = (props) => {
         </Col>
       </Row>
       {Object.keys(selectedJobPosting).length !== 0 && (
-        <EditJobPostingModal
-          jobPosting={selectedJobPosting}
-          showEditJobPostingModal={showEditJobPostingModal}
-          setShowEditJobPostingModal={setShowEditJobPostingModal}
-        ></EditJobPostingModal>
+        <Container>
+          <EditJobPostingModal
+            jobPosting={selectedJobPosting}
+            showEditJobPostingModal={showEditJobPostingModal}
+            setShowEditJobPostingModal={setShowEditJobPostingModal}
+          ></EditJobPostingModal>
+          <DeleteJobPostingConfirmationModal
+            jobPosting={selectedJobPosting}
+            showDeleteJobPostingConfirmationModal={
+              showDeleteJobPostingConfirmationModal
+            }
+            setShowDeleteJobPostingConfirmationModal={
+              setShowDeleteJobPostingConfirmationModal
+            }
+          ></DeleteJobPostingConfirmationModal>
+        </Container>
       )}
     </Container>
   );

@@ -16,10 +16,16 @@ export const updateJobPostingService = (jobPostingInfo) => {
   });
 }
 
-export const loadJobPostingsByEmployerId = (employer_id) => {
+export const loadJobPostingsByEmployerIdService = (employer_id) => {
   return fetch("/load_job_postings_by_employer_id", {
     method: "POST",
     body: JSON.stringify(employer_id),
   });
 };
 
+export const deleteJobPostingService = (jobId) => {
+  return fetch("/delete_job_posting", {
+    method: "POST",
+    body: JSON.stringify(jobId),
+  });
+}
