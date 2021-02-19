@@ -47,10 +47,10 @@ const ApplicantJobCart = (props) => {
           <Card>
             <Card.Header as="h5">Company Name</Card.Header>
             <Card.Body>
-              <Card.Title>{job.role}</Card.Title>
-              <Card.Subtitle>{job.city + ", " + job.state}</Card.Subtitle>
+              <Card.Title>{job.generalInfo.role}</Card.Title>
+              <Card.Subtitle>{job.location.city + ", " + job.location.state}</Card.Subtitle>
               <Card.Text>
-                {job.description}
+                {job.generalInfo.description}
               </Card.Text>
               <Button variant="outline-primary">Remove from Job Cart</Button>
             </Card.Body>

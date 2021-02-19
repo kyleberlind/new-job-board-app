@@ -6,6 +6,7 @@ import {
 } from "../../../services/applicant/ApplicantServices";
 import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 import PropTypes from 'prop-types';
+import {jobPostingShape} from "../../../shapes/JobPostingShape"
 
 import './css/ApplicantConsole.css';
 
@@ -40,18 +41,18 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
               <Col sm={6}>
                 <ListGroup>
                   {props.jobPostings.map(posting =>
-                      <ListGroup.Item key={posting.id} action href={"#search_result_posting".concat(posting.id)}>
+                      <ListGroup.Item key={posting.generalInfo.id} action href={"#search_result_posting".concat(posting.generalInfo.id)}>
                         <div className="jobApplicationListItemHeader">
                           <div className="jobApplicationListItemMain">
-                            {posting.role}
+                            {posting.generalInfo.role}
                           </div>
                           <div className="jobApplicationListItemMeta jobApplicationListItemMetaEnd">
-                            {posting.city}
+                            {posting.location.city}
                           </div>
                         </div>
                         <div className="jobApplicationListItemFooter">
                           <div className="jobApplicationListItemMeta">
-                            {posting.dateCreated}
+                            {posting.generalInfo.dateCreated}
                           </div>
                         </div>
                       </ListGroup.Item>
@@ -61,27 +62,27 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
               <Col sm={6}>
                 <Tab.Content>
                   {props.jobPostings.map(posting =>
-                    <Tab.Pane key={posting.id} eventKey={"#search_result_posting".concat(posting.id)}>
+                    <Tab.Pane key={posting.generalInfo.id} eventKey={"#search_result_posting".concat(posting.generalInfo.id)}>
                       <div className={"searchResultPosting"}>
                         <Button
                           onClick={() => {
-                              addToJobCartClick(props.applicantId, posting.id, posting.employerId)
+                              addToJobCartClick(props.applicantId, posting.generalInfo.id, posting.employerId)
                             }
                           }
                           className={"jobPostingAddToJobCartButton"}>
                           Add to Job Cart
                         </Button>
                         <h1>
-                          {posting.role}
+                          {posting.generalInfo.role}
                         </h1>
                         <h3>
-                          {posting.city}
+                          {posting.location.city}
                         </h3>
                         <h4>
-                          {posting.state}
+                          {posting.location.state}
                         </h4>
                         <p>
-                          {posting.description}
+                          {posting.generalInfo.description}
                         </p>
                       </div>
                     </Tab.Pane>
@@ -96,16 +97,7 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
 };
 
 ApplicantConsoleSearchResultsContainer.propTypes = {
-  jobPostings: PropTypes.arrayOf(PropTypes.shape({
-     id: PropTypes.number.isRequired,
-     city: PropTypes.string.isRequired,
-     dateCreated: PropTypes.string.isRequired,
-     description: PropTypes.string.isRequired,
-     employerId: PropTypes.number.isRequired,
-     role: PropTypes.string.isRequired,
-     state: PropTypes.string.isRequired,
-     zipCode: PropTypes.number.isRequired,
-   })).isRequired,
+  jobPostings: PropTypes.arrayOf(jobPostingShape).isRequired,
    applicantId: PropTypes.number.isRequired,
 }
 

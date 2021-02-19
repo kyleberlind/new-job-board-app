@@ -1,9 +1,10 @@
+"""02/14/2021"""
 import json
-import uuid
-from flask import Blueprint, jsonify, session, request
+from flask import Blueprint, session, request
 from ..daos.account_dao import AccountDao
-from ..daos.job_dao import JobDao
-from ..utilities.response import EmployerInfoResponse, BaseSaveResponse, JobPostingsResponse
+from ..utilities.responses.employer_responses import EmployerInfoResponse
+from ..utilities.responses.base_responses import BaseSaveResponse
+from ..utilities.responses.job_posting_responses import JobPostingsResponse
 from ..models.job_posting.job_posting_model import JobPostingModel
 from ..models.job_posting.job_posting_processor_model import JobPostingProcessorModel
 
@@ -53,14 +54,33 @@ def save_new_job_posting():
         ).json(by_alias=True)
 
 
+@employer_view.route("/update_job_posting", methods=['POST'])
+def update_job_posting():
+    """Updates an existing job posting"""
+    job_posting_data = json.loads(request.data)
+    job_posting_processor = JobPostingProcessorModel()
+    try:
+        job_posting = JobPostingModel(
+            **job_posting_data
+        )
+        result = job_posting_processor.update_job_posting(job_posting)
+        return BaseSaveResponse(success=result).json(by_alias=True)
+    except Exception as error:
+        return BaseSaveResponse(
+            success=False,
+            has_error=True,
+            error_message=str(error)
+        ).json(by_alias=True)
+
+
 @employer_view.route("/load_job_postings_by_employer_id", methods=['POST'])
 def load_job_postings_by_employer_id():
     """Loads the job posting for an employer by their ID"""
-    job_dao = JobDao()
+    job_posting_processor = JobPostingProcessorModel()
     try:
         employer_id = json.loads(request.data)
         job_postings = {
-            "job_postings": job_dao.load_job_postings_by_employer_id(employer_id)
+            "job_postings": job_posting_processor.load_job_postings_by_employer_id(employer_id)
         }
         return JobPostingsResponse(**job_postings).json(by_alias=True)
     except Exception as error:
@@ -69,10 +89,16 @@ def load_job_postings_by_employer_id():
             errorMessage=str(error)
         ).json(by_alias=True)
 
-
-def update_job_posting():
-    """Updates an existing job posting"""
-
-
+@employer_view.route("/delete_job_posting", methods=['POST'])
 def delete_job_posting():
     """Deletes an existing job posting"""
+    job_posting_processor = JobPostingProcessorModel()
+    try:
+        job_id = json.loads(request.data)
+        result = job_posting_processor.delete_job_posting(job_id)
+        return BaseSaveResponse(success=result).json(by_alias=True)
+    except Exception as error:
+        return JobPostingsResponse(
+            hasError=True,
+            errorMessage=str(error)
+        ).json(by_alias=True)

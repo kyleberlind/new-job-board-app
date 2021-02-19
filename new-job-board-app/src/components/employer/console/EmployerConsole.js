@@ -1,14 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { Container, Button, Row, Col, Card } from "react-bootstrap";
-
-import Spinner from "react-bootstrap/Spinner";
+import {
+  Container,
+  Button,
+  Row,
+  Col,
+  Card,
+  InputGroup,
+  FormControl,
+  Spinner
+} from "react-bootstrap";
+import DeleteJobPostingConfirmationModal from "../jobPosting/DeleteJobPostingConfirmationModal";
 import PropTypes from "prop-types";
-import { loadJobPostingsByEmployerId } from "../../../services/employer/EmployerServices";
-import JobPostingCard from "../jobPosting/JobPostingCard";
+import EditJobPostingModal from "../jobPosting/EditJobPostingModal";
+import { loadJobPostingsByEmployerIdService } from "../../../services/employer/EmployerServices";
+import JobPostingAccordion from "../jobPosting/JobPostingAccordion";
+import {
+  NO_JOB_POSTINGS_MESSAGE,
+  MY_JOB_POSTINGS_TITLE,
+} from "../constants/EmployerConstants";
 
+//TODO refactor all of the crud functionality to update a centralized redux state, then create toast confirmational messages
 const EmployerConsole = (props) => {
   const [jobPostings, setJobPostings] = useState([]);
   const [areJobPostingsLoading, setAreJobPostingsLoading] = useState(true);
+  const [showEditJobPostingModal, setShowEditJobPostingModal] = useState(false);
+  const [
+    showDeleteJobPostingConfirmationModal,
+    setShowDeleteJobPostingConfirmationModal,
+  ] = useState(false);
+  const [selectedJobPosting, setSelectedJobPosting] = useState({});
 
   useEffect(() => {
     if (
@@ -16,7 +36,7 @@ const EmployerConsole = (props) => {
       props.employer.employerId !== ""
     ) {
       setAreJobPostingsLoading(true);
-      loadJobPostingsByEmployerId(props.employer.employerId)
+      loadJobPostingsByEmployerIdService(props.employer.employerId)
         .then((response) => {
           response.json().then((data) => {
             if (data["jobPostings"].length > 0) {
@@ -35,10 +55,18 @@ const EmployerConsole = (props) => {
   const generateJobPostings = () => {
     return jobPostings.length > 0 ? (
       jobPostings.map((jobPosting) => {
-        return <JobPostingCard key={jobPosting.id} jobPosting={jobPosting} />;
+        return (
+          <JobPostingAccordion
+            key={jobPosting.generalInfo.id}
+            jobPosting={jobPosting}
+            setSelectedJobPosting={setSelectedJobPosting}
+            setShowEditJobPostingModal={setShowEditJobPostingModal}
+            setShowDeleteJobPostingConfirmationModal={setShowDeleteJobPostingConfirmationModal}
+          />
+        );
       })
     ) : (
-      <Card>You dont have any postings yet</Card>
+      <Card>{NO_JOB_POSTINGS_MESSAGE}</Card>
     );
   };
 
@@ -47,7 +75,13 @@ const EmployerConsole = (props) => {
       <Row>
         <Col>
           <Card>
-            <Card.Header>My Job Postings</Card.Header>
+            <Card.Header>{MY_JOB_POSTINGS_TITLE}</Card.Header>
+            <InputGroup size="sm" className="mb-3">
+              <InputGroup.Prepend>
+                <Button variant="primary">Search</Button>
+              </InputGroup.Prepend>
+              <FormControl aria-label="Small" />
+            </InputGroup>
             <Card.Body>
               {areJobPostingsLoading ? (
                 <Spinner animation="border" role="status" size={"lg"}></Spinner>
@@ -58,6 +92,24 @@ const EmployerConsole = (props) => {
           </Card>
         </Col>
       </Row>
+      {Object.keys(selectedJobPosting).length !== 0 && (
+        <Container>
+          <EditJobPostingModal
+            jobPosting={selectedJobPosting}
+            showEditJobPostingModal={showEditJobPostingModal}
+            setShowEditJobPostingModal={setShowEditJobPostingModal}
+          ></EditJobPostingModal>
+          <DeleteJobPostingConfirmationModal
+            jobPosting={selectedJobPosting}
+            showDeleteJobPostingConfirmationModal={
+              showDeleteJobPostingConfirmationModal
+            }
+            setShowDeleteJobPostingConfirmationModal={
+              setShowDeleteJobPostingConfirmationModal
+            }
+          ></DeleteJobPostingConfirmationModal>
+        </Container>
+      )}
     </Container>
   );
 };

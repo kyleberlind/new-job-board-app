@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Card} from "react-bootstrap";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import PropTypes from "prop-types";
 
 const JobPostingCard = (props) => {
-  const formattedJobLocation = `${props.jobPosting.city}, ${props.jobPosting.state}, ${props.jobPosting.zipCode}`;
+  const formattedJobLocation = `${props.jobPosting.location.city}, ${props.jobPosting.location.state}, ${props.jobPosting.location.zipCode}`;
+
+  const handleEditButtonClick = () => {
+    props.setShowEditJobPostingModal(true);
+  };
 
   return (
-    <Card>
-      <Card.Header>
-        {props.jobPosting.role} | {formattedJobLocation}
-      </Card.Header>
-      <Card.Body>
-        <Container fluid>
-          <Row>ID: {props.jobPosting.id}</Row>
-          <Row>Date Created: {props.jobPosting.dateCreated}</Row>
-          <Row>Number of Applicants:</Row>
-        </Container>
-      </Card.Body>
-    </Card>
+    <Container fluid>
+      <Row>
+        <Card.Text>
+          {props.jobPosting.generalInfo.role}{" "}
+          {props.jobPosting.generalInfo.team !== null ? "| " : ""}
+          {props.jobPosting.generalInfo.team}
+        </Card.Text>
+      </Row>
+      <Row>
+        <Card.Subtitle className="mb-2 text-muted">
+          {formattedJobLocation}
+        </Card.Subtitle>
+      </Row>
+    </Container>
   );
 };
 
