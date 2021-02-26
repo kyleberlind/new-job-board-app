@@ -2,12 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import PropTypes from "prop-types";
 
+
 const JobPostingCard = (props) => {
   const formattedJobLocation = `${props.jobPosting.location.city}, ${props.jobPosting.location.state}, ${props.jobPosting.location.zipCode}`;
-
-  const handleEditButtonClick = () => {
-    props.setShowEditJobPostingModal(true);
-  };
 
   return (
     <Container fluid>

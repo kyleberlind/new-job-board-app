@@ -3,8 +3,11 @@
 Responses for job Postings
 """
 from typing import Optional, List
+from pydantic import Field
 from datetime import datetime
 from .base_responses import BaseResponse
+from ...models.job_posting.job_posting_field_model import JobPostingFieldModel
+from .account_responses import 
 
 
 class JobPostingGeneralInfoResponse(BaseResponse):
@@ -24,27 +27,31 @@ class JobPostingLocationResponse(BaseResponse):
     zip_code: str
 
 
-class JobPostingQuestionResponse(BaseResponse):
-    """Response for job posting questions"""
-    id: int
-    title: str
-    value: str
-    type: str
-    description: str
-    date_created: datetime
+class JobPostingFieldsResponse(BaseResponse):
+    """response for job posting fields"""
+    job_posting_fields: Optional[List[JobPostingFieldModel]]
 
 
 class JobPostingResponse(BaseResponse):
     """Response for job posting"""
     general_info: JobPostingGeneralInfoResponse
     location: JobPostingLocationResponse
+    job_posting_fields: Optional[List[JobPostingFieldModel]] = Field([], alias='fields')
 
 
 class JobPostingsResponse(BaseResponse):
     """Response for multiple job postings"""
-    job_postings: List[JobPostingResponse]
+    job_postings: Optional[List[JobPostingResponse]]
 
 
 class JobCartResponse(BaseResponse):
     """Response for job cart"""
     job_cart: Optional[List[JobPostingResponse]]
+
+class JobPostingApplicationResponse(BaseResponse):
+    id: int
+    date_appplied: datetime
+    applicant_info: ApplicantInfoResponse
+
+class JobPostingApplicationsResponse(BaseResponse):
+    applications: Optional[List[JobPostingApplicationResponse]]

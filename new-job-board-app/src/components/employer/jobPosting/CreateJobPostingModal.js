@@ -6,14 +6,13 @@ import {
   Row,
   Col,
   Alert,
-  InputGroup,
-  FormControl,
   Card,
   Modal,
 } from "react-bootstrap";
 import { useFormFields } from "../../../libs/hooks/useFormFields";
 import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
+import { Dropdown, Label, Checkbox, Icon } from "semantic-ui-react";
 
 import "./css/CreateJobPosting.css";
 
@@ -21,14 +20,51 @@ const CreateJobPostingModal = (props) => {
   const [validated, setValidated] = useState(false);
   const [validationMessageType, setValidationMessageType] = useState("success");
   const [validationMessage, setValidationMessage] = useState("");
+  const [checked, setChecked] = useState(false);
   const [
     jobPostingGeneralInfo,
     handleJobPostingGeneralInfoChange,
   ] = useFormFields(props.jobPosting.generalInfo);
+  const [jobPostingLocation, handleJobPostingLocationChange] = useFormFields(
+    props.jobPosting.location
+  );
   const [
-    jobPostingLocationInfo,
-    handleJobPostingLocationInfoChange,
-  ] = useFormFields(props.jobPosting.location);
+    jobPostingFieldIdsMappedToRequiredFlag,
+    setJobPostingFieldIdsMappedToRequiredFlag,
+  ] = useState({});
+
+  const jobPostingFieldOptions = () => {
+    return props.jobPostingFields.map((field) => {
+      return {
+        key: field.id,
+        value: field.id,
+        text: field.value,
+      };
+    });
+  };
+
+  const addJobPostingField = (event, data) => {
+    const currentJobPostingFields = {};
+    data["value"].forEach((fieldId) => {
+      if (!(fieldId in jobPostingFieldIdsMappedToRequiredFlag)) {
+        currentJobPostingFields[fieldId] = false;
+      } else {
+        currentJobPostingFields[fieldId] =
+          jobPostingFieldIdsMappedToRequiredFlag[fieldId];
+      }
+    });
+    setJobPostingFieldIdsMappedToRequiredFlag(currentJobPostingFields);
+  };
+
+  const makeJobPostingFieldRequired = (fieldId) => {
+    if (jobPostingFieldIdsMappedToRequiredFlag[fieldId]) {
+      jobPostingFieldIdsMappedToRequiredFlag[fieldId] = false;
+    } else {
+      jobPostingFieldIdsMappedToRequiredFlag[fieldId] = true;
+    }
+    // Use this checked varible to trigger a state update
+    setChecked(!checked);
+  };
 
   const handleSubmitButtonClick = (event) => {
     const form = event.currentTarget;
@@ -36,11 +72,12 @@ const CreateJobPostingModal = (props) => {
     event.stopPropagation();
     if (form.checkValidity() === true) {
       saveNewJobPostingService({
-        location: jobPostingLocationInfo,
+        location: jobPostingLocation,
         generalInfo: {
           employerId: props.employer.employerId,
           ...jobPostingGeneralInfo,
         },
+        jobPostingFields: formatJobPostingFields(),
       })
         .then((response) => {
           response.json().then((data) => {
@@ -63,6 +100,31 @@ const CreateJobPostingModal = (props) => {
     }
     setValidated(true);
   };
+
+  const formatJobPostingFields = () => {
+    return Object.keys(jobPostingFieldIdsMappedToRequiredFlag).map((id) => {
+      return { id, required: jobPostingFieldIdsMappedToRequiredFlag[id] };
+    });
+  };
+
+  const renderItemContent = (item) => {
+    return (
+      <Label horizontal>
+        <Icon name="delete" />
+        {item.text}
+        <Label.Detail>
+          <Checkbox
+            checked={!!jobPostingFieldIdsMappedToRequiredFlag[item.value]}
+            onChange={() => {
+              makeJobPostingFieldRequired(item.value);
+            }}
+            label="Mark Required"
+          />
+        </Label.Detail>
+      </Label>
+    );
+  };
+
   return (
     <div className="root">
       <Modal
@@ -96,9 +158,9 @@ const CreateJobPostingModal = (props) => {
                         <Form.Label>City</Form.Label>
                         <Form.Control
                           required
-                          value={jobPostingLocationInfo.city}
-                          onChange={handleJobPostingLocationInfoChange}
-                          placeholder="Denver"
+                          value={jobPostingLocation.city}
+                          onChange={handleJobPostingLocationChange}
+                          placeholder="Enter a City"
                         />
                         <Form.Control.Feedback type="invalid">
                           Please enter a city, state and zipcode
@@ -110,9 +172,9 @@ const CreateJobPostingModal = (props) => {
                         <Form.Label>State</Form.Label>
                         <Form.Control
                           required
-                          value={jobPostingLocationInfo.state}
-                          onChange={handleJobPostingLocationInfoChange}
-                          placeholder="CO"
+                          value={jobPostingLocation.state}
+                          onChange={handleJobPostingLocationChange}
+                          placeholder="Enter a State"
                         />
                       </Form.Group>
                     </Col>
@@ -121,9 +183,9 @@ const CreateJobPostingModal = (props) => {
                         <Form.Label>Zip Code</Form.Label>
                         <Form.Control
                           required
-                          value={jobPostingLocationInfo.zipCode}
-                          onChange={handleJobPostingLocationInfoChange}
-                          placeholder="80220"
+                          value={jobPostingLocation.zipCode}
+                          onChange={handleJobPostingLocationChange}
+                          placeholder="Enter a Zip Code"
                         />
                       </Form.Group>
                     </Col>
@@ -187,12 +249,16 @@ const CreateJobPostingModal = (props) => {
             <Card>
               <Card.Header>Job Posting Questions</Card.Header>
               <Card.Body>
-                <InputGroup size="sm" className="mb-3">
-                  <InputGroup.Prepend>
-                    <Button variant="primary">Search</Button>
-                  </InputGroup.Prepend>
-                  <FormControl aria-label="Small" />
-                </InputGroup>
+                <Dropdown
+                  placeholder="Select Job Posting Questions"
+                  fluid
+                  search
+                  selection
+                  multiple
+                  renderLabel={renderItemContent}
+                  onChange={addJobPostingField}
+                  options={jobPostingFieldOptions()}
+                />
               </Card.Body>
             </Card>
             <Container fluid>
@@ -234,6 +300,7 @@ const CreateJobPostingModal = (props) => {
 
 CreateJobPostingModal.propTypes = {
   employer: PropTypes.object.isRequired,
+  jobPostingFields: PropTypes.array.isRequired,
   jobPosting: PropTypes.shape({
     jobPostingInfo: PropTypes.shape({
       generalInfo: PropTypes.shape({

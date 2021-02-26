@@ -72,9 +72,9 @@ def add_posting_to_job_cart():
                 errorMessage="job_id already in job cart"
             ).json(by_alias=True)
         else:
-            session['job_cart'] += job_posting_processor.load_job_posting_by_id(job_id)
+            session['job_cart'] += job_posting_processor.load_job_posting_by_job_id(job_id)
     else:
-        session['job_cart'] = job_posting_processor.load_job_posting_by_id(job_id)
+        session['job_cart'] = job_posting_processor.load_job_posting_by_job_id(job_id)
     job_cart_response = {
         "job_cart": session['job_cart']
     }

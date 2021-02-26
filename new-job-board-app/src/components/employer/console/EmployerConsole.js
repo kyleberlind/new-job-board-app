@@ -1,14 +1,4 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Button,
-  Row,
-  Col,
-  Card,
-  InputGroup,
-  FormControl,
-  Spinner
-} from "react-bootstrap";
 import DeleteJobPostingConfirmationModal from "../jobPosting/DeleteJobPostingConfirmationModal";
 import PropTypes from "prop-types";
 import EditJobPostingModal from "../jobPosting/EditJobPostingModal";
@@ -18,6 +8,7 @@ import {
   NO_JOB_POSTINGS_MESSAGE,
   MY_JOB_POSTINGS_TITLE,
 } from "../constants/EmployerConstants";
+import { Search, Grid, Card, Container, Loader } from "semantic-ui-react";
 
 //TODO refactor all of the crud functionality to update a centralized redux state, then create toast confirmational messages
 const EmployerConsole = (props) => {
@@ -61,7 +52,9 @@ const EmployerConsole = (props) => {
             jobPosting={jobPosting}
             setSelectedJobPosting={setSelectedJobPosting}
             setShowEditJobPostingModal={setShowEditJobPostingModal}
-            setShowDeleteJobPostingConfirmationModal={setShowDeleteJobPostingConfirmationModal}
+            setShowDeleteJobPostingConfirmationModal={
+              setShowDeleteJobPostingConfirmationModal
+            }
           />
         );
       })
@@ -71,31 +64,39 @@ const EmployerConsole = (props) => {
   };
 
   return (
-    <Container fluid>
-      <Row>
-        <Col>
-          <Card>
-            <Card.Header>{MY_JOB_POSTINGS_TITLE}</Card.Header>
-            <InputGroup size="sm" className="mb-3">
-              <InputGroup.Prepend>
-                <Button variant="primary">Search</Button>
-              </InputGroup.Prepend>
-              <FormControl aria-label="Small" />
-            </InputGroup>
-            <Card.Body>
+    <Grid>
+      <Grid.Row>
+        <Grid.Column>
+          <Card fluid>
+            <Card.Content>
+              <Card.Header>
+                <Grid>
+                  <Grid.Row>
+                    <Grid.Column width={2}>
+                      <Container textAlign="center">
+                        {MY_JOB_POSTINGS_TITLE}
+                      </Container>
+                    </Grid.Column>
+                    <Grid.Column width={8}>
+                      <Search fluid></Search>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Card.Header>
               {areJobPostingsLoading ? (
-                <Spinner animation="border" role="status" size={"lg"}></Spinner>
+                <Loader active />
               ) : (
                 generateJobPostings()
               )}
-            </Card.Body>
+            </Card.Content>
           </Card>
-        </Col>
-      </Row>
+        </Grid.Column>
+      </Grid.Row>
       {Object.keys(selectedJobPosting).length !== 0 && (
-        <Container>
+        <Grid>
           <EditJobPostingModal
             jobPosting={selectedJobPosting}
+            jobPostingFields={props.jobPostingFields}
             showEditJobPostingModal={showEditJobPostingModal}
             setShowEditJobPostingModal={setShowEditJobPostingModal}
           ></EditJobPostingModal>
@@ -108,14 +109,15 @@ const EmployerConsole = (props) => {
               setShowDeleteJobPostingConfirmationModal
             }
           ></DeleteJobPostingConfirmationModal>
-        </Container>
+        </Grid>
       )}
-    </Container>
+    </Grid>
   );
 };
 
 EmployerConsole.propTypes = {
   employer: PropTypes.object.isRequired,
+  jobPostingFields: PropTypes.array.isRequired
 };
 
 export default EmployerConsole;
