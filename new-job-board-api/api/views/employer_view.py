@@ -4,7 +4,7 @@ from flask import Blueprint, session, request
 from ..daos.account_dao import AccountDao
 from ..utilities.responses.employer_responses import EmployerInfoResponse
 from ..utilities.responses.base_responses import BaseSaveResponse
-from ..utilities.responses.job_posting_responses import JobPostingsResponse, JobPostingFieldsResponse
+from ..utilities.responses.job_posting_responses import JobPostingsResponse, JobPostingFieldsResponse, JobPostingApplicationsResponse
 from ..models.job_posting.job_posting_model import JobPostingModel
 from ..models.job_posting.job_posting_processor_model import JobPostingProcessorModel
 
@@ -123,9 +123,9 @@ def load_job_applications_by_job_id():
     job_posting_processor = JobPostingProcessorModel()
     try:
         job_id = json.loads(request.data)
-        "applications": {applications = job_posting_processor.load_job_applications_by_job_id(
+        applications = {"applications": job_posting_processor.load_job_applications_by_job_id(
             job_id)}
-        return JobPostingApplicationResponse(**applications)
+        return JobPostingApplicationsResponse(**applications)
     except Exception as error:
         return JobPostingsResponse(
             hasError=True,

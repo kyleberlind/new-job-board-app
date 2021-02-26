@@ -2,12 +2,12 @@
 02/14/2021
 Responses for job Postings
 """
+from datetime import datetime
 from typing import Optional, List
 from pydantic import Field
-from datetime import datetime
 from .base_responses import BaseResponse
 from ...models.job_posting.job_posting_field_model import JobPostingFieldModel
-from .account_responses import 
+from .applicant_responses import ApplicantInfoResponse
 
 
 class JobPostingGeneralInfoResponse(BaseResponse):
