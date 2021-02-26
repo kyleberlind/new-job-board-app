@@ -17,5 +17,6 @@ def format_job_posting_info(job_posting):
         "general_info": JobPostingGeneralInfoModel(**job_posting).dict(),
         "location": JobPostingLocationModel(
             **job_posting
-        ).dict()
+        ).dict(),
+        "job_posting_fields": job_posting["fields"]
     }

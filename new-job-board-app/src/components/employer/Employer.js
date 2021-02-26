@@ -9,23 +9,38 @@ import CreateJobPostingModal from "./jobPosting/CreateJobPostingModal";
 import { Container, Modal, Button } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { logoutService } from "../../services/AccountServices";
-import { loadEmployerInfoService } from "../../services/employer/EmployerServices";
+import {
+  loadEmployerInfoService,
+  loadJobPostingFieldsService,
+} from "../../services/employer/EmployerServices";
 
 function Employer() {
   const [employer, setEmployer] = useState({});
+  const [jobPostingFields, setJobPostingFields] = useState([]);
   const [showCreateJobPostingModal, setShowCreateJobPostingModal] = useState(
     false
   );
 
   useEffect(() => {
     loadEmployerInfoService().then((response) => {
-      response.json().then((data) => {
-        if (!data) {
-          window.location.assign("login");
-        } else {
-          setEmployer(data);
-        }
-      });
+      response
+        .json()
+        .then((data) => {
+          if (!data) {
+            window.location.assign("login");
+          } else {
+            setEmployer(data);
+          }
+        })
+        .then(
+          loadJobPostingFieldsService().then((response) => {
+            response.json().then((data) => {
+              if (!data["hasError"]) {
+                setJobPostingFields(data["jobPostingFields"]);
+              }
+            });
+          })
+        );
     });
   }, []);
 
@@ -62,6 +77,7 @@ function Employer() {
             render={() => (
               <EmployerConsole
                 employer={employer}
+                jobPostingFields={jobPostingFields}
               />
             )}
           />
@@ -71,6 +87,7 @@ function Employer() {
         setShowCreateJobPostingModal={setShowCreateJobPostingModal}
         showCreateJobPostingModal={showCreateJobPostingModal}
         employer={employer}
+        jobPostingFields={jobPostingFields}
       />
     </Container>
   );

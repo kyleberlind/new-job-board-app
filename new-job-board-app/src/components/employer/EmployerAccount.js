@@ -1,24 +1,47 @@
 import React from "react";
-import { Container, Row, Card } from "react-bootstrap";
 import PropTypes from "prop-types";
+import { Card, Button, Table } from "semantic-ui-react";
 
 const EmployerAccount = (props) => {
   return (
-    <Container fluid>
-
-      <Card>
-        <Card.Header>
-          {props.employer.employerName} Account Information
-        </Card.Header>
-        <Card.Body>
-          <Container fluid>
-            <Row>ID: {props.employer.employerId}</Row>
-            <Row>Size: {props.employer.employerSize}</Row>
-            <Row>Account Created: {props.employer.signUpDate}</Row>
-          </Container>
-        </Card.Body>
-      </Card>
-    </Container>
+    <Card fluid>
+      <Card.Content header={props.employer.employerName} />
+      <Card.Content>
+        <Table definition>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell width={2}>ID</Table.Cell>
+              <Table.Cell>{props.employer.employerId}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Email Address</Table.Cell>
+              <Table.Cell>{props.employer.emailAddress}</Table.Cell>
+              <Table.Cell width={2}>
+                <Button>Edit</Button>
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Password</Table.Cell>
+              <Table.Cell>{props.employer.password}</Table.Cell>
+              <Table.Cell>
+                <Button>Edit</Button>
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Size</Table.Cell>
+              <Table.Cell>{props.employer.employerSize}</Table.Cell>
+              <Table.Cell>
+                <Button>Edit</Button>
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Account Created</Table.Cell>
+              <Table.Cell>{props.employer.signUpDate}</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table>
+      </Card.Content>
+    </Card>
   );
 };
 

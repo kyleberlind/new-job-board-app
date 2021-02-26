@@ -1,6 +1,6 @@
 """
 02/14/2021
-Responses for the employer
+Responses for the applicant
 """  
 from typing import Optional
 from .base_responses import BaseResponse

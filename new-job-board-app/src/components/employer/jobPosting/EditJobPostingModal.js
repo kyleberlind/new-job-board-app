@@ -1,53 +1,96 @@
 import React, { useState, useEffect } from "react";
 import {
   Form,
-  Button,
   Container,
   Row,
   Col,
   Alert,
-  InputGroup,
-  FormControl,
   Card,
   Modal,
+  Button,
 } from "react-bootstrap";
 import { updateJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
-import {jobPostingShape} from "../../../shapes/JobPostingShape"
+import { jobPostingShape } from "../../../shapes/JobPostingShape";
+
+import { Dropdown, Label, Checkbox, Icon } from "semantic-ui-react";
 
 const EditJobPostingModal = (props) => {
   const [validated, setValidated] = useState(false);
   const [validationMessageType, setValidationMessageType] = useState("success");
   const [validationMessage, setValidationMessage] = useState("");
-
   const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState(
     props.jobPosting.generalInfo
   );
   const [jobPostingLocationInfo, setJobPostingLocationInfo] = useState(
     props.jobPosting.location
   );
-  const [jobPostingQuestionInfo, setJobPostingQuestionInfo] = useState(
-    props.jobPosting.questions
-  );
 
-  const handleJobPostingChange = (
-    event,
-    setJobPostingFields,
-    jobPostingInfo
-  ) => {
-    setJobPostingFields({
+  const [
+    jobPostingFieldIdsMappedToRequiredFlag,
+    setJobPostingFieldIdsMappedToRequiredFlag,
+  ] = useState(() => {
+    const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
+    props.jobPosting.fields.map((field) => {
+      selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] = field.required;
+    });
+    return selectedJobPostingFieldIdsMappedToRequiredFlag;
+  });
+
+  useEffect(() => {
+    setJobPostingGeneralInfo(props.jobPosting.generalInfo);
+    setJobPostingLocationInfo(props.jobPosting.location);
+    setJobPostingFieldIdsMappedToRequiredFlag(() => {
+      const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
+      props.jobPosting.fields.map((field) => {
+        selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] =
+          field.required;
+      });
+      return selectedJobPostingFieldIdsMappedToRequiredFlag;
+    });
+  }, [props.jobPosting]);
+
+  const jobPostingFieldOptions = () => {
+    return props.jobPostingFields.map((field) => {
+      return {
+        key: field.id,
+        value: field.id,
+        text: field.value,
+      };
+    });
+  };
+
+  const handleJobPostingFieldChange = (event, data) => {
+    const currentJobPostingFields = {};
+    data["value"].forEach((fieldId) => {
+      if (!(fieldId in jobPostingFieldIdsMappedToRequiredFlag)) {
+        currentJobPostingFields[fieldId] = false;
+      } else {
+        currentJobPostingFields[fieldId] =
+          jobPostingFieldIdsMappedToRequiredFlag[fieldId];
+      }
+    });
+    setJobPostingFieldIdsMappedToRequiredFlag(currentJobPostingFields);
+  };
+
+  const makeJobPostingFieldRequired = (fieldId) => {
+    const currentJobPostingFieldIdsMappedToRequiredFlag = {...jobPostingFieldIdsMappedToRequiredFlag}
+    if (currentJobPostingFieldIdsMappedToRequiredFlag[fieldId]) {
+      currentJobPostingFieldIdsMappedToRequiredFlag[fieldId] = false;
+    } else {
+      currentJobPostingFieldIdsMappedToRequiredFlag[fieldId] = true;
+    }
+    setJobPostingFieldIdsMappedToRequiredFlag(currentJobPostingFieldIdsMappedToRequiredFlag)
+  };
+
+  const handleJobPostingChange = (event, setJobPostingInfo, jobPostingInfo) => {
+    setJobPostingInfo({
       ...jobPostingInfo,
       [event.target.name]: event.target.value,
     });
   };
 
-  useEffect(() => {
-    setJobPostingGeneralInfo(props.jobPosting.generalInfo);
-    setJobPostingLocationInfo(props.jobPosting.location);
-    setJobPostingQuestionInfo(props.jobPosting.questions);
-  }, [props.jobPosting]);
-
-  const handleSubmitButtonClick = (event) => {
+  const handleSaveButtonClick = (event) => {
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
@@ -55,6 +98,7 @@ const EditJobPostingModal = (props) => {
       updateJobPostingService({
         generalInfo: jobPostingGeneralInfo,
         location: jobPostingLocationInfo,
+        fields: formatJobPostingFields(),
       }).then((response) => {
         response.json().then((data) => {
           if (data["hasError"]) {
@@ -73,6 +117,47 @@ const EditJobPostingModal = (props) => {
     }
     setValidated(true);
   };
+
+  const formatJobPostingFields = () => {
+    return Object.keys(jobPostingFieldIdsMappedToRequiredFlag).map((id) => {
+      return { id, required: jobPostingFieldIdsMappedToRequiredFlag[id] };
+    });
+  };
+
+  const removeJobPostingField = (fieldId) => {
+    const currentJobPostingFieldIdsMappedToRequiredFlag = {
+      ...jobPostingFieldIdsMappedToRequiredFlag,
+    };
+    delete currentJobPostingFieldIdsMappedToRequiredFlag[fieldId];
+    setJobPostingFieldIdsMappedToRequiredFlag(
+      currentJobPostingFieldIdsMappedToRequiredFlag
+    );
+  };
+
+  const renderItemContent = (item) => {
+    return (
+      <Label horizontal>
+        <Label.Group>
+          {item.text}
+          <Icon
+            link
+            onClick={() => removeJobPostingField(item.value)}
+            name="delete"
+          />
+          <Label.Detail>
+            <Checkbox
+              checked={!!jobPostingFieldIdsMappedToRequiredFlag[item.value]}
+              onChange={() => {
+                makeJobPostingFieldRequired(item.value);
+              }}
+              label="Required"
+            />
+          </Label.Detail>
+        </Label.Group>
+      </Label>
+    );
+  };
+
   return (
     <div className="root">
       <Modal
@@ -90,7 +175,7 @@ const EditJobPostingModal = (props) => {
           <Form
             noValidate
             validated={validated}
-            onSubmit={handleSubmitButtonClick}
+            onSubmit={handleSaveButtonClick}
           >
             <Card>
               <Card.Header>Location</Card.Header>
@@ -235,12 +320,19 @@ const EditJobPostingModal = (props) => {
             <Card>
               <Card.Header>Job Posting Questions</Card.Header>
               <Card.Body>
-                <InputGroup size="sm" className="mb-3">
-                  <InputGroup.Prepend>
-                    <Button variant="primary">Search</Button>
-                  </InputGroup.Prepend>
-                  <FormControl aria-label="Small" />
-                </InputGroup>
+                <Dropdown
+                  placeholder="Select Job Posting Questions"
+                  fluid
+                  search
+                  selection
+                  multiple
+                  value={Object.keys(
+                    jobPostingFieldIdsMappedToRequiredFlag
+                  ).map(Number)}
+                  renderLabel={renderItemContent}
+                  onChange={handleJobPostingFieldChange}
+                  options={jobPostingFieldOptions()}
+                />
               </Card.Body>
             </Card>
             <Container fluid>
@@ -283,7 +375,7 @@ const EditJobPostingModal = (props) => {
 EditJobPostingModal.propTypes = {
   showEditJobPostingModal: PropTypes.bool.isRequired,
   setShowEditJobPostingModal: PropTypes.func.isRequired,
-  jobPosting: jobPostingShape.isRequired
+  jobPosting: jobPostingShape.isRequired,
 };
 
 EditJobPostingModal.defaultProps = {

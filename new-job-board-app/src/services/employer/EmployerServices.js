@@ -14,7 +14,7 @@ export const updateJobPostingService = (jobPostingInfo) => {
     method: "POST",
     body: JSON.stringify(jobPostingInfo),
   });
-}
+};
 
 export const loadJobPostingsByEmployerIdService = (employer_id) => {
   return fetch("/load_job_postings_by_employer_id", {
@@ -25,6 +25,17 @@ export const loadJobPostingsByEmployerIdService = (employer_id) => {
 
 export const deleteJobPostingService = (jobId) => {
   return fetch("/delete_job_posting", {
+    method: "POST",
+    body: JSON.stringify(jobId),
+  });
+};
+
+export const loadJobPostingFieldsService = () => {
+  return fetch("/get_job_posting_fields");
+};
+
+export const loadJobApplicantsService = (jobId) => {
+  return fetch("/load_job_applications_by_job_id", {
     method: "POST",
     body: JSON.stringify(jobId),
   });
