@@ -469,14 +469,14 @@ class JobDao():
             cursor = self.connection.cursor(self.db.cursors.DictCursor)
             cursor.execute(
                 """
-                    SELECT     application.id,
-                               applicantion.applicant_id,
+                    SELECT     applications.id,
+                               applications.applicant_id,
                                user.first_name,
                                user.last_name,
-                               user.email
+                               user.email_address
                     FROM       job.tbl_job_posting_applications applications
                     INNER JOIN user.tbl_user user
-                            ON user.id = applicantion.applicant_id
+                            ON user.id = applications.applicant_id
                     WHERE      applications.job_id = %s
                 """,
                 [job_id]

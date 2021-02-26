@@ -125,7 +125,7 @@ def load_job_applications_by_job_id():
         job_id = json.loads(request.data)
         applications = {"applications": job_posting_processor.load_job_applications_by_job_id(
             job_id)}
-        return JobPostingApplicationsResponse(**applications)
+        return JobPostingApplicationsResponse(**applications).json(by_alias=True)
     except Exception as error:
         return JobPostingsResponse(
             hasError=True,
