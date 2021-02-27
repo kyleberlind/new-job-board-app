@@ -1,7 +1,7 @@
 """02/14/2021"""
 from ...daos.job_dao import JobDao
 from ...models.job_posting.job_posting_model import JobPostingModel
-from ...utilities.mappers.job_posting_mappers import map_job_posting_info
+from ...utilities.mappers.job_posting_mappers import map_job_posting_info, map_job_applications
 
 
 class JobPostingProcessorModel:
@@ -19,7 +19,7 @@ class JobPostingProcessorModel:
                 self.dao.save_job_posting_fields(
                     new_job_id, job_posting.job_posting_fields)
         except Exception as error:
-            raise Exception(error)
+            raise error
 
     def update_job_posting(self, job_posting: JobPostingModel):
         """Updates an existing job posting"""
@@ -30,11 +30,10 @@ class JobPostingProcessorModel:
                 self.dao.update_job_posting_fields(
                     job_posting.general_info.id, job_posting.job_posting_fields)
         except Exception as error:
-            raise Exception from error
+            raise error
 
     def load_job_postings_by_employer_id(self, employer_id: int):
         """Loads the job postings for an employer ID"""
-
         try:
             job_postings = self.dao.load_job_postings_by_employer_id(
                 employer_id
@@ -47,16 +46,19 @@ class JobPostingProcessorModel:
                 job_postings, job_posting_field_dict)
             return map_job_posting_info(merged_job_postings)
         except Exception as error:
-            raise Exception(error)
+            raise error
 
     def build_job_posting_field_dict(self, job_posting_fields_list: list) -> dict:
         """Builds the mapping dict between the job id and the job posting fields"""
-        job_posting_field_dict = {}
-        for record in job_posting_fields_list:
-            if record["job_id"] not in job_posting_field_dict:
-                job_posting_field_dict[record["job_id"]] = []
-            job_posting_field_dict[record["job_id"]].append(record)
-        return job_posting_field_dict
+        try:
+            job_posting_field_dict = {}
+            for record in job_posting_fields_list:
+                if record["job_id"] not in job_posting_field_dict:
+                    job_posting_field_dict[record["job_id"]] = []
+                job_posting_field_dict[record["job_id"]].append(record)
+            return job_posting_field_dict
+        except Exception as error:
+            raise error
 
     def merge_job_posting_with_fields(
         self,
@@ -64,17 +66,23 @@ class JobPostingProcessorModel:
         job_posting_field_dict: dict
     ) -> list:
         """Merges the job postings list with the job posting fields for each job id"""
-        for record in job_postings:
-            record["fields"] = job_posting_field_dict[record["id"]]\
-                if record["id"] in job_posting_field_dict\
-                else []
-        return job_postings
+        try:
+            for record in job_postings:
+                record["fields"] = job_posting_field_dict[record["id"]]\
+                    if record["id"] in job_posting_field_dict\
+                    else []
+            return job_postings
+        except Exception as error:
+            raise error
 
     def delete_job_posting(self, job_id: int) -> bool:
         """Deletes a job posting by the job ID"""
-        return self.dao.delete_job_posting(job_id) and\
-            self.dao.delete_job_posting_location(job_id) and\
-            self.dao.delete_job_posting_fields(job_id)
+        try:
+            return self.dao.delete_job_posting(job_id) and\
+                self.dao.delete_job_posting_location(job_id) and\
+                self.dao.delete_job_posting_fields(job_id)
+        except Exception as error:
+            raise error
 
     def search_job_postings(self, job_search_query: str, job_search_location_query: str):
         """Searches for a job posting by key word or location"""
@@ -92,11 +100,12 @@ class JobPostingProcessorModel:
         try:
             return self.dao.get_job_posting_fields()
         except Exception as error:
-            raise Exception(error)
+            raise error
 
-    def load_job_applications_by_job_id(self, job_id:int)->list:
+    def load_job_applications_by_job_id(self, job_id: int) -> list:
         """Loads the applications for the job ID"""
         try:
-            return self.dao.load_job_applications_by_job_id(job_id)
+            applications = self.dao.load_job_applications_by_job_id(job_id)
+            return map_job_applications(applications)
         except Exception as error:
-            raise Exception(error)
+            raise error

@@ -49,9 +49,11 @@ class JobCartResponse(BaseResponse):
     job_cart: Optional[List[JobPostingResponse]]
 
 class JobPostingApplicationResponse(BaseResponse):
-    id: int
-    date_appplied: datetime
+    """Response for a job application"""
+    application_id: int
+    date_applied: datetime
     applicant_info: ApplicantInfoResponse
 
 class JobPostingApplicationsResponse(BaseResponse):
+    """Response for multiple job applications"""
     applications: Optional[List[JobPostingApplicationResponse]]
