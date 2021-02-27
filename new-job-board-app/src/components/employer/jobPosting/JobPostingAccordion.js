@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button, Row, Col, Card, Accordion } from "react-bootstrap";
+import { Accordion } from "react-bootstrap";
 import JobPostingCard from "./JobPostingCard";
 import { loadJobApplicantsService } from "../../../services/employer/EmployerServices";
-import { Loader } from "semantic-ui-react";
+import { Loader, Card, Grid, Button } from "semantic-ui-react";
 
 const JobPostingAccordion = (props) => {
   const [areApplicantsLoading, setAreApplicantsLoading] = useState(false);
-  const [jobApplications, setJobApplications] = useState([])
-  
+  const [jobApplications, setJobApplications] = useState([]);
+
   useEffect(() => {
+    setAreApplicantsLoading(true);
     loadJobApplicantsService(props.jobPosting.generalInfo.id)
       .then((response) => {
         response.json().then((data) => {
-          if (data["applications"].length > 0) {
-            setJobApplications(data["applications"]);
+          if (data["hasError"]) {
+            console.log(data["errorMessage"]);
+          } else {
+            if (data["applications"].length > 0) {
+              setJobApplications(data["applications"]);
+            }
           }
           setAreApplicantsLoading(false);
         });
@@ -24,12 +29,13 @@ const JobPostingAccordion = (props) => {
       });
   }, []);
 
-
   const generateJobApplications = () => {
     return jobApplications.length > 0 ? (
       jobApplications.map((jobApplication) => {
         return (
-          <Card>{jobApplication.id}</Card>
+          <Card.Content>
+            {jobApplication.applicantInfo.emailAddress}
+          </Card.Content>
         );
       })
     ) : (
@@ -37,63 +43,63 @@ const JobPostingAccordion = (props) => {
     );
   };
 
-
-
   return (
     <Accordion>
-      <Card>
-        <Accordion.Toggle as={Button} variant="dark" eventKey="0">
+      <Card fluid>
+        <Accordion.Toggle as={Button} variant="light" eventKey="0">
           <JobPostingCard jobPosting={props.jobPosting} />
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="0">
-          <Container fluid>
-            <Row noGutters>
-              <Col lg={6}>
-                <Card>
-                  <Card.Body>
-                    ID: {props.jobPosting.generalInfo.id}
-                    Description: {props.jobPosting.generalInfo.description}
-                  </Card.Body>
-                  <Card.Footer>
-                    <Container fluid>
-                      <Row>
-                        <Col>
-                          <Button
-                            block
-                            variant="primary"
-                            onClick={() => {
-                              props.setSelectedJobPosting(props.jobPosting);
-                              props.setShowEditJobPostingModal(true);
-                            }}
-                          >
-                            Edit
-                          </Button>
-                        </Col>
-                        <Col>
-                          <Button
-                            block
-                            variant="secondary"
-                            onClick={() => {
-                              props.setSelectedJobPosting(props.jobPosting);
-                              props.setShowDeleteJobPostingConfirmationModal(
-                                true
-                              );
-                            }}
-                          >
-                            Delete
-                          </Button>
-                        </Col>
-                      </Row>
-                    </Container>
-                  </Card.Footer>
-                </Card>
-              </Col>
-              <Col lg={6}>
-                <Card>Applicants</Card>
-                {areApplicantsLoading ? <Loader active /> : generateJobApplications()}
-              </Col>
-            </Row>
-          </Container>
+          <Grid columns={2}>
+            <Grid.Column>
+              <Card fluid>
+                <Card.Content>
+                  ID: {props.jobPosting.generalInfo.id}
+                </Card.Content>
+                <Card.Content textAlign="left">
+                  {props.jobPosting.generalInfo.description}
+                </Card.Content>
+                <Card.Content textAlign="center">
+                  <Grid columns={2}>
+                    <Grid.Column>
+                      <Button
+                   
+                        primary
+                        onClick={() => {
+                          props.setSelectedJobPosting(props.jobPosting);
+                          props.setShowEditJobPostingModal(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </Grid.Column>
+                    <Grid.Column>
+                      <Button
+               
+                        color="grey"
+                        onClick={() => {
+                          props.setSelectedJobPosting(props.jobPosting);
+                          props.setShowDeleteJobPostingConfirmationModal(true);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </Grid.Column>
+                  </Grid>
+                </Card.Content>
+              </Card>
+            </Grid.Column>
+            <Grid.Column>
+              <Card fluid>
+                <Card.Content header="Applicants"></Card.Content>
+                {areApplicantsLoading ? (
+                  <Loader active />
+                ) : (
+                  generateJobApplications()
+                )}
+              </Card>
+            </Grid.Column>
+          </Grid>
         </Accordion.Collapse>
       </Card>
     </Accordion>

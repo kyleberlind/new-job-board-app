@@ -50,8 +50,8 @@ class JobCartResponse(BaseResponse):
 
 class JobPostingApplicationResponse(BaseResponse):
     """Response for a job application"""
-    id: int
-    date_appplied: datetime
+    application_id: int
+    date_applied: datetime
     applicant_info: ApplicantInfoResponse
 
 class JobPostingApplicationsResponse(BaseResponse):

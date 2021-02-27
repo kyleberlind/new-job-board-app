@@ -4,7 +4,11 @@ from flask import Blueprint, session, request
 from ..daos.account_dao import AccountDao
 from ..utilities.responses.employer_responses import EmployerInfoResponse
 from ..utilities.responses.base_responses import BaseSaveResponse
-from ..utilities.responses.job_posting_responses import JobPostingsResponse, JobPostingFieldsResponse, JobPostingApplicationsResponse
+from ..utilities.responses.job_posting_responses import (
+    JobPostingsResponse,
+    JobPostingFieldsResponse,
+    JobPostingApplicationsResponse
+)
 from ..models.job_posting.job_posting_model import JobPostingModel
 from ..models.job_posting.job_posting_processor_model import JobPostingProcessorModel
 

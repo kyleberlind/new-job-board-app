@@ -11,3 +11,4 @@ class ApplicantInfoResponse(BaseResponse):
     email_address: Optional[str]
     first_name: Optional[str]
     last_name: Optional[str]
+    

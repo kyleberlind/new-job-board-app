@@ -6,7 +6,6 @@ import MySQLdb
 from ..api_secrets.aws_credentials import AWS_PASSWORD, AWS_USER_NAME, AWS_HOSTNAME
 from ..models.job_posting.job_posting_general_info_model import JobPostingGeneralInfoModel
 from ..models.job_posting.job_posting_location_model import JobPostingLocationModel
-from ..exceptions.dao_exceptions import JobDaoException, NoJobPostingFoundException
 
 
 class JobDao():
@@ -446,9 +445,9 @@ class JobDao():
             cursor = self.connection.cursor(self.db.cursors.DictCursor)
             for job in job_applications:
                 params = [
-                    job['id'],
+                    job["general_info"]['id'],
                     applicant_id,
-                    job['employer_id'],
+                    job["general_info"]['employer_id'],
                 ]
                 cursor.execute(
                     """
@@ -469,8 +468,9 @@ class JobDao():
             cursor = self.connection.cursor(self.db.cursors.DictCursor)
             cursor.execute(
                 """
-                    SELECT     applications.id,
+                    SELECT     applications.id as application_id,
                                applications.applicant_id,
+                               applications.date_applied,
                                user.first_name,
                                user.last_name,
                                user.email_address
