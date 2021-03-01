@@ -91,17 +91,9 @@ class JobDao():
     def save_job_posting_fields(self, job_id: int, job_posting_fields: list) -> bool:
         """Maps the job posting ID to its fields """
         try:
-            values = self.get_job_posting_field_values(
+            query = self.get_insert_job_posting_fields_statement(
                 job_id, job_posting_fields)
             cursor = self.connection.cursor(self.db.cursors.DictCursor)
-            query = """
-                        INSERT INTO job.tbl_job_posting_field_mapping (
-                                    job_id,
-                                    field_id,
-                                    required
-                                )
-                        VALUES
-                    """ + values
             cursor.execute(
                 query
             )

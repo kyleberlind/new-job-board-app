@@ -36,7 +36,7 @@ class JobPostingResponse(BaseResponse):
     """Response for job posting"""
     general_info: JobPostingGeneralInfoResponse
     location: JobPostingLocationResponse
-    job_posting_fields: Optional[List[JobPostingFieldModel]] = Field([], alias='fields')
+    job_posting_fields: Optional[List[JobPostingFieldModel]]
 
 
 class JobPostingsResponse(BaseResponse):

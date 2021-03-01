@@ -20,7 +20,6 @@ const CreateJobPostingModal = (props) => {
   const [validated, setValidated] = useState(false);
   const [validationMessageType, setValidationMessageType] = useState("success");
   const [validationMessage, setValidationMessage] = useState("");
-  const [checked, setChecked] = useState(false);
   const [
     jobPostingGeneralInfo,
     handleJobPostingGeneralInfoChange,
@@ -57,13 +56,13 @@ const CreateJobPostingModal = (props) => {
   };
 
   const makeJobPostingFieldRequired = (fieldId) => {
-    if (jobPostingFieldIdsMappedToRequiredFlag[fieldId]) {
-      jobPostingFieldIdsMappedToRequiredFlag[fieldId] = false;
+    const currentJobPostingFieldIdsMappedToRequiredFlag = {...jobPostingFieldIdsMappedToRequiredFlag}
+    if (currentJobPostingFieldIdsMappedToRequiredFlag[fieldId]) {
+      currentJobPostingFieldIdsMappedToRequiredFlag[fieldId] = false;
     } else {
-      jobPostingFieldIdsMappedToRequiredFlag[fieldId] = true;
+      currentJobPostingFieldIdsMappedToRequiredFlag[fieldId] = true;
     }
-    // Use this checked varible to trigger a state update
-    setChecked(!checked);
+    setJobPostingFieldIdsMappedToRequiredFlag(currentJobPostingFieldIdsMappedToRequiredFlag)
   };
 
   const handleSubmitButtonClick = (event) => {

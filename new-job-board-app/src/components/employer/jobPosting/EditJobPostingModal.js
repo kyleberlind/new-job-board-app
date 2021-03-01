@@ -31,7 +31,7 @@ const EditJobPostingModal = (props) => {
     setJobPostingFieldIdsMappedToRequiredFlag,
   ] = useState(() => {
     const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
-    props.jobPosting.fields.map((field) => {
+    props.jobPosting.jobPostingFields.map((field) => {
       selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] = field.required;
     });
     return selectedJobPostingFieldIdsMappedToRequiredFlag;
@@ -42,7 +42,7 @@ const EditJobPostingModal = (props) => {
     setJobPostingLocationInfo(props.jobPosting.location);
     setJobPostingFieldIdsMappedToRequiredFlag(() => {
       const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
-      props.jobPosting.fields.map((field) => {
+      props.jobPosting.jobPostingFields.map((field) => {
         selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] =
           field.required;
       });
@@ -98,7 +98,7 @@ const EditJobPostingModal = (props) => {
       updateJobPostingService({
         generalInfo: jobPostingGeneralInfo,
         location: jobPostingLocationInfo,
-        fields: formatJobPostingFields(),
+        jobPostingFields: formatJobPostingFields(),
       }).then((response) => {
         response.json().then((data) => {
           if (data["hasError"]) {

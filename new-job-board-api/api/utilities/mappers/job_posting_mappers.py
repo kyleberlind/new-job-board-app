@@ -19,7 +19,7 @@ def format_job_posting_info(job_posting):
         "location": JobPostingLocationModel(
             **job_posting
         ).dict(),
-        "job_posting_fields": job_posting["fields"] if "fields" in job_posting else []
+        "job_posting_fields": job_posting["job_posting_fields"] if "job_posting_fields" in job_posting else []
     }
 
 

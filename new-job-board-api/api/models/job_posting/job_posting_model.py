@@ -10,4 +10,4 @@ class JobPostingModel(BaseJobModel):
     """Model to represent the job posting"""
     general_info: JobPostingGeneralInfoModel
     location: JobPostingLocationModel
-    job_posting_fields: Optional[List[JobPostingFieldModel]] = Field([], alias='fields')
+    job_posting_fields: Optional[List[JobPostingFieldModel]]

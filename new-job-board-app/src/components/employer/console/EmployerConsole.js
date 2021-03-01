@@ -8,7 +8,14 @@ import {
   NO_JOB_POSTINGS_MESSAGE,
   MY_JOB_POSTINGS_TITLE,
 } from "../constants/EmployerConstants";
-import { Search, Grid, Card, Container, Loader } from "semantic-ui-react";
+import {
+  Search,
+  Grid,
+  Card,
+  Container,
+  Loader,
+  Header,
+} from "semantic-ui-react";
 
 //TODO refactor all of the crud functionality to update a centralized redux state, then create toast confirmational messages
 const EmployerConsole = (props) => {
@@ -69,20 +76,18 @@ const EmployerConsole = (props) => {
         <Grid.Column>
           <Card fluid>
             <Card.Content>
-              <Card.Header>
-                <Grid>
-                  <Grid.Row>
-                    <Grid.Column width={2}>
-                      <Container textAlign="center">
-                        {MY_JOB_POSTINGS_TITLE}
-                      </Container>
-                    </Grid.Column>
-                    <Grid.Column width={8}>
-                      <Search fluid></Search>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Card.Header>
+              <Grid>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <Header as="h2" content={MY_JOB_POSTINGS_TITLE} />
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Search fluid></Search>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Card.Content>
+            <Card.Content>
               {areJobPostingsLoading ? (
                 <Loader active />
               ) : (
@@ -117,7 +122,7 @@ const EmployerConsole = (props) => {
 
 EmployerConsole.propTypes = {
   employer: PropTypes.object.isRequired,
-  jobPostingFields: PropTypes.array.isRequired
+  jobPostingFields: PropTypes.array.isRequired,
 };
 
 export default EmployerConsole;
