@@ -384,7 +384,7 @@ class JobDao():
                                 SELECT *
                                 FROM job.tbl_job_posting_applications
                                 WHERE applicant_id = 37
-                                AND id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id)
+                                AND id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id, applicant_id)
                             ) applications
                          ON applications.job_id = job_posting.id
             """
