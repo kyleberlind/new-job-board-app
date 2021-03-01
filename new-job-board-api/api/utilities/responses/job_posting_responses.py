@@ -52,7 +52,14 @@ class JobPostingApplicationResponse(BaseResponse):
     """Response for a job application"""
     application_id: int
     date_applied: datetime
-    applicant_info: ApplicantInfoResponse
+    applicant_info: Optional[ApplicantInfoResponse]
+    # @kyle you can make these required if you want, but
+    # leave it as optional if you don't need them for your response
+    employer_name: Optional[str]
+    description: Optional[str]
+    role: Optional[str]
+    city: Optional[str]
+    state: Optional[str]
 
 class JobPostingApplicationsResponse(BaseResponse):
     """Response for multiple job applications"""

@@ -486,3 +486,41 @@ class JobDao():
             return list(results)
         except Exception as error:
             raise error
+
+    def load_job_applications_by_account_id(self, account_id: int) -> list:
+        """Loads the jobs applications by account id"""
+        try:
+            cursor = self.connection.cursor(self.db.cursors.DictCursor)
+            cursor.execute(
+                """
+                    SELECT     applications.id as application_id,
+                               applications.applicant_id,
+                               applications.date_applied,
+                               user.first_name,
+                               user.last_name,
+                               user.email_address,
+                               job_postings.role,
+                               job_postings.description,
+                               employer.employer_name,
+                               applications.job_id,
+                               location.city,
+                               location.state
+                    FROM       job.tbl_job_posting_applications applications
+                    INNER JOIN user.tbl_user user
+                            ON user.id = applications.applicant_id
+					INNER JOIN job.tbl_job_posting job_postings
+                            ON job_postings.id = applications.job_id
+					INNER JOIN user.tbl_employer employer
+                            ON employer.employer_id = applications.employer_id
+                    INNER JOIN job.tbl_job_posting_location location
+                            ON location.job_id = applications.job_id
+                    WHERE      applications.applicant_id = %s
+                    AND applications.id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id)
+                """,
+                [account_id]
+            )
+            results = cursor.fetchall()
+            cursor.close()
+            return list(results)
+        except Exception as error:
+            raise error

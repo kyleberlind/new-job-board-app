@@ -22,21 +22,21 @@ const ApplicantConsoleJobApplicationsContainer = (props) => {
             <Col sm={6}>
               <ListGroup>
                 {props.jobApplications.map(application =>
-                    <ListGroup.Item action href={"#job".concat(application.id)}>
+                    <ListGroup.Item action href={"#job".concat(application.applicationId)}>
                       <div className="jobApplicationListItemHeader">
                         <div className="jobApplicationListItemMain">
-                          {application.company}
+                          {application.employerName}
                         </div>
                         <div className="jobApplicationListItemMeta jobApplicationListItemMetaEnd">
-                          {application.location}
+                          {application.city.concat(", ").concat(application.state)}
                         </div>
                       </div>
                       <div className="jobApplicationListItemFooter">
                         <div className="jobApplicationListItemMeta">
-                          {application.jobTitle}
+                          {application.role}
                         </div>
                         <div className="jobApplicationListItemMeta jobApplicationListItemMetaEnd">
-                          {application.applicationStatus}
+                          {application.dateApplied} {/* REPLACE WITH JOB STATUS */}
                         </div>
                       </div>
                     </ListGroup.Item>
@@ -46,21 +46,18 @@ const ApplicantConsoleJobApplicationsContainer = (props) => {
             <Col sm={6}>
               <Tab.Content>
                 {props.jobApplications.map(application =>
-                  <Tab.Pane eventKey={"#job".concat(application.id)}>
+                  <Tab.Pane eventKey={"#job".concat(application.applicationId)}>
                     <h1>
-                      {application.company}
+                      {application.role}
                     </h1>
                     <h3>
-                      {application.jobTitle}
+                      {application.employerName}
                     </h3>
                     <h4>
-                      {application.location}
+                      {application.city.concat(", ").concat(application.state)}
                     </h4>
                     <p>
-                      {application.jobDescription}
-                    </p>
-                    <p>
-                      {application.applicationStatus}
+                      {application.description}
                     </p>
                   </Tab.Pane>
                 )}
@@ -75,12 +72,13 @@ const ApplicantConsoleJobApplicationsContainer = (props) => {
 
 ApplicantConsoleJobApplicationsContainer.propTypes = {
   jobApplications: PropTypes.arrayOf(PropTypes.shape({
-     id: PropTypes.string.isRequired,
-     company: PropTypes.string.isRequired,
-     jobTitle: PropTypes.string.isRequired,
-     location: PropTypes.string.isRequired,
-     jobDescription: PropTypes.string.isRequired,
-     applicationStatus: PropTypes.string.isRequired
+    applicationId: PropTypes.number.isRequired,
+    dateApplied: PropTypes.string.isRequired,
+    employerName: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    city: PropTypes.string.isRequired,
+    state: PropTypes.string.isRequired,
    })).isRequired,
 }
 

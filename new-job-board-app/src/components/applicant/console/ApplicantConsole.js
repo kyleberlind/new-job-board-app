@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import {
   loadApplicantInfoService,
   loadJobCart,
-  searchJobPostings
+  searchJobPostings,
+  loadApplicantJobApplicationsFromId
 } from "../../../services/applicant/ApplicantServices";
 import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 import ApplicantConsoleJobApplicationsContainer from "./ApplicantConsoleJobApplicationsContainer.js"
@@ -20,6 +21,7 @@ const ApplicantConsole = () => {
     jobSearchQuery: "",
     jobSearchLocationQuery: "",
   });
+  const [jobApplications, setJobApplications] = useState([]);
   const handleSubmitButtonClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -44,83 +46,35 @@ const ApplicantConsole = () => {
           window.location.assign("login");
         } else {
           setUserId(data["applicantData"]);
+          console.log(userId);
         }
       });
     });
   });
 
-  const jobApplications = [
-    {
-      id: "1",
-      company: "Facebook",
-      jobTitle: "Software Engineer",
-      location: "Menlo Park, CA",
-      jobDescription: "This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly.",
-      applicationStatus: "In Review",
-    },
-    {
-      id: "2",
-      company: "Amazon",
-      jobTitle: "Software Engineer",
-      location: "Seattle, WA",
-      jobDescription: "This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly.",
-      applicationStatus: "Recruiter Reach Out on 11/21",
-    },
-    {
-      id: "3",
-      company: "Google",
-      jobTitle: "Software Engineer II",
-      location: "Mountainview, CA",
-      jobDescription: "This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly.",
-      applicationStatus: "In Review",
-    },
-    {
-      id: "4",
-      company: "Microsoft",
-      jobTitle: "Senior Software Engineer",
-      location: "Seattle, WA",
-      jobDescription: "This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly.",
-      applicationStatus: "In Review",
-    },
-    {
-      id: "5",
-      company: "Stripe",
-      jobTitle: "Software Devlopment Engineer",
-      location: "San Francisco, CA",
-      jobDescription: "This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly.",
-      applicationStatus: "In Review",
-    },
-    {
-      id: "6",
-      company: "Palantir",
-      jobTitle: "Product Engineer",
-      location: "San Jose, CA",
-      jobDescription: "This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly.",
-      applicationStatus: "Rejected",
-    },
-    {
-      id: "7",
-      company: "Red Hat",
-      jobTitle: "Full Stack Software Engineer",
-      location: "New York, NY",
-      jobDescription: "This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly. This is a dummy job description. \
-      This job is so silly. This is a dummy job description. This job is so silly.",
-      applicationStatus: "Recruiter Reached Out on 1/15",
-    },
-  ];
+  useEffect(() => {
+    loadApplicantJobApplicationsFromId(userId).then((response) => {
+      response.json().then((data) => {
+        if (data["hasError"]) {
+          console.log(data["errorMessage"]);
+        }
+        else {
+          const applications = data["applications"].map(application => {
+            return {
+              applicationId: application.applicationId,
+              dateApplied: application.dateApplied,
+              employerName: application.employerName,
+              description: application.description,
+              role: application.role,
+              city: application.city,
+              state: application.state,
+            }
+          });
+          setJobApplications(applications);
+        }
+      })
+    });
+  }, [userId])
 
   return (
     <Container className="container" fluid>
