@@ -18,6 +18,7 @@ class JobPostingGeneralInfoResponse(BaseResponse):
     team: Optional[str]
     description: str
     date_created: datetime
+    applied: Optional[bool]
 
 
 class JobPostingLocationResponse(BaseResponse):

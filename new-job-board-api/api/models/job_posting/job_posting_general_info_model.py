@@ -11,3 +11,4 @@ class JobPostingGeneralInfoModel(BaseJobModel):
     team: Optional[str]
     description:str
     date_created: Optional[datetime]
+    applied: Optional[bool]

@@ -71,6 +71,7 @@ def load_job_postings_by_employer_id():
                 search_input["jobSearchLocationQuery"]
             )
         }
+        print(job_postings)
         return JobPostingsResponse(**job_postings).json(by_alias=True)
     except Exception as error:
         return JobPostingsResponse(

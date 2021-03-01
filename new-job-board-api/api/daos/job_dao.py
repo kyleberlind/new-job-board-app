@@ -373,12 +373,20 @@ class JobDao():
                            location.city,
                            location.state,
                            location.zip_code,
-                           employer.employer_name
+                           employer.employer_name,
+                           (applications.applicant_id IS NOT NULL) as applied
                 FROM       job.tbl_job_posting job_posting
                 INNER JOIN job.tbl_job_posting_location location
                         ON job_posting.id = location.job_id
                 INNER JOIN user.tbl_employer employer
                         ON job_posting.employer_id = employer.employer_id
+            LEFT OUTER JOIN (
+                                SELECT *
+                                FROM job.tbl_job_posting_applications
+                                WHERE applicant_id = 37
+                                AND id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id)
+                            ) applications
+                         ON applications.job_id = job_posting.id
             """
         if (len(job_posting_search_query) > 0) & (len(job_location_search_query) > 0):
             job_posting_search_query = "%" + job_posting_search_query.lower() + "%"

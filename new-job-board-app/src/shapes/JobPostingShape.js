@@ -10,4 +10,5 @@ export const jobPostingShape = PropTypes.shape({
     state: PropTypes.string,
     zipCode: PropTypes.string,
   }),
+  applied: PropTypes.boolean,
 });
