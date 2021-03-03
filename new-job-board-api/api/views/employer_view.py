@@ -7,6 +7,7 @@ from ..utilities.responses.base_responses import BaseSaveResponse
 from ..utilities.responses.job_posting_responses import (
     JobPostingsResponse,
     JobPostingFieldsResponse,
+    JobPostingApplicationResponse,
     JobPostingApplicationsResponse
 )
 from ..models.job_posting.job_posting_model import JobPostingModel
@@ -130,6 +131,22 @@ def load_job_applications_by_job_id():
         applications = {"applications": job_posting_processor.load_job_applications_by_job_id(
             job_id)}
         return JobPostingApplicationsResponse(**applications).json(by_alias=True)
+    except Exception as error:
+        return JobPostingsResponse(
+            hasError=True,
+            errorMessage=str(error)
+        ).json(by_alias=True)
+
+
+@employer_view.route("/load_job_application_by_employer_reference_id", methods=['POST'])
+def load_job_application_by_employer_reference_id():
+    """Loads the application for an employers reference ID"""
+    job_posting_processor = JobPostingProcessorModel()
+    try:
+        employer_reference_id = json.loads(request.data)
+        application = job_posting_processor.load_job_applications_by_employer_reference_id(
+            employer_reference_id)
+        return JobPostingApplicationResponse(**application).json(by_alias=True)
     except Exception as error:
         return JobPostingsResponse(
             hasError=True,

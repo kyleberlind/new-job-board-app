@@ -1,6 +1,5 @@
 """02/14/2021"""
 from typing import List, Optional
-from pydantic import Field
 from .job_posting_general_info_model import  JobPostingGeneralInfoModel
 from .job_posting_location_model import JobPostingLocationModel
 from .job_posting_field_model import JobPostingFieldModel

@@ -33,5 +33,6 @@ def format_job_applications(application: dict) -> dict:
     return {
         "application_id": application["application_id"],
         "date_applied": application["date_applied"],
+        "employer_reference_id": application["employer_reference_id"],
         "applicant_info": ApplicantInfoResponse(**application).dict()
     }

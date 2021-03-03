@@ -443,8 +443,8 @@ class JobDao():
                 ]
                 cursor.execute(
                     """
-                        INSERT INTO job.tbl_job_posting_applications (job_id, applicant_id, employer_id)
-                        VALUES (%s, %s, %s)
+                        INSERT INTO job.tbl_job_posting_applications (job_id, applicant_id, employer_id, employer_reference_id)
+                        VALUES (%s, %s, %s, UUID())
                     """,
                     params,
                 )
@@ -463,6 +463,7 @@ class JobDao():
                     SELECT     applications.id as application_id,
                                applications.applicant_id,
                                applications.date_applied,
+                               applications.employer_reference_id,
                                user.first_name,
                                user.last_name,
                                user.email_address
@@ -476,5 +477,31 @@ class JobDao():
             results = cursor.fetchall()
             cursor.close()
             return list(results)
+        except Exception as error:
+            raise error
+
+    def load_job_applications_by_employer_reference_id(self, employer_reference_id: str):
+        """Loads the jobs application by employer reference ID"""
+        try:
+            cursor = self.connection.cursor(self.db.cursors.DictCursor)
+            cursor.execute(
+                """
+                    SELECT     applications.id as application_id,
+                               applications.applicant_id,
+                               applications.date_applied,
+                               applications.employer_reference_id,
+                               user.first_name,
+                               user.last_name,
+                               user.email_address
+                    FROM       job.tbl_job_posting_applications applications
+                    INNER JOIN user.tbl_user user
+                            ON user.id = applications.applicant_id
+                    WHERE      applications.employer_reference_id = %s
+                """,
+                [employer_reference_id]
+            )
+            results = cursor.fetchone()
+            cursor.close()
+            return results
         except Exception as error:
             raise error

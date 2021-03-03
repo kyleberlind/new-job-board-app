@@ -39,4 +39,13 @@ export const loadJobApplicantsService = (jobId) => {
     method: "POST",
     body: JSON.stringify(jobId),
   });
-}
+};
+
+export const loadJobApplicantionByEmployerReferenceId = (
+  employerReferenceId
+) => {
+  return fetch("/load_job_application_by_employer_reference_id", {
+    method: "POST",
+    body: JSON.stringify(employerReferenceId),
+  });
+};

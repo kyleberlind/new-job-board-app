@@ -47,13 +47,14 @@ const JobPostingAccordion = (props) => {
             fluid
             key={jobApplication.applicationId}
             header={jobApplication.applicantInfo.emailAddress}
-            href={"/employer/employer-console"}
-          >
-          </Card>
+            href={`/employer/application/${jobApplication.employerReferenceId}`}
+          ></Card>
         );
       })
     ) : (
-      <Card fluid>There are no applicants for this job yet.</Card>
+      <Container fluid textAlign="center">
+        <Header as={"h3"}>There are no applicants for this job yet.</Header>
+      </Container>
     );
   };
 
@@ -80,16 +81,21 @@ const JobPostingAccordion = (props) => {
         onClick={handleClickAccordionTitle}
       >
         <Grid.Row>
-          <Icon name="dropdown" />
-          <Container fluid textAlign="left">
-            <Header as="h3">{getJobPostingHeader()}</Header>
-            <p>{formattedJobLocation}</p>
-          </Container>
+          <Grid.Column>
+            <Icon name="dropdown" />
+          </Grid.Column>
+          <Grid.Column>
+            <Container fluid textAlign="left">
+              <Header as="h3">{getJobPostingHeader()}</Header>
+              <p>{formattedJobLocation}</p>
+            </Container>
+          </Grid.Column>
         </Grid.Row>
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 0}>
         <Grid columns={2} celled="internally">
           <Grid.Column>
+            <Header as="h3">Details</Header>
             <Card fluid>
               <Card.Content>ID: {props.jobPosting.generalInfo.id}</Card.Content>
               <Card.Content textAlign="left">
@@ -124,16 +130,14 @@ const JobPostingAccordion = (props) => {
             </Card>
           </Grid.Column>
           <Grid.Column>
-            <Card fluid>
-              <Card.Content
-                header="Applicants"
-              ></Card.Content>
+            <Header as="h3">Applicants</Header>
+            <Card.Group fluid>
               {areApplicantsLoading ? (
                 <Loader active />
               ) : (
                 generateJobApplications()
               )}
-            </Card>
+            </Card.Group>
           </Grid.Column>
         </Grid>
       </Accordion.Content>

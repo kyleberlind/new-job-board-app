@@ -78,11 +78,13 @@ const EmployerConsole = (props) => {
             <Card.Content>
               <Grid>
                 <Grid.Row columns={2}>
-                  <Grid.Column>
-                    <Header as="h2" content={MY_JOB_POSTINGS_TITLE} />
+                  <Grid.Column width={3}>
+                    <Container>
+                      <Header as="h2" content={MY_JOB_POSTINGS_TITLE} />
+                    </Container>
                   </Grid.Column>
-                  <Grid.Column>
-                    <Search fluid></Search>
+                  <Grid.Column width={9}>
+                    <Search input={{ fluid: true }} fluid></Search>
                   </Grid.Column>
                 </Grid.Row>
               </Grid>

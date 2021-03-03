@@ -113,3 +113,11 @@ class JobPostingProcessorModel:
             return map_job_applications(applications)
         except Exception as error:
             raise error
+
+    def load_job_applications_by_employer_reference_id(self, employer_reference_id:str):
+        """Loads the application for the employer be reference ID"""
+        try:
+            return self.dao.load_job_applications_by_employer_reference_id(
+                employer_reference_id)
+        except Exception as error:
+            raise error
