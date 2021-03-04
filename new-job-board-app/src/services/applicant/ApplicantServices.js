@@ -9,6 +9,13 @@ export const loadApplicantInfoFromId = (accountId) => {
   });
 };
 
+export const loadApplicantJobApplicationsFromId = (accountId) => {
+  return fetch("/load_applicant_job_applications_from_id", {
+    method: "POST",
+    body: JSON.stringify(accountId),
+  });
+};
+
 export const searchJobPostings = (jobPostingSearchInput) => {
   return fetch("/search_job_postings", {
     method: "POST",

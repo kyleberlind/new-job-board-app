@@ -365,12 +365,20 @@ class JobDao():
                            location.city,
                            location.state,
                            location.zip_code,
-                           employer.employer_name
+                           employer.employer_name,
+                           (applications.applicant_id IS NOT NULL) as applied
                 FROM       job.tbl_job_posting job_posting
                 INNER JOIN job.tbl_job_posting_location location
                         ON job_posting.id = location.job_id
                 INNER JOIN user.tbl_employer employer
                         ON job_posting.employer_id = employer.employer_id
+            LEFT OUTER JOIN (
+                                SELECT *
+                                FROM job.tbl_job_posting_applications
+                                WHERE applicant_id = 37
+                                AND id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id)
+                            ) applications
+                         ON applications.job_id = job_posting.id
             """
         if (len(job_posting_search_query) > 0) & (len(job_location_search_query) > 0):
             job_posting_search_query = "%" + job_posting_search_query.lower() + "%"
@@ -500,8 +508,46 @@ class JobDao():
                 """,
                 [employer_reference_id]
             )
-            results = cursor.fetchone()
+            result = cursor.fetchone()
             cursor.close()
-            return results
+            return result
+        except Exception as error:
+            raise error
+
+    def load_job_applications_by_account_id(self, account_id: int) -> list:
+        """Loads the jobs applications by account id"""
+        try:
+            cursor = self.connection.cursor(self.db.cursors.DictCursor)
+            cursor.execute(
+                """
+                    SELECT     applications.id as application_id,
+                               applications.applicant_id,
+                               applications.date_applied,
+                               user.first_name,
+                               user.last_name,
+                               user.email_address,
+                               job_postings.role,
+                               job_postings.description,
+                               employer.employer_name,
+                               applications.job_id,
+                               location.city,
+                               location.state
+                    FROM       job.tbl_job_posting_applications applications
+                    INNER JOIN user.tbl_user user
+                            ON user.id = applications.applicant_id
+					INNER JOIN job.tbl_job_posting job_postings
+                            ON job_postings.id = applications.job_id
+					INNER JOIN user.tbl_employer employer
+                            ON employer.employer_id = applications.employer_id
+                    INNER JOIN job.tbl_job_posting_location location
+                            ON location.job_id = applications.job_id
+                    WHERE      applications.applicant_id = %s
+                    AND applications.id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id)
+                """,
+                [account_id]
+            )
+            results = cursor.fetchall()
+            cursor.close()
+            return list(results)
         except Exception as error:
             raise error

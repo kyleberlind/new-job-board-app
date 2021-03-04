@@ -69,8 +69,9 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
                               addToJobCartClick(props.applicantId, posting.generalInfo.id, posting.employerId)
                             }
                           }
-                          className={"jobPostingAddToJobCartButton"}>
-                          Add to Job Cart
+                          className={"jobPostingAddToJobCartButton"}
+                          disabled={posting.generalInfo.applied }>
+                          {posting.generalInfo.applied ? "Applied" : "Add to Job Cart"}
                         </Button>
                         <h1>
                           {posting.generalInfo.role}

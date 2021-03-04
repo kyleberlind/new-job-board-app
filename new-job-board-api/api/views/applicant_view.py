@@ -2,7 +2,7 @@
 import json
 from flask import Blueprint, jsonify, session, request
 from ..utilities.responses.applicant_responses import ApplicantInfoResponse
-from ..utilities.responses.job_posting_responses import JobPostingsResponse, JobCartResponse
+from ..utilities.responses.job_posting_responses import JobPostingsResponse, JobCartResponse, JobPostingApplicationsResponse
 from ..models.job_posting.job_posting_processor_model import JobPostingProcessorModel
 from ..daos.account_dao import AccountDao
 from ..daos.job_dao import JobDao
@@ -33,6 +33,32 @@ def load_applicant_info_from_id():
         ).json(by_alias=True)
 
 
+@applicant_view.route('/load_applicant_job_applications_from_id', methods=['POST'])
+def load_applicant_job_applications_from_id():
+    """Fetches applicant info from applicant id"""
+    job_dao = JobDao()
+    try:
+        account_id = json.loads(request.data)
+        applications_raw = job_dao.load_job_applications_by_account_id(account_id)
+        applications = []
+        for application in applications_raw:
+            applications.append({
+                "application_id": application["application_id"],
+                "date_applied": application["date_applied"],
+                "employer_name": application["employer_name"],
+                "description": application["description"],
+                "role": application["role"],
+                "city": application["city"],
+                "state": application["state"]
+            })
+        return JobPostingApplicationsResponse(**{"applications": applications}).json(by_alias=True)
+    except Exception as error:
+        print(str(error))
+        return JobPostingsResponse(
+            hasError=True,
+            errorMessage=str(error)
+        ).json(by_alias=True)
+
 @applicant_view.route("/search_job_postings", methods=['POST'])
 def load_job_postings_by_employer_id():
     """Searches for job postings based on search input data"""
@@ -45,6 +71,7 @@ def load_job_postings_by_employer_id():
                 search_input["jobSearchLocationQuery"]
             )
         }
+        print(job_postings)
         return JobPostingsResponse(**job_postings).json(by_alias=True)
     except Exception as error:
         return JobPostingsResponse(
