@@ -81,7 +81,7 @@ function Employer() {
               />
             )}
           />
-          <Route path="/employer/application/:id" component={ApplicationView} />
+          <Route path="/employer/application/:employer_reference_id" component={ApplicationView} />
         </Switch>
       </Router>
       <CreateJobPostingModal

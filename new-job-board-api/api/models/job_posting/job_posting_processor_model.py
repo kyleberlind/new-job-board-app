@@ -1,6 +1,8 @@
 """02/14/2021"""
 from ...daos.job_dao import JobDao
 from ...models.job_posting.job_posting_model import JobPostingModel
+from ...models.job_posting.job_posting_application_model import JobPostingApplicationModel
+from ...models.applicant.applicant_info_model import ApplicantInfoModel
 from ...utilities.mappers.job_posting_mappers import map_job_posting_info, map_job_applications
 
 
@@ -114,10 +116,11 @@ class JobPostingProcessorModel:
         except Exception as error:
             raise error
 
-    def load_job_applications_by_employer_reference_id(self, employer_reference_id:str):
+    def load_job_application_by_employer_reference_id(self, employer_reference_id: str):
         """Loads the application for the employer be reference ID"""
         try:
-            return self.dao.load_job_applications_by_employer_reference_id(
+            application = self.dao.load_job_application_by_employer_reference_id(
                 employer_reference_id)
+            return application
         except Exception as error:
             raise error

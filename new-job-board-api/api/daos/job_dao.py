@@ -480,7 +480,7 @@ class JobDao():
         except Exception as error:
             raise error
 
-    def load_job_applications_by_employer_reference_id(self, employer_reference_id: str):
+    def load_job_application_by_employer_reference_id(self, employer_reference_id: str):
         """Loads the jobs application by employer reference ID"""
         try:
             cursor = self.connection.cursor(self.db.cursors.DictCursor)

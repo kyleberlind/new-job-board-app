@@ -1,11 +1,10 @@
 """
 03/02/2021
 """
-
 from typing import Optional
-from pydantic import BaseModel
+from .base_applicant_model import BaseApplicantModel
 
-class ApplicantInfoModel(BaseModel):
+class ApplicantInfoModel(BaseApplicantModel):
     """Model to represent the applicant info"""
     applicant_id: Optional[int]
     email_address: Optional[str]

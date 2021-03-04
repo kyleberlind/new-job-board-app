@@ -7,13 +7,12 @@ from ..utilities.responses.base_responses import BaseSaveResponse
 from ..utilities.responses.job_posting_responses import (
     JobPostingsResponse,
     JobPostingFieldsResponse,
-    JobPostingApplicationResponse,
     JobPostingApplicationsResponse
 )
 from ..models.job_posting.job_posting_model import JobPostingModel
 from ..models.job_posting.job_posting_processor_model import JobPostingProcessorModel
-
-
+from ..models.job_posting.job_posting_application_model import JobPostingApplicationModel
+from ..models.applicant.applicant_info_model import ApplicantInfoModel
 employer_view = Blueprint("employer_view", __name__)
 
 
@@ -144,9 +143,10 @@ def load_job_application_by_employer_reference_id():
     job_posting_processor = JobPostingProcessorModel()
     try:
         employer_reference_id = json.loads(request.data)
-        application = job_posting_processor.load_job_applications_by_employer_reference_id(
+        application = job_posting_processor.load_job_application_by_employer_reference_id(
             employer_reference_id)
-        return JobPostingApplicationResponse(**application).json(by_alias=True)
+        applicant_info = ApplicantInfoModel(**application)
+        return JobPostingApplicationModel(**application, applicant_info=applicant_info).json(by_alias=True)
     except Exception as error:
         return JobPostingsResponse(
             hasError=True,
