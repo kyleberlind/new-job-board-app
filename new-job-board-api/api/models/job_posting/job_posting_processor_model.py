@@ -1,6 +1,8 @@
 """02/14/2021"""
 from ...daos.job_dao import JobDao
 from ...models.job_posting.job_posting_model import JobPostingModel
+from ...models.job_posting.job_posting_application_model import JobPostingApplicationModel
+from ...models.applicant.applicant_info_model import ApplicantInfoModel
 from ...utilities.mappers.job_posting_mappers import map_job_posting_info, map_job_applications
 
 
@@ -15,9 +17,14 @@ class JobPostingProcessorModel:
         try:
             new_job_id = self.dao.save_job_posting_general_info(
                 job_posting.general_info)
-            return self.dao.save_job_posting_location(new_job_id, job_posting.location) and\
-                self.dao.save_job_posting_fields(
+
+            result = self.dao.save_job_posting_location(
+                new_job_id, job_posting.location)
+
+            if job_posting.job_posting_fields:
+                result = result and self.dao.save_job_posting_fields(
                     new_job_id, job_posting.job_posting_fields)
+            return result
         except Exception as error:
             raise error
 
@@ -36,8 +43,7 @@ class JobPostingProcessorModel:
         """Loads the job postings for an employer ID"""
         try:
             job_postings = self.dao.load_job_postings_by_employer_id(
-                employer_id
-            )
+                employer_id)
             job_posting_fields_for_employer = self.dao.load_job_posting_fields_by_employer_id(
                 employer_id)
             job_posting_field_dict = self.build_job_posting_field_dict(
@@ -68,7 +74,7 @@ class JobPostingProcessorModel:
         """Merges the job postings list with the job posting fields for each job id"""
         try:
             for record in job_postings:
-                record["fields"] = job_posting_field_dict[record["id"]]\
+                record["job_posting_fields"] = job_posting_field_dict[record["id"]]\
                     if record["id"] in job_posting_field_dict\
                     else []
             return job_postings
@@ -107,5 +113,14 @@ class JobPostingProcessorModel:
         try:
             applications = self.dao.load_job_applications_by_job_id(job_id)
             return map_job_applications(applications)
+        except Exception as error:
+            raise error
+
+    def load_job_application_by_employer_reference_id(self, employer_reference_id: str):
+        """Loads the application for the employer be reference ID"""
+        try:
+            application = self.dao.load_job_application_by_employer_reference_id(
+                employer_reference_id)
+            return application
         except Exception as error:
             raise error

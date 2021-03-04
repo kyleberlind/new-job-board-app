@@ -2,6 +2,7 @@
 from typing import Optional
 from .base_job_model import BaseJobModel
 
+
 class JobPostingFieldModel(BaseJobModel):
     """Model to represent the job posting field"""
     id: Optional[int]
@@ -10,4 +11,3 @@ class JobPostingFieldModel(BaseJobModel):
     value: Optional[str]
     type: Optional[str]
     description: Optional[str]
-

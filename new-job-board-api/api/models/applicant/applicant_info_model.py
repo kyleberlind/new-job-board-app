@@ -1,12 +1,11 @@
 """
-02/14/2021
-Responses for the applicant
+03/02/2021
 """
 from typing import Optional
-from .base_responses import BaseResponse
+from .base_applicant_model import BaseApplicantModel
 
-class ApplicantInfoResponse(BaseResponse):
-    """Response for applicant info"""
+class ApplicantInfoModel(BaseApplicantModel):
+    """Model to represent the applicant info"""
     applicant_id: Optional[int]
     email_address: Optional[str]
     first_name: Optional[str]

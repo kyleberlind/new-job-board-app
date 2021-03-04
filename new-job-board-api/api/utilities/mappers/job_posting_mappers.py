@@ -4,7 +4,7 @@ Mappers for job postings
 """
 from ...models.job_posting.job_posting_location_model import JobPostingLocationModel
 from ...models.job_posting.job_posting_general_info_model import JobPostingGeneralInfoModel
-from ..responses.applicant_responses import ApplicantInfoResponse
+from ...models.applicant.applicant_info_model import ApplicantInfoModel
 
 
 def map_job_posting_info(job_postings: list):
@@ -15,11 +15,11 @@ def map_job_posting_info(job_postings: list):
 def format_job_posting_info(job_posting):
     """Formatting function for the job posting"""
     return {
-        "general_info": JobPostingGeneralInfoModel(**job_posting).dict(),
+        "general_info": JobPostingGeneralInfoModel(**job_posting),
         "location": JobPostingLocationModel(
             **job_posting
-        ).dict(),
-        "job_posting_fields": job_posting["fields"] if "fields" in job_posting else []
+        ),
+        "job_posting_fields": job_posting["job_posting_fields"] if "job_posting_fields" in job_posting else []
     }
 
 
@@ -33,5 +33,6 @@ def format_job_applications(application: dict) -> dict:
     return {
         "application_id": application["application_id"],
         "date_applied": application["date_applied"],
-        "applicant_info": ApplicantInfoResponse(**application).dict()
+        "employer_reference_id": application["employer_reference_id"],
+        "applicant_info": ApplicantInfoModel(**application)
     }
