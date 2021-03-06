@@ -2,10 +2,10 @@
 03/02/2021
 """
 from datetime import datetime
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
 from .base_job_model import BaseJobModel
 from ..applicant.applicant_info_model import ApplicantInfoModel, ApplicantInfoModelSQLAlchemy
-from sqlalchemy import ForeignKey
 from ...__init__ import db
 
 class JobPostingApplicationModel(BaseJobModel):
