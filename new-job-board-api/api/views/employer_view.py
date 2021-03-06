@@ -13,6 +13,8 @@ from ..models.job_posting.job_posting_model import JobPostingModel
 from ..models.job_posting.job_posting_processor_model import JobPostingProcessorModel
 from ..models.job_posting.job_posting_application_model import JobPostingApplicationModel
 from ..models.applicant.applicant_info_model import ApplicantInfoModel
+from flask_graphql import GraphQLView
+
 employer_view = Blueprint("employer_view", __name__)
 
 
@@ -147,6 +149,18 @@ def load_job_application_by_employer_reference_id():
             employer_reference_id)
         applicant_info = ApplicantInfoModel(**application)
         return JobPostingApplicationModel(**application, applicant_info=applicant_info).json(by_alias=True)
+    except Exception as error:
+        return JobPostingsResponse(
+            hasError=True,
+            errorMessage=str(error)
+        ).json(by_alias=True)
+
+
+@employer_view.route("/load_job_application_by_employer_reference_id_gql", methods=['POST'])
+def load_job_application_by_employer_reference_id_gql():
+    """ GQL endpoint to load the application for an employers reference ID"""
+    try:
+        pass
     except Exception as error:
         return JobPostingsResponse(
             hasError=True,
