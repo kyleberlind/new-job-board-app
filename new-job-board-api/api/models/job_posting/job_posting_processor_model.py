@@ -1,8 +1,6 @@
 """02/14/2021"""
 from ...daos.job_dao import JobDao
 from ...models.job_posting.job_posting_model import JobPostingModel
-from ...models.job_posting.job_posting_application_model import JobPostingApplicationModel
-from ...models.applicant.applicant_info_model import ApplicantInfoModel
 from ...utilities.mappers.job_posting_mappers import map_job_posting_info, map_job_applications
 
 

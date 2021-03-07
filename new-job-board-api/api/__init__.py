@@ -1,5 +1,14 @@
+"""03/04/2021"""
 from flask_cors import CORS
 from flask import Flask
+from flask_graphql import GraphQLView
+from flask_sqlalchemy import SQLAlchemy
+from .api_secrets.aws_credentials import (
+    BASE_DB_PATH
+)
+
+
+db = SQLAlchemy()
 
 
 def create_app():
@@ -10,11 +19,29 @@ def create_app():
     from .views.account_view import account_view
     from .views.employer_view import employer_view
     from .views.applicant_view import applicant_view
+    from .schemas.job_posting_application_schema import job_posting_schema
 
     app.register_blueprint(account_view)
     app.register_blueprint(employer_view)
     app.register_blueprint(applicant_view)
     CORS(app)
+
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = BASE_DB_PATH + "job"
+    app.config["SQLALCHEMY_BINDS"] = {
+        'user': BASE_DB_PATH + "user",
+    }
+
+    db.init_app(app)
+
+    app.add_url_rule(
+        '/graphql',
+        view_func=GraphQLView.as_view(
+            'graphql',
+            schema=job_posting_schema,
+            graphiql=True
+        )
+    )
 
     return app
 
