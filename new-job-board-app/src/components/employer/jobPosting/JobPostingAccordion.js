@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import JobPostingCard from "./JobPostingCard";
 import { loadJobApplicantsService } from "../../../services/employer/EmployerServices";
 import {
   Accordion,
@@ -10,7 +9,8 @@ import {
   Button,
   Icon,
   Header,
-  Search,
+  Segment,
+  Item,
 } from "semantic-ui-react";
 
 const JobPostingAccordion = (props) => {
@@ -40,15 +40,20 @@ const JobPostingAccordion = (props) => {
   }, []);
 
   const generateJobApplications = () => {
+    let index = 0
     return jobApplications.length > 0 ? (
       jobApplications.map((jobApplication) => {
+        index+=1
         return (
-          <Card
-            fluid
+          <Item
             key={jobApplication.applicationId}
-            header={jobApplication.applicantInfo.emailAddress}
-            href={`/employer/application/${jobApplication.employerReferenceId}`}
-          ></Card>
+            onClick={() => {
+              window.location.href = `/employer/application/${jobApplication.employerReferenceId}`;
+            }}
+          >
+            <Item.Content>{index}. {jobApplication.applicantInfo.emailAddress}</Item.Content >
+            <Item.Meta>{jobApplication.dateApplied}</Item.Meta>
+          </Item>
         );
       })
     ) : (
@@ -95,49 +100,68 @@ const JobPostingAccordion = (props) => {
       <Accordion.Content active={activeIndex === 0}>
         <Grid columns={2} celled="internally">
           <Grid.Column>
-            <Header as="h3">Details</Header>
+            <Container>
+              <Grid columns={2}>
+                <Grid.Row verticalAlign="middle">
+                  <Grid.Column>
+                    <Header as="h3">Details</Header>
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Grid columns={2}>
+                      <Grid.Row>
+                        <Grid.Column>
+                          <Button
+                            basic
+                            color="blue"
+                            size="small"
+                            onClick={() => {
+                              props.setSelectedJobPosting(props.jobPosting);
+                              props.setShowEditJobPostingModal(true);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                        </Grid.Column>
+                        <Grid.Column>
+                          <Button
+                            basic
+                            color="red"
+                            size="small"
+                            onClick={() => {
+                              props.setSelectedJobPosting(props.jobPosting);
+                              props.setShowDeleteJobPostingConfirmationModal(
+                                true
+                              );
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </Grid.Column>
+                      </Grid.Row>
+                    </Grid>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Container>
             <Card fluid>
               <Card.Content>ID: {props.jobPosting.generalInfo.id}</Card.Content>
               <Card.Content textAlign="left">
                 {props.jobPosting.generalInfo.description}
               </Card.Content>
-              <Card.Content textAlign="center">
-                <Grid columns={2}>
-                  <Grid.Column>
-                    <Button
-                      primary
-                      onClick={() => {
-                        props.setSelectedJobPosting(props.jobPosting);
-                        props.setShowEditJobPostingModal(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Button
-                      color="grey"
-                      onClick={() => {
-                        props.setSelectedJobPosting(props.jobPosting);
-                        props.setShowDeleteJobPostingConfirmationModal(true);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </Grid.Column>
-                </Grid>
-              </Card.Content>
             </Card>
           </Grid.Column>
+
           <Grid.Column>
-            <Header as="h3">Applicants</Header>
-            <Card.Group fluid>
+            <Container>
+              <Header as="h3">Applicants</Header>
               {areApplicantsLoading ? (
                 <Loader active />
               ) : (
-                generateJobApplications()
+                <Item.Group divided link>
+                  {generateJobApplications()}
+                </Item.Group>
               )}
-            </Card.Group>
+            </Container>
           </Grid.Column>
         </Grid>
       </Accordion.Content>

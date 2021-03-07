@@ -16,11 +16,9 @@ class JobPostingModel(BaseJobModel):
     job_posting_fields: Optional[List[JobPostingFieldModel]]
 
 
-# class JobPostingModelSQLAlchemy(db.Model):
-#     """Model to represent the job posting in SQL Alchemy"""
-#     general_info = relationship(
-#         "JobPostingGeneralInfoModelSQLAlchemy",
-#         backref="tbl_job_posting"
-#     )
-#     def __repr__(self):
-#         return '<JobPosting %r>' % self.id
+class JobPostingModelSQLAlchemy(db.Model):
+    """Model to represent the job posting in SQL Alchemy"""
+    extend_existing=True
+    id = db.Column(db.Integer, primary_key=True)
+    def __repr__(self):
+        return '<JobPosting %r>' % self.id

@@ -1,22 +1,23 @@
 import React from "react";
-import { Button, Navbar, Nav } from "react-bootstrap";
+import { Menu, Button } from "semantic-ui-react";
 
 function EmployerConsoleNavBar(props) {
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-      <Navbar.Brand href="/employer/employer-console">Console</Navbar.Brand>
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav.Link href="/employer/account"> Account</Nav.Link>
-        <Nav.Link
-          onClick={() => {
-            props.setShowCreateJobPostingModal(true);
-          }}
-        >
-          Create Job Posting
-        </Nav.Link>
-      </Navbar.Collapse>
-      <Button onClick={props.handleLogout}>Logout</Button>
-    </Navbar>
+    <Menu inverted>
+      <Menu.Item name="Console" href="/employer/employer-console" />
+      <Menu.Item name="Account" href="/employer/account" />
+      <Menu.Item
+        name="Create Job Posting"
+        onClick={() => {
+          props.setShowCreateJobPostingModal(true);
+        }}
+      />
+      <Menu.Menu position="right">
+        <Menu.Item>
+          <Button onClick={props.handleLogout}>Logout</Button>
+        </Menu.Item>
+      </Menu.Menu>
+    </Menu>
   );
 }
 

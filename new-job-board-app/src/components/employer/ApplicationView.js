@@ -9,6 +9,7 @@ import {
   Segment,
   Button,
   Container,
+  Divider,
 } from "semantic-ui-react";
 import { useQuery } from "@apollo/client";
 import { GET_APPLICATION_BY_REFERENCE_ID } from "../../services/graphql/employer/EmployerQueries";
@@ -28,6 +29,17 @@ const ApplicationView = (props) => {
     },
   ];
 
+  const getJobPostingHeader = () => {
+    return (
+      data.applicationsByEmployerReferenceId[0].jobPosting.generalInfo.role +
+      (data.applicationsByEmployerReferenceId[0].jobPosting.generalInfo.team !==
+      null
+        ? " | "
+        : "") +
+      data.applicationsByEmployerReferenceId[0].jobPosting.generalInfo.team
+    );
+  };
+
   if (error) {
     return <Card>Error!</Card>;
   } else if (loading) {
@@ -35,37 +47,44 @@ const ApplicationView = (props) => {
   } else {
     return (
       <Container fluid>
-        <Grid columns={2}>
-          <Grid.Row>
-            <Grid.Column>
+        <Segment.Group horizontal>
+          <Segment>
+            {data.applicationsByEmployerReferenceId[0].applicantInfo
+              .firstName != null && (
               <Header as={"h2"}>
                 {`${data.applicationsByEmployerReferenceId[0].applicantInfo.firstName} ${data.applicationsByEmployerReferenceId[0].applicantInfo.lastName}`}
               </Header>
-              <Header as={"h3"}>
-                {
-                  data.applicationsByEmployerReferenceId[0].applicantInfo
-                    .emailAddress
-                }
-              </Header>
-              <Segment vertical>
-                Application Date:{" "}
-                {data.applicationsByEmployerReferenceId[0].dateApplied}
-              </Segment>
-            </Grid.Column>
-            <Grid.Column>
-              <Container fluid textAlign="center">
+            )}
+            <Header as={"h3"}>
+              {
+                data.applicationsByEmployerReferenceId[0].applicantInfo
+                  .emailAddress
+              }
+            </Header>
+            Application Date:
+            {data.applicationsByEmployerReferenceId[0].dateApplied}
+          </Segment>
+          <Segment>
+            <Grid columns={2}>
+              <Grid.Column>
+                <Header as={"h2"}>Role | Team</Header>
+              </Grid.Column>
+              <Grid.Column width={3}>
                 <Button.Group>
-                  <Button color="red">Reject Applicant</Button>
+                  <Button compact color="red">
+                    Reject Applicant
+                  </Button>
                   <Button.Or />
-                  <Button color="green">Reach Out</Button>
+                  <Button compact color="green">
+                    Reach Out
+                  </Button>
                 </Button.Group>
-              </Container>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Tab panes={panes} />
-          </Grid.Row>
-        </Grid>
+              </Grid.Column>
+            </Grid>
+          </Segment>
+        </Segment.Group>
+
+        <Tab panes={panes} />
       </Container>
     );
   }
