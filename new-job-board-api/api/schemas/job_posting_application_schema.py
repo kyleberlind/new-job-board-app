@@ -28,7 +28,9 @@ class Query(graphene.ObjectType):
         JobPostingApplicationObject, employer_id=graphene.Int())
     applications_by_employer_reference_id = graphene.List(
         JobPostingApplicationObject, employer_reference_id=graphene.String())
-
+    applications_by_employer_applicant_id = graphene.List(
+        JobPostingApplicationObject, employer_id=graphene.Int())
+        
     @staticmethod
     def resolve_applications_by_employer_id(parent, info, **args):
         """Resolves the job posting applications by the employer ID"""
@@ -48,5 +50,15 @@ class Query(graphene.ObjectType):
             )
         ).all()
 
+    @staticmethod
+    def resolve_applications_by_employer_applicant_id(parent, info, **args):
+        """Resolves the job posting applications by the applicant ID"""
+        applicant_id = args.get('applicant_id')
+        applications_query = JobPostingApplicationObject.get_query(info)
+        return applications_query.filter(
+            JobPostingApplicationModelSQLAlchemy.applicant_id.contains(
+                applicant_id
+            )
+        ).all()
 
 job_posting_schema = graphene.Schema(query=Query)

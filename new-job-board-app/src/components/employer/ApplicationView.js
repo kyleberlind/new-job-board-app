@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   Card,
@@ -10,32 +10,15 @@ import {
   Button,
   Container,
 } from "semantic-ui-react";
-import { loadJobApplicantionByEmployerReferenceId } from "../../services/employer/EmployerServices";
+import { useQuery } from "@apollo/client";
+import { GET_APPLICATION_BY_REFERENCE_ID } from "../../services/graphql/employer/EmployerQueries";
 
 const ApplicationView = (props) => {
-  const [jobApplication, setJobApplications] = useState({});
-  const [isApplicationLoading, setIsApplicationLoading] = useState(true);
-
-  useEffect(() => {
-    setIsApplicationLoading(true);
-    loadJobApplicantionByEmployerReferenceId(
-      props.match.params.employer_reference_id
-    )
-      .then((response) => {
-        response.json().then((data) => {
-          if (data["hasError"]) {
-            console.log(data["errorMessage"]);
-          } else {
-            setJobApplications(data);
-          }
-          setIsApplicationLoading(false);
-        });
-      })
-      .catch((error) => {
-        setIsApplicationLoading(false);
-        console.log(error);
-      });
-  }, []);
+  const { loading, error, data } = useQuery(GET_APPLICATION_BY_REFERENCE_ID, {
+    variables: {
+      employerReferenceId: props.match.params.employer_reference_id,
+    },
+  });
 
   const panes = [
     { menuItem: "Resume", render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> },
@@ -45,46 +28,47 @@ const ApplicationView = (props) => {
     },
   ];
 
-  return (
-    <Card fluid>
-      {isApplicationLoading ? (
-        <Loader active />
-      ) : (
-        <Container fluid>
-          <Grid columns={2}>
-            <Grid.Row>
-              <Grid.Column>
-                <Header as={"h2"}>
-                  {`${jobApplication.applicantInfo.firstName} ${jobApplication.applicantInfo.lastName}`}
-                </Header>
-                <Header as={"h3"}>
-                  {jobApplication.applicantInfo.emailAddress}{" "}
-                </Header>
-                <Segment vertical>
-                  Application Date: {jobApplication.dateApplied}
-                </Segment>
-                <Segment vertical>
-                  Application ID: {jobApplication.applicationId}
-                </Segment>
-              </Grid.Column>
-              <Grid.Column>
-                <Container fluid textAlign="center">
-                  <Button.Group>
-                    <Button color="red">Reject Applicant</Button>
-                    <Button.Or />
-                    <Button color="green">Reach Out</Button>
-                  </Button.Group>
-                </Container>
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Tab panes={panes} />
-            </Grid.Row>
-          </Grid>
-        </Container>
-      )}
-    </Card>
-  );
+  if (error) {
+    return <Card>Error!</Card>;
+  } else if (loading) {
+    return <Loader active />;
+  } else {
+    return (
+      <Container fluid>
+        <Grid columns={2}>
+          <Grid.Row>
+            <Grid.Column>
+              <Header as={"h2"}>
+                {`${data.applicationsByEmployerReferenceId[0].applicantInfo.firstName} ${data.applicationsByEmployerReferenceId[0].applicantInfo.lastName}`}
+              </Header>
+              <Header as={"h3"}>
+                {
+                  data.applicationsByEmployerReferenceId[0].applicantInfo
+                    .emailAddress
+                }
+              </Header>
+              <Segment vertical>
+                Application Date:{" "}
+                {data.applicationsByEmployerReferenceId[0].dateApplied}
+              </Segment>
+            </Grid.Column>
+            <Grid.Column>
+              <Container fluid textAlign="center">
+                <Button.Group>
+                  <Button color="red">Reject Applicant</Button>
+                  <Button.Or />
+                  <Button color="green">Reach Out</Button>
+                </Button.Group>
+              </Container>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Tab panes={panes} />
+          </Grid.Row>
+        </Grid>
+      </Container>
+    );
+  }
 };
 
 ApplicationView.propTypes = {
