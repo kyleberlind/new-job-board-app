@@ -1,4 +1,10 @@
 import React, { useState } from "react";
+<<<<<<< Updated upstream
+=======
+import { useFormFields } from "../../../libs/hooks/useFormFields";
+import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
+import PropTypes from "prop-types";
+>>>>>>> Stashed changes
 import {
   Form,
   Button,
@@ -8,11 +14,18 @@ import {
   Alert,
   Card,
   Modal,
+<<<<<<< Updated upstream
 } from "react-bootstrap";
 import { useFormFields } from "../../../libs/hooks/useFormFields";
 import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
 import { Dropdown, Label, Checkbox, Icon } from "semantic-ui-react";
+=======
+  Card,
+  Container,
+  Form,
+} from "semantic-ui-react";
+>>>>>>> Stashed changes
 
 import "./css/CreateJobPosting.css";
 
@@ -125,6 +138,7 @@ const CreateJobPostingModal = (props) => {
   };
 
   return (
+<<<<<<< Updated upstream
     <div className="root">
       <Modal
         show={props.showCreateJobPostingModal}
@@ -148,116 +162,55 @@ const CreateJobPostingModal = (props) => {
             }}
           >
             <Card>
+=======
+    <Modal
+      onClose={() => props.setShowCreateJobPostingModal(false)}
+      onOpen={() => props.setShowCreateJobPostingModal(true)}
+      open={props.showCreateJobPostingModal}
+      closeIcon="cancel"
+    >
+      <Modal.Header>
+        <>Create Job Posting</>
+      </Modal.Header>
+      <Modal.Content>
+        <Form
+          onSubmit={(event) => {
+            handleSubmitButtonClick(event);
+          }}
+        >
+          <Card fluid>
+            <Card.Content>
+>>>>>>> Stashed changes
               <Card.Header>Location</Card.Header>
-              <Card.Body>
-                <Container>
-                  <Row>
-                    <Col>
-                      <Form.Group controlId="city">
-                        <Form.Label>City</Form.Label>
-                        <Form.Control
-                          required
-                          value={jobPostingLocation.city}
-                          onChange={handleJobPostingLocationChange}
-                          placeholder="Enter a City"
-                        />
-                        <Form.Control.Feedback type="invalid">
-                          Please enter a city, state and zipcode
-                        </Form.Control.Feedback>
-                      </Form.Group>
-                    </Col>
-                    <Col xs={3}>
-                      <Form.Group controlId="state">
-                        <Form.Label>State</Form.Label>
-                        <Form.Control
-                          required
-                          value={jobPostingLocation.state}
-                          onChange={handleJobPostingLocationChange}
-                          placeholder="Enter a State"
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col xs={3}>
-                      <Form.Group controlId="zipCode">
-                        <Form.Label>Zip Code</Form.Label>
-                        <Form.Control
-                          required
-                          value={jobPostingLocation.zipCode}
-                          onChange={handleJobPostingLocationChange}
-                          placeholder="Enter a Zip Code"
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Container>
-              </Card.Body>
-            </Card>
-            <Card>
-              <Card.Header>General Info</Card.Header>
-              <Card.Body>
-                <Container>
-                  <Row>
-                    <Col xs={6}>
-                      <Form.Group controlId="role">
-                        <Form.Label>Job Role</Form.Label>
-                        <Form.Control
-                          required
-                          value={jobPostingGeneralInfo.role}
-                          onChange={handleJobPostingGeneralInfoChange}
-                          placeholder="Enter a Job Role"
-                        />
-                        <Form.Control.Feedback type="invalid">
-                          Please enter a job role
-                        </Form.Control.Feedback>
-                      </Form.Group>
-                    </Col>
-                    <Col xs={6}>
-                      <Form.Group controlId="team">
-                        <Form.Label>Team</Form.Label>
-                        <Form.Control
-                          value={jobPostingGeneralInfo.team}
-                          onChange={handleJobPostingGeneralInfoChange}
-                          placeholder="Enter a Team"
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <div className="textArea">
-                        <Form.Group controlId="description">
-                          <Form.Label>Job Description</Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            rows={6}
-                            required
-                            value={jobPostingGeneralInfo.description}
-                            onChange={handleJobPostingGeneralInfoChange}
-                            placeholder="Enter Job Description"
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            Please enter a Job Description
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                      </div>
-                    </Col>
-                  </Row>
-                </Container>
-              </Card.Body>
-            </Card>
-            <Card>
-              <Card.Header>Job Posting Questions</Card.Header>
-              <Card.Body>
-                <Dropdown
-                  placeholder="Select Job Posting Questions"
+              <Form.Group widths="equal" inline>
+                <Form.Input
+                  controlId="city"
                   fluid
-                  search
-                  selection
-                  multiple
-                  renderLabel={renderItemContent}
-                  onChange={addJobPostingField}
-                  options={jobPostingFieldOptions()}
+                  required
+                  label="City"
+                  value={jobPostingLocation.city}
+                  onChange={handleJobPostingLocationChange}
+                  placeholder="Enter a City"
+                  error={{
+                    content: "Please enter a city",
+                    pointing: "below",
+                  }}
                 />
+
+                <Form.Input
+                  controlId="state"
+                  fluid
+                  label="State"
+                  required
+                  value={jobPostingLocation.state}
+                  onChange={handleJobPostingLocationChange}
+                  placeholder="Enter a State"
+                  error={{
+                    content: "Please enter a state",
+                    pointing: "below",
+                  }}
+                />
+<<<<<<< Updated upstream
               </Card.Body>
             </Card>
             <Container fluid>
@@ -294,6 +247,100 @@ const CreateJobPostingModal = (props) => {
         {validationMessage}
       </Alert>
     </div>
+=======
+
+                <Form.Input
+                  controlId="zipCode"
+                  label="Zip Code"
+                  fluid
+                  required
+                  value={jobPostingLocation.zipCode}
+                  onChange={handleJobPostingLocationChange}
+                  placeholder="Enter a Zip Code"
+                  error={{
+                    content: "Please enter a zip code ",
+                    pointing: "below",
+                  }}
+                />
+              </Form.Group>
+            </Card.Content>
+          </Card>
+          <Card fluid>
+            <Card.Content>
+              <Card.Header textAlign="left">General Info</Card.Header>
+
+              <Form.Group widths="equal" inline>
+                <Form.Input
+                  fluid
+                  controlId="role"
+                  label="Job Role"
+                  
+                  value={jobPostingGeneralInfo.role}
+                  onChange={handleJobPostingGeneralInfoChange}
+                  placeholder="Enter a Job Role"
+                  error={{
+                    content: "Please enter a job role",
+                    pointing: "below",
+                  }}
+                />
+                <Form.Input
+                  fluid
+                  controlId="team"
+                  label="Team"
+                  value={jobPostingGeneralInfo.team}
+                  onChange={handleJobPostingGeneralInfoChange}
+                  placeholder="Enter a Team"
+                />
+              </Form.Group>
+
+              <Form.Group widths="equal"  controlId="description">
+                <Form.TextArea
+                  label="Job Description"
+                  fluid
+                  value={jobPostingGeneralInfo.description}
+                  onChange={handleJobPostingGeneralInfoChange}
+                  placeholder="Enter Job Description"
+                  error={{
+                    content: "Please enter a Job Description",
+                    pointing: "below",
+                  }}
+                />
+              </Form.Group>
+            </Card.Content>
+          </Card>
+          <Card fluid>
+            <Card.Content>
+              <Card.Header>Job Posting Questions</Card.Header>
+              <Dropdown
+                placeholder="Select Job Posting Questions"
+                fluid
+                search
+                selection
+                multiple
+                renderLabel={renderItemContent}
+                onChange={addJobPostingField}
+                options={jobPostingFieldOptions()}
+              />
+            </Card.Content>
+          </Card>
+          <Container fluid>
+            <Button className="button" type="submit" variant="primary">
+              Submit
+            </Button>
+            <Button
+              className="button"
+              onClick={() => {
+                props.setShowCreateJobPostingModal(false);
+              }}
+              variant="secondary"
+            >
+              Cancel
+            </Button>
+          </Container>
+        </Form>
+      </Modal.Content>
+    </Modal>
+>>>>>>> Stashed changes
   );
 };
 
@@ -317,7 +364,6 @@ CreateJobPostingModal.propTypes = {
 };
 
 CreateJobPostingModal.defaultProps = {
-  edit: false,
   jobPosting: {
     generalInfo: {
       role: "",

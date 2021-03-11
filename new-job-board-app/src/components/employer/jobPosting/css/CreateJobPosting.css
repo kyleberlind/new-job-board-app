@@ -5,17 +5,6 @@
     justify-content: center;
 }
 
-.jobPostingForm {
-  border-radius: 8px;
-  border: 2px solid #146edb;
-  display: flex;
-  margin: 16px;
-  flex-direction: column;
-  padding: 16px;
-  width: 50%;
-  height:100%;
-}
-
 .button {
   width: 100%;
 }

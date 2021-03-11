@@ -40,6 +40,15 @@ const ApplicationView = (props) => {
     );
   };
 
+<<<<<<< Updated upstream
+=======
+  const formattedJobLocation = () => {
+    return `${data.applicationsByEmployerReferenceId[0].jobPosting.location.city}, 
+            ${data.applicationsByEmployerReferenceId[0].jobPosting.location.state}, 
+            ${data.applicationsByEmployerReferenceId[0].jobPosting.location.zipCode}`;
+  };
+
+>>>>>>> Stashed changes
   if (error) {
     return <Card>Error!</Card>;
   } else if (loading) {
