@@ -16,6 +16,17 @@ export const GET_APPLICATION_BY_REFERENCE_ID = gql`
         firstName
         lastName
       }
+      jobPosting {
+        id
+        role
+        description
+        team
+        location {
+          city
+          state
+          zipCode
+        }
+      }
     }
   }
 `;

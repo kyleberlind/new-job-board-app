@@ -26,10 +26,16 @@ def create_app():
     app.register_blueprint(applicant_view)
     CORS(app)
 
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config["SQLALCHEMY_DATABASE_URI"] = BASE_DB_PATH + "job"
     app.config["SQLALCHEMY_BINDS"] = {
         'user': BASE_DB_PATH + "user",
+    }
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "max_overflow": 15,
+        "pool_pre_ping": True,
+        "pool_recycle": 60 * 60,
+        "pool_size": 10,
     }
 
     db.init_app(app)
