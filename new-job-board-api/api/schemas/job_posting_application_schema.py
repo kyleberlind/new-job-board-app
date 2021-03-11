@@ -1,5 +1,6 @@
 """03/04/2021"""
 import graphene
+from sqlalchemy.orm.session import close_all_sessions
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from ..models.job_posting.job_posting_application_model import JobPostingApplicationModelSQLAlchemy
 from ..models.job_posting.job_posting_model import JobPostingModelSQLAlchemy
@@ -72,15 +73,17 @@ class Query(graphene.ObjectType):
         """Resolves the job posting applications by the employer ID"""
         employer_id = args.get('employer_id')
         applications_query = JobPostingApplicationObject.get_query(info)
+        #close the connection to prevent QueryPool Overflow, TODO revisit to see if this is correct
+        close_all_sessions()
         return applications_query.filter(
             JobPostingApplicationModelSQLAlchemy.employer_id.contains(employer_id)).all()
 
     @staticmethod
     def resolve_applications_by_employer_reference_id(parent, info, **args):
         """Resolves the job posting applications by the employer reference ID"""
-
         employer_reference_id = args.get('employer_reference_id')
         applications_query = JobPostingApplicationObject.get_query(info)
+        close_all_sessions()
         return applications_query.filter(
             JobPostingApplicationModelSQLAlchemy.employer_reference_id.contains(
                 employer_reference_id
@@ -92,11 +95,10 @@ class Query(graphene.ObjectType):
         """Resolves the job posting applications by the applicant ID"""
         applicant_id = args.get('applicant_id')
         applications_query = JobPostingApplicationObject.get_query(info)
+        close_all_sessions()
         return applications_query.filter(
             JobPostingApplicationModelSQLAlchemy.applicant_id.contains(
                 applicant_id
             )
         ).all()
-
-
 job_posting_schema = graphene.Schema(query=Query)

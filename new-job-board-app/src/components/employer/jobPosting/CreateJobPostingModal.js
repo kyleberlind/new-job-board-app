@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import {
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  Alert,
-  Card,
-  Modal,
-} from "react-bootstrap";
+import { Form, Container, Row, Col, Alert, Card } from "react-bootstrap";
 import { useFormFields } from "../../../libs/hooks/useFormFields";
 import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
-import { Dropdown, Label, Checkbox, Icon } from "semantic-ui-react";
+import {
+  Dropdown,
+  Label,
+  Checkbox,
+  Icon,
+  Button,
+  Modal,
+} from "semantic-ui-react";
 
 import "./css/CreateJobPosting.css";
 
@@ -56,13 +54,17 @@ const CreateJobPostingModal = (props) => {
   };
 
   const makeJobPostingFieldRequired = (fieldId) => {
-    const currentJobPostingFieldIdsMappedToRequiredFlag = {...jobPostingFieldIdsMappedToRequiredFlag}
+    const currentJobPostingFieldIdsMappedToRequiredFlag = {
+      ...jobPostingFieldIdsMappedToRequiredFlag,
+    };
     if (currentJobPostingFieldIdsMappedToRequiredFlag[fieldId]) {
       currentJobPostingFieldIdsMappedToRequiredFlag[fieldId] = false;
     } else {
       currentJobPostingFieldIdsMappedToRequiredFlag[fieldId] = true;
     }
-    setJobPostingFieldIdsMappedToRequiredFlag(currentJobPostingFieldIdsMappedToRequiredFlag)
+    setJobPostingFieldIdsMappedToRequiredFlag(
+      currentJobPostingFieldIdsMappedToRequiredFlag
+    );
   };
 
   const handleSubmitButtonClick = (event) => {
@@ -127,19 +129,19 @@ const CreateJobPostingModal = (props) => {
   return (
     <div className="root">
       <Modal
-        show={props.showCreateJobPostingModal}
-        onHide={() => props.setShowCreateJobPostingModal(false)}
-        size="lg"
+        onClose={() => props.setShowCreateJobPostingModal(false)}
+        onOpen={() => props.setShowCreateJobPostingModal(true)}
+        open={props.showCreateJobPostingModal}
         centered
       >
-        <Modal.Header closeButton>
+        <Modal.Header>
           {props.edit ? (
-            <Modal.Title>Edit Job Posting</Modal.Title>
+            <>Edit Job Posting</>
           ) : (
-            <Modal.Title>Create Job Posting</Modal.Title>
+            <>Create Job Posting</>
           )}
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Content>
           <Form
             noValidate
             validated={validated}
@@ -281,7 +283,7 @@ const CreateJobPostingModal = (props) => {
               </Row>
             </Container>
           </Form>
-        </Modal.Body>
+        </Modal.Content>
       </Modal>
       <Alert
         show={validationMessage.length !== 0}
