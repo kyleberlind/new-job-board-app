@@ -13,6 +13,12 @@ flask-cors = "*"
 flask-bcrypt = "*"
 autopep8 = "*"
 awscli = "*"
+flask-graphql = "*"
+flask-sqlalchemy = "*"
+graphene = "*"
+graphene-sqlalchemy = "*"
+pylint-flask-sqlalchemy = "*"
+pylint-flask = "*"
 
 [dev-packages]
 flask = "*"

@@ -5,14 +5,14 @@ import EmployerConsole from "./console/EmployerConsole.js";
 import EmployerConsoleNavBar from "./console/EmployerConsoleNavBar.js";
 import EmployerAccount from "./EmployerAccount";
 import CreateJobPostingModal from "./jobPosting/CreateJobPostingModal";
-
-import { Container, Modal, Button } from "react-bootstrap";
+import ApplicationView from "./ApplicationView";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { logoutService } from "../../services/AccountServices";
 import {
   loadEmployerInfoService,
   loadJobPostingFieldsService,
 } from "../../services/employer/EmployerServices";
+import { Container } from "semantic-ui-react";
 
 function Employer() {
   const [employer, setEmployer] = useState({});
@@ -80,6 +80,10 @@ function Employer() {
                 jobPostingFields={jobPostingFields}
               />
             )}
+          />
+          <Route
+            path="/employer/application/:employer_reference_id"
+            component={ApplicationView}
           />
         </Switch>
       </Router>

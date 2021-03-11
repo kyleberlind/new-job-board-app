@@ -8,7 +8,14 @@ import {
   NO_JOB_POSTINGS_MESSAGE,
   MY_JOB_POSTINGS_TITLE,
 } from "../constants/EmployerConstants";
-import { Search, Grid, Card, Container, Loader } from "semantic-ui-react";
+import {
+  Search,
+  Grid,
+  Card,
+  Container,
+  Loader,
+  Header,
+} from "semantic-ui-react";
 
 //TODO refactor all of the crud functionality to update a centralized redux state, then create toast confirmational messages
 const EmployerConsole = (props) => {
@@ -64,60 +71,62 @@ const EmployerConsole = (props) => {
   };
 
   return (
-    <Grid>
-      <Grid.Row>
-        <Grid.Column>
-          <Card fluid>
-            <Card.Content>
-              <Card.Header>
+    <Container fluid>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column>
+            <Card fluid>
+              <Card.Content>
                 <Grid>
-                  <Grid.Row>
-                    <Grid.Column width={2}>
-                      <Container textAlign="center">
-                        {MY_JOB_POSTINGS_TITLE}
+                  <Grid.Row columns={2}>
+                    <Grid.Column width={3}>
+                      <Container>
+                        <Header as="h2" content={MY_JOB_POSTINGS_TITLE} />
                       </Container>
                     </Grid.Column>
-                    <Grid.Column width={8}>
-                      <Search fluid></Search>
+                    <Grid.Column width={9}>
+                      <Search input={{ fluid: true }} fluid></Search>
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>
-              </Card.Header>
-              {areJobPostingsLoading ? (
-                <Loader active />
-              ) : (
-                generateJobPostings()
-              )}
-            </Card.Content>
-          </Card>
-        </Grid.Column>
-      </Grid.Row>
-      {Object.keys(selectedJobPosting).length !== 0 && (
-        <Grid>
-          <EditJobPostingModal
-            jobPosting={selectedJobPosting}
-            jobPostingFields={props.jobPostingFields}
-            showEditJobPostingModal={showEditJobPostingModal}
-            setShowEditJobPostingModal={setShowEditJobPostingModal}
-          ></EditJobPostingModal>
-          <DeleteJobPostingConfirmationModal
-            jobPosting={selectedJobPosting}
-            showDeleteJobPostingConfirmationModal={
-              showDeleteJobPostingConfirmationModal
-            }
-            setShowDeleteJobPostingConfirmationModal={
-              setShowDeleteJobPostingConfirmationModal
-            }
-          ></DeleteJobPostingConfirmationModal>
-        </Grid>
-      )}
-    </Grid>
+              </Card.Content>
+              <Card.Content>
+                {areJobPostingsLoading ? (
+                  <Loader active />
+                ) : (
+                  generateJobPostings()
+                )}
+              </Card.Content>
+            </Card>
+          </Grid.Column>
+        </Grid.Row>
+        {Object.keys(selectedJobPosting).length !== 0 && (
+          <Grid>
+            <EditJobPostingModal
+              jobPosting={selectedJobPosting}
+              jobPostingFields={props.jobPostingFields}
+              showEditJobPostingModal={showEditJobPostingModal}
+              setShowEditJobPostingModal={setShowEditJobPostingModal}
+            ></EditJobPostingModal>
+            <DeleteJobPostingConfirmationModal
+              jobPosting={selectedJobPosting}
+              showDeleteJobPostingConfirmationModal={
+                showDeleteJobPostingConfirmationModal
+              }
+              setShowDeleteJobPostingConfirmationModal={
+                setShowDeleteJobPostingConfirmationModal
+              }
+            ></DeleteJobPostingConfirmationModal>
+          </Grid>
+        )}
+      </Grid>
+    </Container>
   );
 };
 
 EmployerConsole.propTypes = {
   employer: PropTypes.object.isRequired,
-  jobPostingFields: PropTypes.array.isRequired
+  jobPostingFields: PropTypes.array.isRequired,
 };
 
 export default EmployerConsole;

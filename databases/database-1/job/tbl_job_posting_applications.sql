@@ -5,5 +5,6 @@ create table tbl_job_posting_applications (
   applicant_id INT NOT NULL,
 	employer_id INT NOT NULL,
   date_applied datetime Default Now(),
+  employer_reference_id NVARCHAR(36) NOT NULL;
   primary key (id)
 );
