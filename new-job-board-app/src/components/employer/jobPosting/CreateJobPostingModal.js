@@ -1,10 +1,7 @@
 import React, { useState } from "react";
-<<<<<<< Updated upstream
-=======
 import { useFormFields } from "../../../libs/hooks/useFormFields";
 import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
->>>>>>> Stashed changes
 import {
   Form,
   Button,
@@ -14,18 +11,10 @@ import {
   Alert,
   Card,
   Modal,
-<<<<<<< Updated upstream
-} from "react-bootstrap";
-import { useFormFields } from "../../../libs/hooks/useFormFields";
-import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
-import PropTypes from "prop-types";
-import { Dropdown, Label, Checkbox, Icon } from "semantic-ui-react";
-=======
   Card,
   Container,
   Form,
 } from "semantic-ui-react";
->>>>>>> Stashed changes
 
 import "./css/CreateJobPosting.css";
 
@@ -138,31 +127,6 @@ const CreateJobPostingModal = (props) => {
   };
 
   return (
-<<<<<<< Updated upstream
-    <div className="root">
-      <Modal
-        show={props.showCreateJobPostingModal}
-        onHide={() => props.setShowCreateJobPostingModal(false)}
-        size="lg"
-        centered
-      >
-        <Modal.Header closeButton>
-          {props.edit ? (
-            <Modal.Title>Edit Job Posting</Modal.Title>
-          ) : (
-            <Modal.Title>Create Job Posting</Modal.Title>
-          )}
-        </Modal.Header>
-        <Modal.Body>
-          <Form
-            noValidate
-            validated={validated}
-            onSubmit={(event) => {
-              handleSubmitButtonClick(event);
-            }}
-          >
-            <Card>
-=======
     <Modal
       onClose={() => props.setShowCreateJobPostingModal(false)}
       onOpen={() => props.setShowCreateJobPostingModal(true)}
@@ -180,7 +144,6 @@ const CreateJobPostingModal = (props) => {
         >
           <Card fluid>
             <Card.Content>
->>>>>>> Stashed changes
               <Card.Header>Location</Card.Header>
               <Form.Group widths="equal" inline>
                 <Form.Input
@@ -210,44 +173,6 @@ const CreateJobPostingModal = (props) => {
                     pointing: "below",
                   }}
                 />
-<<<<<<< Updated upstream
-              </Card.Body>
-            </Card>
-            <Container fluid>
-              <Row>
-                <Col>
-                  <Button className="button" type="submit" variant="primary">
-                    Submit
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    className="button"
-                    onClick={() => {
-                      props.setShowCreateJobPostingModal(false);
-                    }}
-                    variant="secondary"
-                  >
-                    Cancel
-                  </Button>
-                </Col>
-              </Row>
-            </Container>
-          </Form>
-        </Modal.Body>
-      </Modal>
-      <Alert
-        show={validationMessage.length !== 0}
-        variant={validationMessageType}
-        dismissible
-        onClose={() => {
-          setValidationMessage("");
-        }}
-      >
-        {validationMessage}
-      </Alert>
-    </div>
-=======
 
                 <Form.Input
                   controlId="zipCode"
@@ -340,7 +265,6 @@ const CreateJobPostingModal = (props) => {
         </Form>
       </Modal.Content>
     </Modal>
->>>>>>> Stashed changes
   );
 };
 

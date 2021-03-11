@@ -13,16 +13,4 @@ class JobPostingGeneralInfoModel(BaseJobModel):
     description:str
     date_created: Optional[datetime]
     applied: Optional[bool]
-
-class JobPostingGeneralInfoModelSQLAlchemy(db.Model):
-    """Model to represent the job posting general Info in SQLAlchemy"""
-    __tablename__ = "tbl_job_posting"
-    extend_existing=True
-    id = db.Column(db.Integer, primary_key=True)
-    employer_id = db.Column(db.Integer)
-    role = db.Column(db.String(64))
-    description = db.Column(db.String(1024))
-    date_created = db.Column(db.DateTime)
-    applied = db.Column(db.Integer)
-    def __repr__(self):
-        return '<JobPostingGeneralInfo %r>' % self.id
+    
