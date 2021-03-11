@@ -1,7 +1,7 @@
 use job;
 create table tbl_job_posting_location (
 	id INT NOT NULL AUTO_INCREMENT,
-	job_id NVARCHAR(64) NOT NULL,
+	job_id INT NOT NULL,
 	city NVARCHAR(64) NOT NULL,
     state NVARCHAR(64) NOT NULL,
     zip_code NVARCHAR(64) NOT NULL,

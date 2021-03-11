@@ -9,7 +9,6 @@ import {
   Button,
   Icon,
   Header,
-  Segment,
   Item,
 } from "semantic-ui-react";
 
