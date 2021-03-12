@@ -14,7 +14,7 @@ function EmployerConsoleNavBar(props) {
       />
       <Menu.Menu position="right">
         <Menu.Item>
-          <Button onClick={props.handleLogout}>Logout</Button>
+          <Button fluid onClick={props.handleLogout}>Logout</Button>
         </Menu.Item>
       </Menu.Menu>
     </Menu>

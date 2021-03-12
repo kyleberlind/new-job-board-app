@@ -111,6 +111,7 @@ const JobPostingAccordion = (props) => {
                         <Grid.Column>
                           <Button
                             basic
+                            fluid
                             color="blue"
                             size="small"
                             onClick={() => {
@@ -124,6 +125,7 @@ const JobPostingAccordion = (props) => {
                         <Grid.Column>
                           <Button
                             basic
+                            fluid
                             color="red"
                             size="small"
                             onClick={() => {
