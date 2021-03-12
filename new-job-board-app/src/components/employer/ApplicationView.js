@@ -77,11 +77,11 @@ const ApplicationView = (props) => {
               </Grid.Column>
               <Grid.Column width={3}>
                 <Button.Group>
-                  <Button compact color="red">
+                  <Button fluid compact color="red">
                     Reject Applicant
                   </Button>
                   <Button.Or />
-                  <Button compact color="green">
+                  <Button fluid compact color="green">
                     Reach Out
                   </Button>
                 </Button.Group>
