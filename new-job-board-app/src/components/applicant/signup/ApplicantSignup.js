@@ -69,6 +69,9 @@ function ApplicantSignup() {
       <h1>
         Applicant Signup
       </h1>
+      <Button href="/employer-signup" >
+        Sign Up As Employer
+      </Button>
       <Form
         noValidate
         className="form"

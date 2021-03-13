@@ -63,11 +63,6 @@ function Employer() {
       />
       <Router>
         <Switch>
-          <Route path="/employer/" exact>
-            <h2>Hello {employer}</h2>
-          </Route>
-          <Route path="/employer/signup" component={EmployerSignup} />
-          <Route path="/employer/login" component={UserLogin} />
           <Route
             path="/employer/account"
             render={() => <EmployerAccount employer={employer} />}

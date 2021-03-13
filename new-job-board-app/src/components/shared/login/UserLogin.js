@@ -1,9 +1,10 @@
-import { Button, InputGroup, Form, FormControl, Toast } from "react-bootstrap";
 import {
   loginUserService,
   getSessionService,
 } from "../../../services/AccountServices";
 import React, { useState, useEffect } from "react";
+import { Form, Input, TextArea } from "semantic-ui-react-form-validator";
+import { Button, Card, Container } from "semantic-ui-react";
 
 import "./css/UserLogin.css";
 
@@ -36,75 +37,65 @@ function UserLogin() {
   };
 
   const handleSubmitButtonClick = (event) => {
-    const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
-    if (form.checkValidity() === true) {
-      loginUserService(email, password, 2)
-        .then((response) => {
-          response.json().then((data) => {
-            if (data["hasError"] === true) {
-              setValidationMessage(data["errorMessage"]);
+    loginUserService(email, password, 2)
+      .then((response) => {
+        response.json().then((data) => {
+          if (data["hasError"] === true) {
+            setValidationMessage(data["errorMessage"]);
+          } else {
+            if (data["userType"] === 1) {
+              window.location.assign("/applicant/applicant-console");
             } else {
-              if (data["userType"] === 1) {
-                window.location.assign("/applicant/applicant-console");
-              } else {
-                window.location.assign("/employer/employer-console");
-              }
+              window.location.assign("/employer/employer-console");
             }
-          });
-        })
-        .catch((error) => {
-          setValidationMessage(error);
+          }
         });
-    }
-    setValidated(true);
+      })
+      .catch((error) => {
+        setValidationMessage(error);
+      });
   };
 
   return (
-    <div className="root">
-      <h1>Login</h1>
-      <div className="loginForm">
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={handleSubmitButtonClick}
-        >
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Email Address</Form.Label>
-            <Form.Control
-              required
+    <Container textAlign="center">
+      <Card>
+        <Card.Header>Login</Card.Header>
+        <Card.Content>
+          <Form onSubmit={handleSubmitButtonClick}>
+            <Input
+              validators={["required", "isEmail"]}
+              errorMessages={[
+                "Please enter an email address",
+                "Please enter a valid mail address",
+              ]}
               onChange={(input) => onEmailChange(input)}
+              value={email}
               type="email"
-              placeholder="Enter email"
+              placeholder="Enter an Email Address"
             />
-            <Form.Control.Feedback type="invalid">
-              Please enter a valid email address
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              required
+
+            <Input
+              validators={["required"]}
+              errorMessages={["Please enter a password"]}
               onChange={(input) => onPasswordChange(input)}
+              value={password}
               type="password"
               placeholder="Password"
             />
-            <Form.Control.Feedback type="invalid">
-              Please enter a password
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Button className="submitButton" type="submit" variant="primary">
-            Submit
-          </Button>
-        </Form>
+            <Button fluid type="submit">
+              Submit
+            </Button>
+          </Form>
+        </Card.Content>
         {validationMessage.length !== 0 && (
           <div className="alert alert-danger" role="alert">
             {validationMessage}
           </div>
         )}
-      </div>
-    </div>
+      </Card>
+    </Container>
   );
 }
 

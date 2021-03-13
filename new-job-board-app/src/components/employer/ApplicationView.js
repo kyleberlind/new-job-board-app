@@ -31,12 +31,12 @@ const ApplicationView = (props) => {
 
   const getJobPostingHeader = () => {
     return (
-      data.applicationsByEmployerReferenceId[0].jobPosting.generalInfo.role +
-      (data.applicationsByEmployerReferenceId[0].jobPosting.generalInfo.team !==
+      data.applicationsByEmployerReferenceId[0].jobPosting.role +
+      (data.applicationsByEmployerReferenceId[0].jobPosting.team !==
       null
         ? " | "
         : "") +
-      data.applicationsByEmployerReferenceId[0].jobPosting.generalInfo.team
+      data.applicationsByEmployerReferenceId[0].jobPosting.team
     );
   };
 
@@ -73,7 +73,8 @@ const ApplicationView = (props) => {
           <Segment>
             <Grid columns={2}>
               <Grid.Column>
-                <Header as={"h2"}>Role | Team</Header>
+                <Header as={"h2"}>{getJobPostingHeader()}</Header>
+                <Header as={"h3"}>{formattedJobLocation()}</Header>
               </Grid.Column>
               <Grid.Column width={3}>
                 <Button.Group>
@@ -89,7 +90,6 @@ const ApplicationView = (props) => {
             </Grid>
           </Segment>
         </Segment.Group>
-
         <Tab panes={panes} />
       </Container>
     );

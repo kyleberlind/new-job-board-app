@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { useFormFields } from "../../../libs/hooks/useFormFields";
 import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
 import {
@@ -11,13 +10,14 @@ import {
   Checkbox,
   Dropdown,
   Icon,
+  Grid,
 } from "semantic-ui-react";
 import { Form, Input, TextArea } from "semantic-ui-react-form-validator";
 
 const CreateJobPostingModal = (props) => {
-  const [validated, setValidated] = useState(false);
-  const [validationMessageType, setValidationMessageType] = useState("success");
   const [validationMessage, setValidationMessage] = useState("");
+  const [validationMessageType, setValidationMessageType] = useState("");
+
   const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState(
     props.jobPosting.generalInfo
   );
@@ -74,37 +74,35 @@ const CreateJobPostingModal = (props) => {
   };
 
   const handleSubmitButtonClick = (event) => {
-    const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
-    if (form.checkValidity() === true) {
-      saveNewJobPostingService({
-        location: jobPostingLocation,
-        generalInfo: {
-          employerId: props.employer.employerId,
-          ...jobPostingGeneralInfo,
-        },
-        jobPostingFields: formatJobPostingFields(),
-      })
-        .then((response) => {
-          response.json().then((data) => {
-            if (data["hasError"]) {
-              setValidationMessage(data["errorMessage"]);
-              props.setShowCreateJobPostingModal(false);
-            } else if (data["success"]) {
-              setValidationMessageType("success");
-              setValidationMessage("Successfully saved job posting!");
-              window.location.assign("employer-console");
-            } else {
-              setValidationMessageType("danger");
-              setValidationMessage("Failed to save job posting");
-            }
-          });
-        })
-        .catch((error) => {
-          setValidationMessage(error["errorMessage"]);
+
+    saveNewJobPostingService({
+      location: jobPostingLocation,
+      generalInfo: {
+        employerId: props.employer.employerId,
+        ...jobPostingGeneralInfo,
+      },
+      jobPostingFields: formatJobPostingFields(),
+    })
+      .then((response) => {
+        response.json().then((data) => {
+          if (data["hasError"]) {
+            setValidationMessage(data["errorMessage"]);
+            props.setShowCreateJobPostingModal(false);
+          } else if (data["success"]) {
+            setValidationMessageType("success");
+            setValidationMessage("Successfully saved job posting!");
+            window.location.assign("employer-console");
+          } else {
+            setValidationMessageType("danger");
+            setValidationMessage("Failed to save job posting");
+          }
         });
-    }
+      })
+      .catch((error) => {
+        setValidationMessage(error["errorMessage"]);
+      });
   };
 
   const formatJobPostingFields = () => {
@@ -116,18 +114,34 @@ const CreateJobPostingModal = (props) => {
   const renderItemContent = (item) => {
     return (
       <Label horizontal>
-        <Icon name="delete" />
-        {item.text}
-        <Label.Detail>
-          <Checkbox
-            checked={!!jobPostingFieldIdsMappedToRequiredFlag[item.value]}
-            onChange={() => {
-              makeJobPostingFieldRequired(item.value);
-            }}
-            label="Mark Required"
+        <Label.Group>
+          {item.text}
+          <Icon
+            link
+            onClick={() => removeJobPostingField(item.value)}
+            name="delete"
           />
-        </Label.Detail>
+          <Label.Detail>
+            <Checkbox
+              checked={!!jobPostingFieldIdsMappedToRequiredFlag[item.value]}
+              onChange={() => {
+                makeJobPostingFieldRequired(item.value);
+              }}
+              label="Required"
+            />
+          </Label.Detail>
+        </Label.Group>
       </Label>
+    );
+  };
+
+  const removeJobPostingField = (fieldId) => {
+    const currentJobPostingFieldIdsMappedToRequiredFlag = {
+      ...jobPostingFieldIdsMappedToRequiredFlag,
+    };
+    delete currentJobPostingFieldIdsMappedToRequiredFlag[fieldId];
+    setJobPostingFieldIdsMappedToRequiredFlag(
+      currentJobPostingFieldIdsMappedToRequiredFlag
     );
   };
 
@@ -139,7 +153,7 @@ const CreateJobPostingModal = (props) => {
       closeIcon="cancel"
     >
       <Modal.Header>
-        <>Create Job Posting</>
+        Create Job Posting
       </Modal.Header>
       <Modal.Content>
         <Form
@@ -150,108 +164,121 @@ const CreateJobPostingModal = (props) => {
           <Card fluid>
             <Card.Content>
               <Card.Header>Location</Card.Header>
-
-              <Input
-                width={4}
-                required
-                name="city"
-                label="City"
-                validators={["required"]}
-                errorMessages={["Please enter a city"]}
-                value={jobPostingLocation.city}
-                onChange={(event) => {
-                  handleJobPostingChange(
-                    event,
-                    setJobPostingLocation,
-                    jobPostingLocation
-                  );
-                }}
-                placeholder="Enter a City"
-              />
-              <Input
-                width={4}
-                label="State"
-                name="state"
-                required
-                value={jobPostingLocation.state}
-                validators={["required"]}
-                errorMessages={["Please enter a state"]}
-                onChange={(event) => {
-                  handleJobPostingChange(
-                    event,
-                    setJobPostingLocation,
-                    jobPostingLocation
-                  );
-                }}
-                placeholder="Enter a State"
-              />
-              <Input
-                width={4}
-                label="Zip Code"
-                name="zipCode"
-                required
-                value={jobPostingLocation.zipCode}
-                validators={["required"]}
-                errorMessages={["Please enter a zip code"]}
-                onChange={(event) => {
-                  handleJobPostingChange(
-                    event,
-                    setJobPostingLocation,
-                    jobPostingLocation
-                  );
-                }}
-                placeholder="Enter a Zip Code"
-              />
+              <Grid columns={3}>
+                <Grid.Row>
+                  <Grid.Column>
+                    <Input
+                      name="city"
+                      label="City *"
+                      validators={["required"]}
+                      errorMessages={["Please enter a city"]}
+                      value={jobPostingLocation.city}
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingLocation,
+                          jobPostingLocation
+                        );
+                      }}
+                      placeholder="Enter a City"
+                    />
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Input
+                      label="State *"
+                      name="state"
+                      value={jobPostingLocation.state}
+                      validators={["required"]}
+                      errorMessages={["Please enter a state"]}
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingLocation,
+                          jobPostingLocation
+                        );
+                      }}
+                      placeholder="Enter a State"
+                    />
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Input
+                      label="Zip Code *"
+                      name="zipCode"
+                      value={jobPostingLocation.zipCode}
+                      validators={["required"]}
+                      errorMessages={["Please enter a zip code"]}
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingLocation,
+                          jobPostingLocation
+                        );
+                      }}
+                      placeholder="Enter a Zip Code"
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
             </Card.Content>
           </Card>
           <Card fluid>
             <Card.Content>
               <Card.Header textAlign="left">General Info</Card.Header>
-              <Input
-                name="role"
-                required
-                label="Job Role"
-                validators={["required"]}
-                errorMessages={["Please enter a job role"]}
-                value={jobPostingGeneralInfo.role}
-                onChange={(event) => {
-                  handleJobPostingChange(
-                    event,
-                    setJobPostingGeneralInfo,
-                    jobPostingGeneralInfo
-                  );
-                }}
-                placeholder="Enter a Job Role"
-              />
-              <Input
-                label="Team"
-                name="team"
-                value={jobPostingGeneralInfo.team}
-                onChange={(event) => {
-                  handleJobPostingChange(
-                    event,
-                    setJobPostingGeneralInfo,
-                    jobPostingGeneralInfo
-                  );
-                }}
-                placeholder="Enter a Team"
-              />
-              <TextArea
-                label="Job Description"
-                name="description"
-                required
-                value={jobPostingGeneralInfo.description}
-                validators={["required"]}
-                errorMessages={["Please enter a Job Description"]}
-                onChange={(event) => {
-                  handleJobPostingChange(
-                    event,
-                    setJobPostingGeneralInfo,
-                    jobPostingGeneralInfo
-                  );
-                }}
-                placeholder="Enter Job Description"
-              />
+              <Grid>
+                <Grid.Row columns={2} s>
+                  <Grid.Column>
+                    <Input
+                      name="role"
+                      label="Job Role *"
+                      validators={["required"]}
+                      errorMessages={["Please enter a job role"]}
+                      value={jobPostingGeneralInfo.role}
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingGeneralInfo,
+                          jobPostingGeneralInfo
+                        );
+                      }}
+                      placeholder="Enter a Job Role"
+                    />
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Input
+                      label="Team"
+                      name="team"
+                      value={jobPostingGeneralInfo.team}
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingGeneralInfo,
+                          jobPostingGeneralInfo
+                        );
+                      }}
+                      placeholder="Enter a Team"
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={1}>
+                  <Grid.Column>
+                    <TextArea
+                      label="Job Description *"
+                      name="description"
+                      value={jobPostingGeneralInfo.description}
+                      validators={["required"]}
+                      errorMessages={["Please enter a Job Description"]}
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingGeneralInfo,
+                          jobPostingGeneralInfo
+                        );
+                      }}
+                      placeholder="Enter Job Description"
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
             </Card.Content>
           </Card>
           <Card fluid>
@@ -263,21 +290,28 @@ const CreateJobPostingModal = (props) => {
                 search
                 selection
                 multiple
+                value={Object.keys(jobPostingFieldIdsMappedToRequiredFlag).map(
+                  Number
+                )}
                 renderLabel={renderItemContent}
                 onChange={addJobPostingField}
                 options={jobPostingFieldOptions()}
               />
             </Card.Content>
           </Card>
-          <Container>
-            <Button>Submit</Button>
-            <Button
-              onClick={() => {
-                props.setShowCreateJobPostingModal(false);
-              }}
-            >
-              Cancel
-            </Button>
+          <Container textAlign="center">
+            <Button.Group attached="bottom">
+              <Button positive>Submit</Button>
+              <Button.Or />
+              <Button
+                negative
+                onClick={() => {
+                  props.setShowCreateJobPostingModal(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </Button.Group>
           </Container>
         </Form>
       </Modal.Content>
