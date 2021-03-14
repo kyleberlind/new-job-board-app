@@ -5247,14 +5247,6 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-formsy-react@^2.2.4:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/formsy-react/-/formsy-react-2.2.4.tgz#9e9a154fc7880f32bbb7b76ac292db4bd0dd8bb7"
-  integrity sha512-u7H8fb7wpQAf4Ps01I0elKLfLdO2bqrW827+mTwRMqE+jU3UsIy8MkwNwwUP/f9X39FJf7bd91KccVf1MC1SDA==
-  dependencies:
-    lodash "^4.17.20"
-    prop-types "^15.7.2"
-
 forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
@@ -11011,7 +11003,7 @@ ts-invariant@^0.4.0:
   dependencies:
     tslib "^1.9.3"
 
-ts-invariant@^0.6.0:
+ts-invariant@^0.6.0, ts-invariant@^0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/ts-invariant/-/ts-invariant-0.6.1.tgz#eb4c52b45daaca8367abbfd6cff998ea871d592d"
   integrity sha512-QQgN33g8E8yrdDuH29HASveLtbzMnRRgWh0i/JNTW4+zcLsdIOnfsgEDi/NKx4UckQyuMFt9Ujm6TWLWQ58Kvg==

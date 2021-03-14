@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Card,
@@ -10,6 +10,7 @@ import {
   Button,
   Container,
   Divider,
+  Modal,
 } from "semantic-ui-react";
 import { useQuery } from "@apollo/client";
 import { GET_APPLICATION_BY_REFERENCE_ID } from "../../services/graphql/employer/EmployerQueries";
@@ -20,6 +21,10 @@ const ApplicationView = (props) => {
       employerReferenceId: props.match.params.employer_reference_id,
     },
   });
+
+  const [isRejectApplicantModalOpen, setIsRejectApplicantModalOpen] = useState(
+    false
+  );
 
   const panes = [
     { menuItem: "Resume", render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> },
@@ -32,8 +37,7 @@ const ApplicationView = (props) => {
   const getJobPostingHeader = () => {
     return (
       data.applicationsByEmployerReferenceId[0].jobPosting.role +
-      (data.applicationsByEmployerReferenceId[0].jobPosting.team !==
-      null
+      (data.applicationsByEmployerReferenceId[0].jobPosting.team !== null
         ? " | "
         : "") +
       data.applicationsByEmployerReferenceId[0].jobPosting.team
@@ -46,6 +50,24 @@ const ApplicationView = (props) => {
             ${data.applicationsByEmployerReferenceId[0].jobPosting.location.zipCode}`;
   };
 
+  const applicantInfo = () => {
+    return (
+      <Segment>
+        {data.applicationsByEmployerReferenceId[0].applicantInfo.firstName !=
+          null && (
+          <Header as={"h2"}>
+            {`${data.applicationsByEmployerReferenceId[0].applicantInfo.firstName} ${data.applicationsByEmployerReferenceId[0].applicantInfo.lastName}`}
+          </Header>
+        )}
+        <Header as={"h3"}>
+          {data.applicationsByEmployerReferenceId[0].applicantInfo.emailAddress}
+        </Header>
+        Application Date:
+        {data.applicationsByEmployerReferenceId[0].dateApplied}
+      </Segment>
+    );
+  };
+
   if (error) {
     return <Card>Error!</Card>;
   } else if (loading) {
@@ -54,22 +76,7 @@ const ApplicationView = (props) => {
     return (
       <Container fluid>
         <Segment.Group horizontal>
-          <Segment>
-            {data.applicationsByEmployerReferenceId[0].applicantInfo
-              .firstName != null && (
-              <Header as={"h2"}>
-                {`${data.applicationsByEmployerReferenceId[0].applicantInfo.firstName} ${data.applicationsByEmployerReferenceId[0].applicantInfo.lastName}`}
-              </Header>
-            )}
-            <Header as={"h3"}>
-              {
-                data.applicationsByEmployerReferenceId[0].applicantInfo
-                  .emailAddress
-              }
-            </Header>
-            Application Date:
-            {data.applicationsByEmployerReferenceId[0].dateApplied}
-          </Segment>
+          {applicantInfo()}
           <Segment>
             <Grid columns={2}>
               <Grid.Column>
@@ -78,7 +85,14 @@ const ApplicationView = (props) => {
               </Grid.Column>
               <Grid.Column width={3}>
                 <Button.Group>
-                  <Button fluid compact color="red">
+                  <Button
+                    fluid
+                    compact
+                    color="red"
+                    onClick={() => {
+                      setIsRejectApplicantModalOpen(true);
+                    }}
+                  >
                     Reject Applicant
                   </Button>
                   <Button.Or />
@@ -91,6 +105,43 @@ const ApplicationView = (props) => {
           </Segment>
         </Segment.Group>
         <Tab panes={panes} />
+        <Modal
+          open={isRejectApplicantModalOpen}
+          onOpen={() => {
+            setIsRejectApplicantModalOpen(true);
+          }}
+          onClose={() => {
+            setIsRejectApplicantModalOpen(false);
+          }}
+        >
+          <Modal.Header>Reject Applicant?</Modal.Header>
+          <Modal.Content>
+            {applicantInfo()}
+            <Modal.Actions>
+              <Container textAlign="center">
+                <Button.Group attached="bottom">
+                  <Button
+                    
+                    onClick={() => {
+                      setIsRejectApplicantModalOpen(true);
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                  <Button.Or />
+                  <Button
+                    
+                    onClick={() => {
+                      setIsRejectApplicantModalOpen(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Button.Group>
+              </Container>
+            </Modal.Actions>
+          </Modal.Content>
+        </Modal>
       </Container>
     );
   }

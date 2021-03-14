@@ -101,4 +101,5 @@ class Query(graphene.ObjectType):
                 applicant_id
             )
         ).all()
+        
 job_posting_schema = graphene.Schema(query=Query)

@@ -3,10 +3,7 @@ import {
   getSessionService,
 } from "../../../services/AccountServices";
 import React, { useState, useEffect } from "react";
-import { Form, Input, TextArea } from "semantic-ui-react-form-validator";
-import { Button, Card, Container } from "semantic-ui-react";
-
-import "./css/UserLogin.css";
+import { Button, Card, Container, Form} from "semantic-ui-react";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -37,8 +34,6 @@ function UserLogin() {
   };
 
   const handleSubmitButtonClick = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
     loginUserService(email, password, 2)
       .then((response) => {
         response.json().then((data) => {
@@ -64,21 +59,18 @@ function UserLogin() {
         <Card.Header>Login</Card.Header>
         <Card.Content>
           <Form onSubmit={handleSubmitButtonClick}>
-            <Input
-              validators={["required", "isEmail"]}
-              errorMessages={[
-                "Please enter an email address",
-                "Please enter a valid mail address",
-              ]}
+            <Form.Input
+              required
+              name="email"
+              type="email"
               onChange={(input) => onEmailChange(input)}
               value={email}
-              type="email"
               placeholder="Enter an Email Address"
             />
 
-            <Input
-              validators={["required"]}
-              errorMessages={["Please enter a password"]}
+            <Form.Input
+              name="password"
+              required
               onChange={(input) => onPasswordChange(input)}
               value={password}
               type="password"
