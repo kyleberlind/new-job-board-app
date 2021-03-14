@@ -59,7 +59,7 @@ function UserLogin() {
   };
 
   return (
-    <Container textAlign="center">
+    <Container fluid textAlign="center">
       <Card>
         <Card.Header>Login</Card.Header>
         <Card.Content>
