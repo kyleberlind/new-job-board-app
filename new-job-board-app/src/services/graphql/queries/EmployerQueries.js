@@ -11,6 +11,7 @@ export const GET_APPLICATION_BY_REFERENCE_ID = gql`
       dateApplied
       employerId
       employerReferenceId
+      status
       applicantInfo {
         emailAddress
         firstName

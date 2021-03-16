@@ -5,7 +5,7 @@ import EmployerConsole from "./console/EmployerConsole.js";
 import EmployerConsoleNavBar from "./console/EmployerConsoleNavBar.js";
 import EmployerAccount from "./EmployerAccount";
 import CreateJobPostingModal from "./jobPosting/CreateJobPostingModal";
-import ApplicationView from "./ApplicationView";
+import ApplicationView from "./reviewApplication/ApplicationView";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { logoutService } from "../../services/AccountServices";
 import {

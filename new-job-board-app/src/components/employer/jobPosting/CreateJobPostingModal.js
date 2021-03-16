@@ -1,18 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
+import JobPostingQuestionLabel from "./JobPostingQuestionLabel";
 import {
   Button,
   Container,
   Card,
   Modal,
-  Label,
-  Checkbox,
   Dropdown,
-  Icon,
   Grid,
+  Form,
 } from "semantic-ui-react";
-import { Form, Input, TextArea } from "semantic-ui-react-form-validator";
 
 const CreateJobPostingModal = (props) => {
   const [validationMessage, setValidationMessage] = useState("");
@@ -113,25 +111,13 @@ const CreateJobPostingModal = (props) => {
 
   const renderItemContent = (item) => {
     return (
-      <Label horizontal>
-        <Label.Group>
-          {item.text}
-          <Icon
-            link
-            onClick={() => removeJobPostingField(item.value)}
-            name="delete"
-          />
-          <Label.Detail>
-            <Checkbox
-              checked={!!jobPostingFieldIdsMappedToRequiredFlag[item.value]}
-              onChange={() => {
-                makeJobPostingFieldRequired(item.value);
-              }}
-              label="Required"
-            />
-          </Label.Detail>
-        </Label.Group>
-      </Label>
+      <JobPostingQuestionLabel
+        questionTitle={item.text}
+        value={item.value}
+        checked={!!jobPostingFieldIdsMappedToRequiredFlag[item.value]}
+        removeJobPostingField={removeJobPostingField}
+        makeJobPostingFieldRequired={makeJobPostingFieldRequired}
+      />
     );
   };
 
@@ -152,9 +138,7 @@ const CreateJobPostingModal = (props) => {
       open={props.showCreateJobPostingModal}
       closeIcon="cancel"
     >
-      <Modal.Header>
-        Create Job Posting
-      </Modal.Header>
+      <Modal.Header>Create Job Posting</Modal.Header>
       <Modal.Content>
         <Form
           onSubmit={(event) => {
@@ -164,61 +148,55 @@ const CreateJobPostingModal = (props) => {
           <Card fluid>
             <Card.Content>
               <Card.Header>Location</Card.Header>
-              <Grid columns={3}>
-                <Grid.Row>
-                  <Grid.Column>
-                    <Input
-                      name="city"
-                      label="City *"
-                      validators={["required"]}
-                      errorMessages={["Please enter a city"]}
-                      value={jobPostingLocation.city}
-                      onChange={(event) => {
-                        handleJobPostingChange(
-                          event,
-                          setJobPostingLocation,
-                          jobPostingLocation
-                        );
-                      }}
-                      placeholder="Enter a City"
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Input
-                      label="State *"
-                      name="state"
-                      value={jobPostingLocation.state}
-                      validators={["required"]}
-                      errorMessages={["Please enter a state"]}
-                      onChange={(event) => {
-                        handleJobPostingChange(
-                          event,
-                          setJobPostingLocation,
-                          jobPostingLocation
-                        );
-                      }}
-                      placeholder="Enter a State"
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Input
-                      label="Zip Code *"
-                      name="zipCode"
-                      value={jobPostingLocation.zipCode}
-                      validators={["required"]}
-                      errorMessages={["Please enter a zip code"]}
-                      onChange={(event) => {
-                        handleJobPostingChange(
-                          event,
-                          setJobPostingLocation,
-                          jobPostingLocation
-                        );
-                      }}
-                      placeholder="Enter a Zip Code"
-                    />
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
+              <Form.Group widths="equal">
+                <Form.Field
+                  required
+                  name="city"
+                  label="City"
+                  control="input"
+                  value={jobPostingLocation.city}
+                  onChange={(event) => {
+                    handleJobPostingChange(
+                      event,
+                      setJobPostingLocation,
+                      jobPostingLocation
+                    );
+                  }}
+                  placeholder="Enter a City"
+                />
+
+                <Form.Field
+                  required
+                  name="state"
+                  label="State"
+                  control="input"
+                  value={jobPostingLocation.state}
+                  onChange={(event) => {
+                    handleJobPostingChange(
+                      event,
+                      setJobPostingLocation,
+                      jobPostingLocation
+                    );
+                  }}
+                  placeholder="Enter a State"
+                />
+
+                <Form.Field
+                  label="Zip Code"
+                  name="zipCode"
+                  required
+                  control="input"
+                  value={jobPostingLocation.zipCode}
+                  onChange={(event) => {
+                    handleJobPostingChange(
+                      event,
+                      setJobPostingLocation,
+                      jobPostingLocation
+                    );
+                  }}
+                  placeholder="Enter a Zip Code"
+                />
+              </Form.Group>
             </Card.Content>
           </Card>
           <Card fluid>
@@ -227,11 +205,11 @@ const CreateJobPostingModal = (props) => {
               <Grid>
                 <Grid.Row columns={2} s>
                   <Grid.Column>
-                    <Input
+                    <Form.Field
+                      label="Job Role"
                       name="role"
-                      label="Job Role *"
-                      validators={["required"]}
-                      errorMessages={["Please enter a job role"]}
+                      required
+                      control="input"
                       value={jobPostingGeneralInfo.role}
                       onChange={(event) => {
                         handleJobPostingChange(
@@ -244,9 +222,10 @@ const CreateJobPostingModal = (props) => {
                     />
                   </Grid.Column>
                   <Grid.Column>
-                    <Input
+                    <Form.Field
                       label="Team"
                       name="team"
+                      control="input"
                       value={jobPostingGeneralInfo.team}
                       onChange={(event) => {
                         handleJobPostingChange(
@@ -261,12 +240,12 @@ const CreateJobPostingModal = (props) => {
                 </Grid.Row>
                 <Grid.Row columns={1}>
                   <Grid.Column>
-                    <TextArea
-                      label="Job Description *"
-                      name="description"
+                    <Form.Field
+                      label="Job Description"
                       value={jobPostingGeneralInfo.description}
-                      validators={["required"]}
-                      errorMessages={["Please enter a Job Description"]}
+                      required
+                      name="description"
+                      control="textArea"
                       onChange={(event) => {
                         handleJobPostingChange(
                           event,

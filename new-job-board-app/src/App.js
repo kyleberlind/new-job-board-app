@@ -2,8 +2,8 @@
 import Applicant from "./components/applicant/Applicant.js";
 import Employer from "./components/employer/Employer.js";
 import Home from "./components/home/Home.js";
-import ApplicantSignup from "./components/applicant/signup/ApplicantSignup"
-import EmployerSignup from "./components/employer/signup/EmployerSignup"
+import ApplicantSignup from "./components/applicant/signup/ApplicantSignup";
+import EmployerSignup from "./components/employer/signup/EmployerSignup";
 import UserLogin from "./components/shared/login/UserLogin.js";
 // css
 import "./App.css";
@@ -11,7 +11,6 @@ import "./App.css";
 // React
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
 
 // TODO: should probably move all routing to a separate file
 

@@ -11,7 +11,6 @@ function Home() {
       <HomeNavBar />
       <Router>
         <Switch>
-          <Route path="/login" render={() => <UserLogin />} />
         </Switch>
       </Router>
     </Container>

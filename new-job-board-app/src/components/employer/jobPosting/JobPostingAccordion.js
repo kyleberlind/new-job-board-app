@@ -39,10 +39,10 @@ const JobPostingAccordion = (props) => {
   }, []);
 
   const generateJobApplications = () => {
-    let index = 0
+    let index = 0;
     return jobApplications.length > 0 ? (
       jobApplications.map((jobApplication) => {
-        index+=1
+        index += 1;
         return (
           <Item
             key={jobApplication.applicationId}
@@ -50,7 +50,18 @@ const JobPostingAccordion = (props) => {
               window.location.href = `/employer/application/${jobApplication.employerReferenceId}`;
             }}
           >
-            <Item.Content>{index}. {jobApplication.applicantInfo.emailAddress}</Item.Content >
+            <Item.Content>
+              {jobApplication.applicantInfo.firstName ? (
+                <Item.Header>
+                  {`${index}. ${jobApplication.applicantInfo.firstName} ${jobApplication.applicantInfo.lastName}`}
+                </Item.Header>
+              ) : (
+                <Item.Header>{index}. Anon</Item.Header>
+              )}
+              <Item.Description>
+                {jobApplication.applicantInfo.emailAddress}
+              </Item.Description>
+            </Item.Content>
             <Item.Meta>{jobApplication.dateApplied}</Item.Meta>
           </Item>
         );
@@ -84,17 +95,11 @@ const JobPostingAccordion = (props) => {
         index={0}
         onClick={handleClickAccordionTitle}
       >
-        <Grid.Row>
-          <Grid.Column>
-            <Icon name="dropdown" />
-          </Grid.Column>
-          <Grid.Column>
-            <Container fluid textAlign="left">
-              <Header as="h3">{getJobPostingHeader()}</Header>
-              <p>{formattedJobLocation}</p>
-            </Container>
-          </Grid.Column>
-        </Grid.Row>
+        <Icon name="dropdown" />
+        <Container fluid textAlign="left">
+          <Header as="h3">{getJobPostingHeader()}</Header>
+          <p>{formattedJobLocation}</p>
+        </Container>
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 0}>
         <Grid columns={2} celled="internally">

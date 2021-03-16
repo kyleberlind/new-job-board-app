@@ -3,7 +3,7 @@ import {
   getSessionService,
 } from "../../../services/AccountServices";
 import React, { useState, useEffect } from "react";
-import { Button, Card, Container, Form} from "semantic-ui-react";
+import { Button, Card, Container, Form } from "semantic-ui-react";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -54,39 +54,45 @@ function UserLogin() {
   };
 
   return (
-    <Container fluid textAlign="center">
-      <Card>
-        <Card.Header>Login</Card.Header>
-        <Card.Content>
-          <Form onSubmit={handleSubmitButtonClick}>
-            <Form.Input
-              required
-              name="email"
-              type="email"
-              onChange={(input) => onEmailChange(input)}
-              value={email}
-              placeholder="Enter an Email Address"
-            />
+    <Container fluid>
+      <Card.Group centered>
+        <Card>
+          <Card.Header textAlign="center">Login</Card.Header>
+          <Card.Content>
+            <Form onSubmit={handleSubmitButtonClick}>
+              <Form.Field
+                required
+                label="Email Address"
+                control="input"
+                name="email"
+                type="email"
+                onChange={(input) => onEmailChange(input)}
+                value={email}
+                placeholder="Enter an Email Address"
+              />
 
-            <Form.Input
-              name="password"
-              required
-              onChange={(input) => onPasswordChange(input)}
-              value={password}
-              type="password"
-              placeholder="Password"
-            />
-            <Button fluid type="submit">
-              Submit
-            </Button>
-          </Form>
-        </Card.Content>
-        {validationMessage.length !== 0 && (
-          <div className="alert alert-danger" role="alert">
-            {validationMessage}
-          </div>
-        )}
-      </Card>
+              <Form.Field
+                name="password"
+                required
+                label="Password"
+                control="input"
+                onChange={(input) => onPasswordChange(input)}
+                value={password}
+                type="password"
+                placeholder="Password"
+              />
+              <Button fluid type="submit">
+                Submit
+              </Button>
+            </Form>
+          </Card.Content>
+          {validationMessage.length !== 0 && (
+            <div className="alert alert-danger" role="alert">
+              {validationMessage}
+            </div>
+          )}
+        </Card>
+      </Card.Group>
     </Container>
   );
 }

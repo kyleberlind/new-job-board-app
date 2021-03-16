@@ -71,56 +71,54 @@ const EmployerConsole = (props) => {
   };
 
   return (
-    <Container fluid>
-      <Grid>
-        <Grid.Row>
-          <Grid.Column>
-            <Card fluid>
-              <Card.Content>
-                <Grid>
-                  <Grid.Row columns={2}>
-                    <Grid.Column width={3}>
-                      <Container>
-                        <Header as="h2" content={MY_JOB_POSTINGS_TITLE} />
-                      </Container>
-                    </Grid.Column>
-                    <Grid.Column width={9}>
-                      <Search input={{ fluid: true }} fluid></Search>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Card.Content>
-              <Card.Content>
-                {areJobPostingsLoading ? (
-                  <Loader active />
-                ) : (
-                  generateJobPostings()
-                )}
-              </Card.Content>
-            </Card>
-          </Grid.Column>
-        </Grid.Row>
-        {Object.keys(selectedJobPosting).length !== 0 && (
-          <Grid>
-            <EditJobPostingModal
-              jobPosting={selectedJobPosting}
-              jobPostingFields={props.jobPostingFields}
-              showEditJobPostingModal={showEditJobPostingModal}
-              setShowEditJobPostingModal={setShowEditJobPostingModal}
-            ></EditJobPostingModal>
-            <DeleteJobPostingConfirmationModal
-              jobPosting={selectedJobPosting}
-              showDeleteJobPostingConfirmationModal={
-                showDeleteJobPostingConfirmationModal
-              }
-              setShowDeleteJobPostingConfirmationModal={
-                setShowDeleteJobPostingConfirmationModal
-              }
-            ></DeleteJobPostingConfirmationModal>
-          </Grid>
-        )}
-      </Grid>
-    </Container>
+    <Grid>
+      <Grid.Row>
+        <Grid.Column>
+          <Card fluid>
+            <Card.Content>
+              <Grid>
+                <Grid.Row columns={2}>
+                  <Grid.Column width={3}>
+                    <Container>
+                      <Header as="h2" content={MY_JOB_POSTINGS_TITLE} />
+                    </Container>
+                  </Grid.Column>
+                  <Grid.Column width={9}>
+                    <Search input={{ fluid: true }} fluid></Search>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Card.Content>
+            <Card.Content>
+              {areJobPostingsLoading ? (
+                <Loader active />
+              ) : (
+                generateJobPostings()
+              )}
+            </Card.Content>
+          </Card>
+        </Grid.Column>
+      </Grid.Row>
+      {Object.keys(selectedJobPosting).length !== 0 && (
+        <Grid>
+          <EditJobPostingModal
+            jobPosting={selectedJobPosting}
+            jobPostingFields={props.jobPostingFields}
+            showEditJobPostingModal={showEditJobPostingModal}
+            setShowEditJobPostingModal={setShowEditJobPostingModal}
+          ></EditJobPostingModal>
+          <DeleteJobPostingConfirmationModal
+            jobPosting={selectedJobPosting}
+            showDeleteJobPostingConfirmationModal={
+              showDeleteJobPostingConfirmationModal
+            }
+            setShowDeleteJobPostingConfirmationModal={
+              setShowDeleteJobPostingConfirmationModal
+            }
+          ></DeleteJobPostingConfirmationModal>
+        </Grid>
+      )}
+    </Grid>
   );
 };
 
