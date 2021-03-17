@@ -319,18 +319,7 @@ EditJobPostingModal.propTypes = {
 };
 
 EditJobPostingModal.defaultProps = {
-  jobPosting: {
-    generalInfo: {
-      role: "",
-      team: "",
-      description: "",
-    },
-    locationInfo: {
-      city: "",
-      state: "",
-      zipCode: "",
-    },
-  },
+
 };
 
 export default EditJobPostingModal;

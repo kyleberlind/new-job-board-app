@@ -80,7 +80,6 @@ const ApplicationView = (props) => {
           <Header as={"h2"}>
             {`${data.applicationsByEmployerReferenceId[0].applicantInfo.firstName} ${data.applicationsByEmployerReferenceId[0].applicantInfo.lastName}`}
           </Header>
-          
         )}
         <Header as={"h3"}>
           {data.applicationsByEmployerReferenceId[0].applicantInfo.emailAddress}

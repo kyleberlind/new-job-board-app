@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
 import { EMPLOYER_USER_TYPE } from "../../../constants/employer/EmployerConstants";
 import { signUpEmployerService } from "../../../services/AccountServices";
-import { useFormFields } from "../../../libs/hooks/useFormFields.js";
-
-import "./css/EmployerSignup.css";
+import {
+  Card,
+  Form,
+  Container,
+  Message,
+} from "semantic-ui-react";
 
 function EmployerSignup() {
-  const [fields, handleFieldChange] = useFormFields({
+  const [fields, setFields] = useState({
     emailAddress: "",
     confirmEmailAddress: "",
     password: "",
@@ -15,24 +17,20 @@ function EmployerSignup() {
     employerName: "",
     employerSize: "0-10",
   });
+
   const [validationMessage, setValidationMessage] = useState("");
-  const [validated, setValidated] = useState(false);
 
   const handleSubmitButtonClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    if (validate(event.currentTarget)) {
+    if (validate()) {
       signUpEmployerService(fields, EMPLOYER_USER_TYPE)
         .then((response) => {
           response.json().then((data) => {
             if (data["hasError"] === true) {
               setValidationMessage(data["errorMessage"]);
             } else {
-              if (data["userType"] === 1) {
-                window.location.assign("applicant-console");
-              } else {
-                window.location.assign("employer-console");
-              }
+              window.location.assign("employer/employer-console");
             }
           });
         })
@@ -41,10 +39,13 @@ function EmployerSignup() {
         });
       setValidationMessage("");
     }
-    setValidated(true);
   };
 
-  const validate = (form) => {
+  const handleFieldChange = (event) => {
+    setFields({ ...fields, [event.target.name]: event.target.value });
+  };
+
+  const validate = () => {
     if (fields.emailAddress !== fields.confirmEmailAddress) {
       setValidationMessage("Emails must match");
       return false;
@@ -53,104 +54,105 @@ function EmployerSignup() {
       setValidationMessage("Passwords must match");
       return false;
     }
-    return form.checkValidity();
+    return true;
   };
 
+  const options = [
+    { key: "0-10", text: "0-10", value: "0-10" },
+    { key: "10-500", text: "10-500", value: "10-500" },
+    { key: "500-1000", text: " 500-1000", value: "500-1000" },
+    { key: "1000-3000", text: "1000-3000", value: "1000-3000" },
+    { key: "3000-10000", text: "3000-10000", value: "3000-10000" },
+    { key: ">10000", text: ">10000", value: ">10000" },
+  ];
+
   return (
-    <div className="root">
-      <h1>Employer Signup</h1>
-      <Form
-        noValidate
-        className="form"
-        validated={validated}
-        onSubmit={handleSubmitButtonClick}
-      >
-        <Form.Group controlId="employerName">
-          <Form.Label>Company Name</Form.Label>
-          <Form.Control
-            required
-            placeholder="Enter company name"
-            value={fields.employerName}
-            onChange={handleFieldChange}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please enter a Company Name
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group controlId="employerSize">
-          <Form.Label>Company Size</Form.Label>
-          <Form.Control as="select" onChange={handleFieldChange}>
-            <option value="0-10">0-10</option>
-            <option value="10-500">10-50</option>
-            <option value="10-500">50-500</option>
-            <option value="500-1000">500-1000</option>
-            <option value="1000-3000">1000-3000</option>
-            <option value="1000-3000">3000-10000</option>
-            <option value="1000-3000">{">"}10000</option>
-          </Form.Control>
-        </Form.Group>
-        <Form.Group controlId="emailAddress">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control
-            required
-            type="email"
-            placeholder="Enter email"
-            value={fields.emailAddress}
-            onChange={handleFieldChange}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please enter an email
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group controlId="confirmEmailAddress">
-          <Form.Label>Confirm email address</Form.Label>
-          <Form.Control
-            required
-            type="email"
-            placeholder="Confirm email"
-            value={fields.confirmEmailAddress}
-            onChange={handleFieldChange}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please confirm email
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            required
-            type="password"
-            placeholder="Enter password"
-            value={fields.password}
-            onChange={handleFieldChange}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please enter a password
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group controlId="confirmPassword">
-          <Form.Label>Confirm password</Form.Label>
-          <Form.Control
-            required
-            type="password"
-            placeholder="Confirm Password"
-            value={fields.confirmPassword}
-            onChange={handleFieldChange}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please confirm your password
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Button className="button" type="submit" variant="primary">
-          Sign Up
-        </Button>
-        {validationMessage.length !== 0 && (
-          <div className="alert alert-danger" role="alert">
-            {validationMessage}
-          </div>
-        )}
-      </Form>
-    </div>
+    <Container centered>
+      <Card fluid>
+        <Card.Header> Employer Signup</Card.Header>
+        <Card.Content>
+          <Form onSubmit={handleSubmitButtonClick}>
+            <Form.Group widths="equal">
+              <Form.Field
+                required
+                control="input"
+                label="Company Name"
+                name="employerName"
+                placeholder="Enter company name"
+                value={fields.employerName}
+                onChange={handleFieldChange}
+              />
+              <Form.Dropdown
+                placeholder="Select Company Size"
+                value={fields.employerSize}
+                fluid
+                required
+                selection
+                name="employerName"
+                label="Company Size"
+                onChange={handleFieldChange}
+                options={options}
+              ></Form.Dropdown>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <Form.Field
+                name="emailAddress"
+                required
+                control="input"
+                label="Email address"
+                type="email"
+                placeholder="Enter email"
+                value={fields.emailAddress}
+                onChange={handleFieldChange}
+              />
+
+              <Form.Field
+                label="Confirm email address"
+                name="confirmEmailAddress"
+                required
+                control="input"
+                type="email"
+                placeholder="Confirm email"
+                value={fields.confirmEmailAddress}
+                onChange={handleFieldChange}
+              />
+            </Form.Group>
+            <Form.Group widths="equal">
+              <Form.Field
+                required
+                label="Password"
+                name="password"
+                type="password"
+                control="input"
+                placeholder="Enter password"
+                value={fields.password}
+                onChange={handleFieldChange}
+              />
+              <Form.Field
+                required
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+                control="input"
+                placeholder="Confirm Password"
+                value={fields.confirmPassword}
+                onChange={handleFieldChange}
+              />
+            </Form.Group>
+            <Form.Button type="submit" primary>
+              Sign Up
+            </Form.Button>
+          </Form>
+          {validationMessage.length !== 0 && (
+            <Message
+              error
+              header="Sign Up Failed"
+              content={validationMessage}
+            />
+          )}
+        </Card.Content>
+      </Card>
+    </Container>
   );
 }
 
