@@ -1,16 +1,17 @@
 import React from "react";
-import { Button, Container, Row, Col, Modal } from "react-bootstrap";
 import { deleteJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
+import { Button, Container, Modal, Segment } from "semantic-ui-react";
 
 const DeleteJobPostingConfirmationModal = (props) => {
   const formattedJobLocation = `${props.jobPosting.location.city}, ${props.jobPosting.location.state}, ${props.jobPosting.location.zipCode}`;
   const handleConfirmDeleteButtonClick = () => {
-    deleteJobPostingService(props.jobPosting.generalInfo.id).then((response) => {
+    deleteJobPostingService(props.jobPosting.generalInfo.id)
+      .then((response) => {
         response.json().then((data) => {
           if (data["hasError"]) {
             props.setShowDeleteJobPostingConfirmationModal(false);
-            console.log(data["errorMessage"])
+            console.log(data["errorMessage"]);
           } else if (data["success"]) {
             console.log("Deleted job posting");
             window.location.assign("employer-console");
@@ -26,57 +27,46 @@ const DeleteJobPostingConfirmationModal = (props) => {
   };
   return (
     <Modal
-      show={props.showDeleteJobPostingConfirmationModal}
-      onHide={() => {
+      size="tiny"
+      open={props.showDeleteJobPostingConfirmationModal}
+      onClose={() => {
         props.setShowDeleteJobPostingConfirmationModal(false);
       }}
-      size="lg"
-      centered
+      onOpen={() => {
+        props.setShowDeleteJobPostingConfirmationModal(true);
+      }}
+      closeIcon="cancel"
     >
       <Modal.Header>Delete Job Posting</Modal.Header>
-      <Modal.Body>
-        <Container>
-          <Row>
-            <Col>ID: {props.jobPosting.generalInfo.id}</Col>
-          </Row>
-          <Row>
-            <Col>Role: {props.jobPosting.generalInfo.role}</Col>
-          </Row>
-          <Row>
-            <Col>Team: {props.jobPosting.generalInfo.team}</Col>
-          </Row>
-          <Row>
-            <Col>Location: {formattedJobLocation}</Col>
-          </Row>
+      <Modal.Content>
+        <Segment vertical>ID: {props.jobPosting.generalInfo.id}</Segment>
+        <Segment vertical>Role: {props.jobPosting.generalInfo.role}</Segment>
+        <Segment vertical>Team: {props.jobPosting.generalInfo.team}</Segment>
+        <Segment vertical>Location: {formattedJobLocation}</Segment>
+      </Modal.Content>
+      <Modal.Actions>
+        <Container textAlign="center">
+          <Button.Group attached="bottom">
+            <Button
+              positive
+              onClick={() => {
+                handleConfirmDeleteButtonClick();
+              }}
+            >
+              Confirm Delete
+            </Button>
+            <Button.Or />
+            <Button
+              negative
+              onClick={() => {
+                props.setShowDeleteJobPostingConfirmationModal(false);
+              }}
+            >
+              Cancel
+            </Button>
+          </Button.Group>
         </Container>
-      </Modal.Body>
-      <Modal.Footer>
-        <Container>
-          <Row>
-            <Col>
-              <Button
-                block
-                onClick={() => {
-                  handleConfirmDeleteButtonClick();
-                }}
-              >
-                Confirm Delete
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                block
-                variant="secondary"
-                onClick={() => {
-                  props.setShowDeleteJobPostingConfirmationModal(false);
-                }}
-              >
-                Cancel
-              </Button>
-            </Col>
-          </Row>
-        </Container>
-      </Modal.Footer>
+      </Modal.Actions>
     </Modal>
   );
 };

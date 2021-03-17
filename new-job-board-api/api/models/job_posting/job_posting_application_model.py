@@ -27,6 +27,7 @@ class JobPostingApplicationModelSQLAlchemy(db.Model):
     employer_id = db.Column(db.Integer)
     date_applied = db.Column(db.DateTime)
     employer_reference_id = db.Column(db.String(36))
+    status=db.Column(db.String(124))
     applicant_info = relationship(
         "ApplicantInfoModelSQLAlchemy",
         backref="tbl_job_posting_applications"

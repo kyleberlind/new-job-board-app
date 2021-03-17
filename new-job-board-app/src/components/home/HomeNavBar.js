@@ -1,21 +1,25 @@
-import { Button, Navbar, Nav, Container } from "react-bootstrap";
-import React, { useState } from "react";
+import React from "react";
 import "./css/HomeNavBar.css";
+import { Menu, Button } from "semantic-ui-react";
 
-const HomeNavBar = props => {
+const HomeNavBar = (props) => {
   return (
-    <div className="homeNavBar">
-      <Navbar bg="dark" variant="dark" expand="lg">
-        <Navbar.Brand href="/">New Job Board Application</Navbar.Brand>
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/about">About</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-        <Button href="/login">Login</Button>
-      </Navbar>
-    </div>
+    <Menu inverted>
+      <Menu.Item name="New Job Board Application" href="/" />
+      <Menu.Item name="Home" href="/" />
+      <Menu.Menu position="right">
+      <Menu.Item>
+          <Button fluid href="/signup">
+            Sign Up
+          </Button>
+        </Menu.Item>
+        <Menu.Item>
+          <Button fluid href="/login">
+            Login
+          </Button>
+        </Menu.Item>
+      </Menu.Menu>
+    </Menu>
   );
 };
 
