@@ -5,7 +5,7 @@ import EmployerConsole from "./console/EmployerConsole.js";
 import EmployerConsoleNavBar from "./console/EmployerConsoleNavBar.js";
 import EmployerAccount from "./EmployerAccount";
 import CreateJobPostingModal from "./jobPosting/CreateJobPostingModal";
-import ApplicationView from "./ApplicationView";
+import ApplicationView from "./reviewApplication/ApplicationView";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { logoutService } from "../../services/AccountServices";
 import {
@@ -63,11 +63,6 @@ function Employer() {
       />
       <Router>
         <Switch>
-          <Route path="/employer/" exact>
-            <h2>Hello {employer}</h2>
-          </Route>
-          <Route path="/employer/signup" component={EmployerSignup} />
-          <Route path="/employer/login" component={UserLogin} />
           <Route
             path="/employer/account"
             render={() => <EmployerAccount employer={employer} />}

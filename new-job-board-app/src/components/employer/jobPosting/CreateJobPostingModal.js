@@ -1,36 +1,38 @@
 import React, { useState } from "react";
-import {
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  Alert,
-  Card,
-  Modal,
-} from "react-bootstrap";
-import { useFormFields } from "../../../libs/hooks/useFormFields";
 import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
-import { Dropdown, Label, Checkbox, Icon } from "semantic-ui-react";
-
-import "./css/CreateJobPosting.css";
+import JobPostingQuestionLabel from "./JobPostingQuestionLabel";
+import {
+  Button,
+  Container,
+  Card,
+  Modal,
+  Dropdown,
+  Grid,
+  Form,
+} from "semantic-ui-react";
 
 const CreateJobPostingModal = (props) => {
-  const [validated, setValidated] = useState(false);
-  const [validationMessageType, setValidationMessageType] = useState("success");
   const [validationMessage, setValidationMessage] = useState("");
-  const [
-    jobPostingGeneralInfo,
-    handleJobPostingGeneralInfoChange,
-  ] = useFormFields(props.jobPosting.generalInfo);
-  const [jobPostingLocation, handleJobPostingLocationChange] = useFormFields(
+  const [validationMessageType, setValidationMessageType] = useState("");
+
+  const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState(
+    props.jobPosting.generalInfo
+  );
+  const [jobPostingLocation, setJobPostingLocation] = useState(
     props.jobPosting.location
   );
   const [
     jobPostingFieldIdsMappedToRequiredFlag,
     setJobPostingFieldIdsMappedToRequiredFlag,
   ] = useState({});
+
+  const handleJobPostingChange = (event, setJobPostingInfo, jobPostingInfo) => {
+    setJobPostingInfo({
+      ...jobPostingInfo,
+      [event.target.name]: event.target.value,
+    });
+  };
 
   const jobPostingFieldOptions = () => {
     return props.jobPostingFields.map((field) => {
@@ -56,48 +58,49 @@ const CreateJobPostingModal = (props) => {
   };
 
   const makeJobPostingFieldRequired = (fieldId) => {
-    const currentJobPostingFieldIdsMappedToRequiredFlag = {...jobPostingFieldIdsMappedToRequiredFlag}
+    const currentJobPostingFieldIdsMappedToRequiredFlag = {
+      ...jobPostingFieldIdsMappedToRequiredFlag,
+    };
     if (currentJobPostingFieldIdsMappedToRequiredFlag[fieldId]) {
       currentJobPostingFieldIdsMappedToRequiredFlag[fieldId] = false;
     } else {
       currentJobPostingFieldIdsMappedToRequiredFlag[fieldId] = true;
     }
-    setJobPostingFieldIdsMappedToRequiredFlag(currentJobPostingFieldIdsMappedToRequiredFlag)
+    setJobPostingFieldIdsMappedToRequiredFlag(
+      currentJobPostingFieldIdsMappedToRequiredFlag
+    );
   };
 
   const handleSubmitButtonClick = (event) => {
-    const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
-    if (form.checkValidity() === true) {
-      saveNewJobPostingService({
-        location: jobPostingLocation,
-        generalInfo: {
-          employerId: props.employer.employerId,
-          ...jobPostingGeneralInfo,
-        },
-        jobPostingFields: formatJobPostingFields(),
-      })
-        .then((response) => {
-          response.json().then((data) => {
-            if (data["hasError"]) {
-              setValidationMessage(data["errorMessage"]);
-              props.setShowCreateJobPostingModal(false);
-            } else if (data["success"]) {
-              setValidationMessageType("success");
-              setValidationMessage("Successfully saved job posting!");
-              window.location.assign("employer-console");
-            } else {
-              setValidationMessageType("danger");
-              setValidationMessage("Failed to save job posting");
-            }
-          });
-        })
-        .catch((error) => {
-          setValidationMessage(error["errorMessage"]);
+
+    saveNewJobPostingService({
+      location: jobPostingLocation,
+      generalInfo: {
+        employerId: props.employer.employerId,
+        ...jobPostingGeneralInfo,
+      },
+      jobPostingFields: formatJobPostingFields(),
+    })
+      .then((response) => {
+        response.json().then((data) => {
+          if (data["hasError"]) {
+            setValidationMessage(data["errorMessage"]);
+            props.setShowCreateJobPostingModal(false);
+          } else if (data["success"]) {
+            setValidationMessageType("success");
+            setValidationMessage("Successfully saved job posting!");
+            window.location.assign("employer-console");
+          } else {
+            setValidationMessageType("danger");
+            setValidationMessage("Failed to save job posting");
+          }
         });
-    }
-    setValidated(true);
+      })
+      .catch((error) => {
+        setValidationMessage(error["errorMessage"]);
+      });
   };
 
   const formatJobPostingFields = () => {
@@ -108,192 +111,190 @@ const CreateJobPostingModal = (props) => {
 
   const renderItemContent = (item) => {
     return (
-      <Label horizontal>
-        <Icon name="delete" />
-        {item.text}
-        <Label.Detail>
-          <Checkbox
-            checked={!!jobPostingFieldIdsMappedToRequiredFlag[item.value]}
-            onChange={() => {
-              makeJobPostingFieldRequired(item.value);
-            }}
-            label="Mark Required"
-          />
-        </Label.Detail>
-      </Label>
+      <JobPostingQuestionLabel
+        questionTitle={item.text}
+        value={item.value}
+        checked={!!jobPostingFieldIdsMappedToRequiredFlag[item.value]}
+        removeJobPostingField={removeJobPostingField}
+        makeJobPostingFieldRequired={makeJobPostingFieldRequired}
+      />
+    );
+  };
+
+  const removeJobPostingField = (fieldId) => {
+    const currentJobPostingFieldIdsMappedToRequiredFlag = {
+      ...jobPostingFieldIdsMappedToRequiredFlag,
+    };
+    delete currentJobPostingFieldIdsMappedToRequiredFlag[fieldId];
+    setJobPostingFieldIdsMappedToRequiredFlag(
+      currentJobPostingFieldIdsMappedToRequiredFlag
     );
   };
 
   return (
-    <div className="root">
-      <Modal
-        show={props.showCreateJobPostingModal}
-        onHide={() => props.setShowCreateJobPostingModal(false)}
-        size="lg"
-        centered
-      >
-        <Modal.Header closeButton>
-          {props.edit ? (
-            <Modal.Title>Edit Job Posting</Modal.Title>
-          ) : (
-            <Modal.Title>Create Job Posting</Modal.Title>
-          )}
-        </Modal.Header>
-        <Modal.Body>
-          <Form
-            noValidate
-            validated={validated}
-            onSubmit={(event) => {
-              handleSubmitButtonClick(event);
-            }}
-          >
-            <Card>
+    <Modal
+      onClose={() => props.setShowCreateJobPostingModal(false)}
+      onOpen={() => props.setShowCreateJobPostingModal(true)}
+      open={props.showCreateJobPostingModal}
+      closeIcon="cancel"
+    >
+      <Modal.Header>Create Job Posting</Modal.Header>
+      <Modal.Content>
+        <Form
+          onSubmit={(event) => {
+            handleSubmitButtonClick(event);
+          }}
+        >
+          <Card fluid>
+            <Card.Content>
               <Card.Header>Location</Card.Header>
-              <Card.Body>
-                <Container>
-                  <Row>
-                    <Col>
-                      <Form.Group controlId="city">
-                        <Form.Label>City</Form.Label>
-                        <Form.Control
-                          required
-                          value={jobPostingLocation.city}
-                          onChange={handleJobPostingLocationChange}
-                          placeholder="Enter a City"
-                        />
-                        <Form.Control.Feedback type="invalid">
-                          Please enter a city, state and zipcode
-                        </Form.Control.Feedback>
-                      </Form.Group>
-                    </Col>
-                    <Col xs={3}>
-                      <Form.Group controlId="state">
-                        <Form.Label>State</Form.Label>
-                        <Form.Control
-                          required
-                          value={jobPostingLocation.state}
-                          onChange={handleJobPostingLocationChange}
-                          placeholder="Enter a State"
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col xs={3}>
-                      <Form.Group controlId="zipCode">
-                        <Form.Label>Zip Code</Form.Label>
-                        <Form.Control
-                          required
-                          value={jobPostingLocation.zipCode}
-                          onChange={handleJobPostingLocationChange}
-                          placeholder="Enter a Zip Code"
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Container>
-              </Card.Body>
-            </Card>
-            <Card>
-              <Card.Header>General Info</Card.Header>
-              <Card.Body>
-                <Container>
-                  <Row>
-                    <Col xs={6}>
-                      <Form.Group controlId="role">
-                        <Form.Label>Job Role</Form.Label>
-                        <Form.Control
-                          required
-                          value={jobPostingGeneralInfo.role}
-                          onChange={handleJobPostingGeneralInfoChange}
-                          placeholder="Enter a Job Role"
-                        />
-                        <Form.Control.Feedback type="invalid">
-                          Please enter a job role
-                        </Form.Control.Feedback>
-                      </Form.Group>
-                    </Col>
-                    <Col xs={6}>
-                      <Form.Group controlId="team">
-                        <Form.Label>Team</Form.Label>
-                        <Form.Control
-                          value={jobPostingGeneralInfo.team}
-                          onChange={handleJobPostingGeneralInfoChange}
-                          placeholder="Enter a Team"
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <div className="textArea">
-                        <Form.Group controlId="description">
-                          <Form.Label>Job Description</Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            rows={6}
-                            required
-                            value={jobPostingGeneralInfo.description}
-                            onChange={handleJobPostingGeneralInfoChange}
-                            placeholder="Enter Job Description"
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            Please enter a Job Description
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                      </div>
-                    </Col>
-                  </Row>
-                </Container>
-              </Card.Body>
-            </Card>
-            <Card>
-              <Card.Header>Job Posting Questions</Card.Header>
-              <Card.Body>
-                <Dropdown
-                  placeholder="Select Job Posting Questions"
-                  fluid
-                  search
-                  selection
-                  multiple
-                  renderLabel={renderItemContent}
-                  onChange={addJobPostingField}
-                  options={jobPostingFieldOptions()}
+              <Form.Group widths="equal">
+                <Form.Field
+                  required
+                  name="city"
+                  label="City"
+                  control="input"
+                  value={jobPostingLocation.city}
+                  onChange={(event) => {
+                    handleJobPostingChange(
+                      event,
+                      setJobPostingLocation,
+                      jobPostingLocation
+                    );
+                  }}
+                  placeholder="Enter a City"
                 />
-              </Card.Body>
-            </Card>
-            <Container fluid>
-              <Row>
-                <Col>
-                  <Button className="button" type="submit" variant="primary">
-                    Submit
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    className="button"
-                    onClick={() => {
-                      props.setShowCreateJobPostingModal(false);
-                    }}
-                    variant="secondary"
-                  >
-                    Cancel
-                  </Button>
-                </Col>
-              </Row>
-            </Container>
-          </Form>
-        </Modal.Body>
-      </Modal>
-      <Alert
-        show={validationMessage.length !== 0}
-        variant={validationMessageType}
-        dismissible
-        onClose={() => {
-          setValidationMessage("");
-        }}
-      >
-        {validationMessage}
-      </Alert>
-    </div>
+
+                <Form.Field
+                  required
+                  name="state"
+                  label="State"
+                  control="input"
+                  value={jobPostingLocation.state}
+                  onChange={(event) => {
+                    handleJobPostingChange(
+                      event,
+                      setJobPostingLocation,
+                      jobPostingLocation
+                    );
+                  }}
+                  placeholder="Enter a State"
+                />
+
+                <Form.Field
+                  label="Zip Code"
+                  name="zipCode"
+                  required
+                  control="input"
+                  value={jobPostingLocation.zipCode}
+                  onChange={(event) => {
+                    handleJobPostingChange(
+                      event,
+                      setJobPostingLocation,
+                      jobPostingLocation
+                    );
+                  }}
+                  placeholder="Enter a Zip Code"
+                />
+              </Form.Group>
+            </Card.Content>
+          </Card>
+          <Card fluid>
+            <Card.Content>
+              <Card.Header textAlign="left">General Info</Card.Header>
+              <Grid>
+                <Grid.Row columns={2} s>
+                  <Grid.Column>
+                    <Form.Field
+                      label="Job Role"
+                      name="role"
+                      required
+                      control="input"
+                      value={jobPostingGeneralInfo.role}
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingGeneralInfo,
+                          jobPostingGeneralInfo
+                        );
+                      }}
+                      placeholder="Enter a Job Role"
+                    />
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Form.Field
+                      label="Team"
+                      name="team"
+                      control="input"
+                      value={jobPostingGeneralInfo.team}
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingGeneralInfo,
+                          jobPostingGeneralInfo
+                        );
+                      }}
+                      placeholder="Enter a Team"
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={1}>
+                  <Grid.Column>
+                    <Form.Field
+                      label="Job Description"
+                      value={jobPostingGeneralInfo.description}
+                      required
+                      name="description"
+                      control="textArea"
+                      onChange={(event) => {
+                        handleJobPostingChange(
+                          event,
+                          setJobPostingGeneralInfo,
+                          jobPostingGeneralInfo
+                        );
+                      }}
+                      placeholder="Enter Job Description"
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Card.Content>
+          </Card>
+          <Card fluid>
+            <Card.Content>
+              <Card.Header>Job Posting Questions</Card.Header>
+              <Dropdown
+                placeholder="Select Job Posting Questions"
+                fluid
+                search
+                selection
+                multiple
+                value={Object.keys(jobPostingFieldIdsMappedToRequiredFlag).map(
+                  Number
+                )}
+                renderLabel={renderItemContent}
+                onChange={addJobPostingField}
+                options={jobPostingFieldOptions()}
+              />
+            </Card.Content>
+          </Card>
+          <Container textAlign="center">
+            <Button.Group attached="bottom">
+              <Button positive>Submit</Button>
+              <Button.Or />
+              <Button
+                negative
+                onClick={() => {
+                  props.setShowCreateJobPostingModal(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </Button.Group>
+          </Container>
+        </Form>
+      </Modal.Content>
+    </Modal>
   );
 };
 
@@ -312,12 +313,12 @@ CreateJobPostingModal.propTypes = {
         state: PropTypes.string,
         zipCode: PropTypes.string,
       }),
+      jobPostingFields: PropTypes.array,
     }),
   }),
 };
 
 CreateJobPostingModal.defaultProps = {
-  edit: false,
   jobPosting: {
     generalInfo: {
       role: "",
@@ -329,6 +330,7 @@ CreateJobPostingModal.defaultProps = {
       state: "",
       zipCode: "",
     },
+    jobPostingFields: [],
   },
 };
 
