@@ -376,7 +376,7 @@ class JobDao():
                                 SELECT *
                                 FROM job.tbl_job_posting_applications
                                 WHERE applicant_id = 37
-                                AND id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id)
+                                AND id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id, applicant_id)
                             ) applications
                          ON applications.job_id = job_posting.id
             """
@@ -542,7 +542,7 @@ class JobDao():
                     INNER JOIN job.tbl_job_posting_location location
                             ON location.job_id = applications.job_id
                     WHERE      applications.applicant_id = %s
-                    AND applications.id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id)
+                    AND applications.id IN (SELECT MIN(id) FROM job.tbl_job_posting_applications GROUP BY job_id, applicant_id)
                 """,
                 [account_id]
             )
