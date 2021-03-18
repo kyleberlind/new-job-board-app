@@ -1,7 +1,7 @@
 import React from "react";
-import { deleteJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
 import { Button, Container, Modal, Segment } from "semantic-ui-react";
+import { deleteJobPostingService } from "../../../services/employer/EmployerServices";
 
 const DeleteJobPostingConfirmationModal = (props) => {
   const formattedJobLocation = `${props.jobPosting.location.city}, ${props.jobPosting.location.state}, ${props.jobPosting.location.zipCode}`;

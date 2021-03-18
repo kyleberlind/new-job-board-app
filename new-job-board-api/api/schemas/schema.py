@@ -127,4 +127,4 @@ class Mutation(graphene.ObjectType):
     update_application_status = UpdateApplicationStatus.Field()
 
 
-job_posting_schema = graphene.Schema(query=Query, mutation=Mutation)
+schema = graphene.Schema(query=Query, mutation=Mutation)

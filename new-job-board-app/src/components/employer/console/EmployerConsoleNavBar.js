@@ -1,11 +1,14 @@
 import React from "react";
 import { Menu, Button } from "semantic-ui-react";
-
+import { createBrowserHistory } from "history";
+import { Link } from "react-router-dom";
 function EmployerConsoleNavBar(props) {
+  const browserHistory = createBrowserHistory();
+
   return (
     <Menu inverted>
-      <Menu.Item name="Console" href="/employer/employer-console" />
-      <Menu.Item name="Account" href="/employer/account" />
+      <Menu.Item name="My Job Postings" as={Link} to="employer-console" />
+      <Menu.Item name="Account" as={Link} to="account"></Menu.Item>
       <Menu.Item
         name="Create Job Posting"
         onClick={() => {
@@ -14,7 +17,9 @@ function EmployerConsoleNavBar(props) {
       />
       <Menu.Menu position="right">
         <Menu.Item>
-          <Button fluid onClick={props.handleLogout}>Logout</Button>
+          <Button fluid onClick={props.handleLogout}>
+            Logout
+          </Button>
         </Menu.Item>
       </Menu.Menu>
     </Menu>

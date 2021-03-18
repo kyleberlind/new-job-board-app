@@ -19,7 +19,7 @@ def create_app():
     from .views.account_view import account_view
     from .views.employer_view import employer_view
     from .views.applicant_view import applicant_view
-    from .schemas.job_posting_application_schema import job_posting_schema
+    from .schemas.schema import schema
 
     app.register_blueprint(account_view)
     app.register_blueprint(employer_view)
@@ -44,7 +44,7 @@ def create_app():
         '/graphql',
         view_func=GraphQLView.as_view(
             'graphql',
-            schema=job_posting_schema,
+            schema=schema,
             graphiql=True
         )
     )
