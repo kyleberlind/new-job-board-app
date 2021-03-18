@@ -152,12 +152,15 @@ class AccountDao():
             cursor = self.user_connection.cursor(self.db.cursors.DictCursor)
             cursor.execute(
                 """
-                    SELECT employer_id,
-                           employer_name,
-                           employer_size,
-                           sign_up_date
-                    FROM   user.tbl_employer
-                    WHERE  user_id = %s
+                    SELECT     employer.employer_id,
+                               employer.employer_name,
+                               employer.employer_size,
+                               employer.sign_up_date,
+                               user.email_address as employer_email_address
+                    FROM       user.tbl_employer employer
+                    INNER JOIN user.tbl_user user
+                            ON employer.user_id = user.id
+                    WHERE      employer.user_id = %s
                 """,
                 [user_id]
             )

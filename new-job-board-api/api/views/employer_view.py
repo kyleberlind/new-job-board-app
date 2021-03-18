@@ -13,7 +13,6 @@ from ..models.job_posting.job_posting_model import JobPostingModel
 from ..models.job_posting.job_posting_processor_model import JobPostingProcessorModel
 from ..models.job_posting.job_posting_application_model import JobPostingApplicationModel
 from ..models.applicant.applicant_info_model import ApplicantInfoModel
-from flask_graphql import GraphQLView
 
 employer_view = Blueprint("employer_view", __name__)
 

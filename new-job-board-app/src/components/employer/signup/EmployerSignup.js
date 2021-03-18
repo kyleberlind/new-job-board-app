@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import { EMPLOYER_USER_TYPE } from "../../../constants/employer/EmployerConstants";
 import { signUpEmployerService } from "../../../services/AccountServices";
-import {
-  Card,
-  Form,
-  Container,
-  Message,
-} from "semantic-ui-react";
+import { Card, Form, Container, Message } from "semantic-ui-react";
 
 function EmployerSignup() {
   const [fields, setFields] = useState({
