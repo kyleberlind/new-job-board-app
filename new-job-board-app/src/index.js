@@ -7,17 +7,24 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "semantic-ui-css/semantic.min.css";
 
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import rootReducer from './reducers/rootReducer';
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   uri: "http://localhost:5000/graphql",
 });
 
+const store = createStore(rootReducer);
+
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <React.Fragment>
-      <App />
-    </React.Fragment>
+    <Provider store={store}>
+      <React.Fragment>
+        <App />
+      </React.Fragment>
+    </Provider>
   </ApolloProvider>,
   document.getElementById("root")
 );
