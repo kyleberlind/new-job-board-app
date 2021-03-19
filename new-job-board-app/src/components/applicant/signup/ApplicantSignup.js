@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Button, Card, Form, Container, Message } from "semantic-ui-react";
 import { APPLICANT_USER_TYPE } from "../../../constants/applicant/ApplicantConstants.js";
 import { signUpApplicantService } from "../../../services/AccountServices";
-import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 
 function ApplicantSignup() {
   const [fields, setFields] = useState({

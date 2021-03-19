@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, Table, Container, Loader } from "semantic-ui-react";
-
+import EditAccountInfoModal from "./modals/EditAccountInfoModel";
 const EmployerAccount = (props) => {
+  const [isEditAccountInfoModalOpen, setIsEditAccountInfoModalOpen] = useState(
+    false
+  );
+  const [editType, setEditType] = useState("");
+
   return (
     <Container fluid>
       {Object.keys(props.employer).length !== 0 ? (
@@ -19,14 +24,45 @@ const EmployerAccount = (props) => {
                   <Table.Cell>Email Address</Table.Cell>
                   <Table.Cell>{props.employer.employerEmailAddress}</Table.Cell>
                   <Table.Cell width={2}>
-                    <Button>Edit</Button>
+                    <Button
+                      fluid
+                      onClick={() => {
+                        setEditType("emailAddress");
+                        setIsEditAccountInfoModalOpen(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>Password</Table.Cell>
+                  <Table.Cell>*************</Table.Cell>
+                  <Table.Cell width={2}>
+                    <Button
+                      fluid
+                      onClick={() => {
+                        setEditType("password");
+                        setIsEditAccountInfoModalOpen(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell>Size</Table.Cell>
                   <Table.Cell>{props.employer.employerSize}</Table.Cell>
                   <Table.Cell>
-                    <Button>Edit</Button>
+                    <Button
+                      fluid
+                      onClick={() => {
+                        setEditType("size");
+                        setIsEditAccountInfoModalOpen(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
                 <Table.Row>
@@ -40,6 +76,11 @@ const EmployerAccount = (props) => {
       ) : (
         <Loader active />
       )}
+      <EditAccountInfoModal
+        isEditAccountInfoModalOpen={isEditAccountInfoModalOpen}
+        setIsEditAccountInfoModalOpen={setIsEditAccountInfoModalOpen}
+        editType={editType}
+      />
     </Container>
   );
 };

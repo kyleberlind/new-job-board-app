@@ -57,12 +57,11 @@ function Employer() {
   //this component will render before the useEffect has fired so employer will be null, is there a better way to load the employer and pass it down
   return (
     <Container fluid>
-
       <Router>
-      <EmployerConsoleNavBar
-        handleLogout={handleLogout}
-        setShowCreateJobPostingModal={setShowCreateJobPostingModal}
-      />
+        <EmployerConsoleNavBar
+          handleLogout={handleLogout}
+          setShowCreateJobPostingModal={setShowCreateJobPostingModal}
+        />
         <Switch>
           <Route
             exact
@@ -91,6 +90,7 @@ function Employer() {
         employer={employer}
         jobPostingFields={jobPostingFields}
       />
+
     </Container>
   );
 }
