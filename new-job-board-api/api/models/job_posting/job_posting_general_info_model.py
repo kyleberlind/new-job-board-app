@@ -13,4 +13,3 @@ class JobPostingGeneralInfoModel(BaseJobModel):
     description:str
     date_created: Optional[datetime]
     applied: Optional[bool]
-    

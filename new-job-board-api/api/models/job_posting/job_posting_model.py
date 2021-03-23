@@ -14,7 +14,6 @@ class JobPostingModel(BaseJobModel):
     location: JobPostingLocationModel
     job_posting_fields: Optional[List[JobPostingFieldModel]]
 
-
 class JobPostingModelSQLAlchemy(db.Model):
     """Model to represent the job posting in SQL Alchemy"""
     __tablename__ = "tbl_job_posting"

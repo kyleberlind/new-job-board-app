@@ -11,7 +11,6 @@ def map_job_posting_info(job_postings: list):
     """Mapper to format job postings"""
     return list(map(format_job_posting_info, job_postings))
 
-
 def format_job_posting_info(job_posting):
     """Formatting function for the job posting"""
     return {
@@ -21,7 +20,6 @@ def format_job_posting_info(job_posting):
         ),
         "job_posting_fields": job_posting["job_posting_fields"] if "job_posting_fields" in job_posting else []
     }
-
 
 def map_job_applications(applications: list) -> list:
     """Maps over the job posing applications"""
