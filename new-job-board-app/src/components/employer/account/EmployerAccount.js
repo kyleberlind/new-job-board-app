@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, Table, Container, Loader } from "semantic-ui-react";
 import EditAccountInfoModal from "./modals/EditAccountInfoModel";
@@ -72,15 +72,16 @@ const EmployerAccount = (props) => {
               </Table.Body>
             </Table>
           </Card.Content>
+          <EditAccountInfoModal
+            isEditAccountInfoModalOpen={isEditAccountInfoModalOpen}
+            setIsEditAccountInfoModalOpen={setIsEditAccountInfoModalOpen}
+            editType={editType}
+            employer={props.employer}
+          />
         </Card>
       ) : (
         <Loader active />
       )}
-      <EditAccountInfoModal
-        isEditAccountInfoModalOpen={isEditAccountInfoModalOpen}
-        setIsEditAccountInfoModalOpen={setIsEditAccountInfoModalOpen}
-        editType={editType}
-      />
     </Container>
   );
 };

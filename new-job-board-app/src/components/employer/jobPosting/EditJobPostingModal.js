@@ -167,8 +167,6 @@ const EditJobPostingModal = (props) => {
                   label="City"
                   required
                   control="input"
-                  validators={["required"]}
-                  errorMessages={["Please enter a city"]}
                   value={jobPostingLocation.city}
                   onChange={(event) => {
                     handleJobPostingChange(

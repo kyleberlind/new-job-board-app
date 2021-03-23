@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import EditEmailModal from "./EditEmailModal";
 import EditPasswordModal from "./EditPasswordModal";
 import EditSizeModal from "./EditSizeModal";
@@ -26,6 +26,8 @@ const EditAccountInfoModal = (props) => {
         <EditSizeModal
           isEditSizeModalOpen={props.isEditAccountInfoModalOpen}
           setIsEditSizeModalOpen={props.setIsEditAccountInfoModalOpen}
+          employerId={props.employer.employerId}
+          employerSize={props.employer.employerSize}
         />
       );
 
@@ -34,6 +36,8 @@ const EditAccountInfoModal = (props) => {
         <EditSizeModal
           isEditSizeModalOpen={props.isEditAccountInfoModalOpen}
           setIsEditSizeModalOpen={props.setIsEditAccountInfoModalOpen}
+          employerId={props.employer.employerId}
+          employerSize={props.employer.employerSize}
         />
       );
   }
@@ -41,6 +45,7 @@ const EditAccountInfoModal = (props) => {
 EditAccountInfoModal.propTypes = {
   isEditAccountInfoModalOpen: PropTypes.bool.isRequired,
   setIsEditAccountInfoModalOpen: PropTypes.func.isRequired,
+  employer: PropTypes.object.isRequired,
 };
 
 export default EditAccountInfoModal;

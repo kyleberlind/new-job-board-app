@@ -5,9 +5,10 @@ import PropTypes from "prop-types";
 const EditPasswordModal = (props) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   return (
     <Modal
-    size="tiny"
+      size="tiny"
       open={props.isEditPasswordModalOpen}
       onOpen={() => {
         props.setIsEditPasswordModalOpen(true);
@@ -43,6 +44,18 @@ const EditPasswordModal = (props) => {
               setNewPassword(event.target.value);
             }}
           />
+          <Form.Field
+            label="Confirm New Password"
+            name="confirmNewPassword"
+            required
+            control="input"
+            type="password"
+            placeholder="Confirm New Password"
+            value={confirmNewPassword}
+            onChange={(event) => {
+              setConfirmNewPassword(event.target.value);
+            }}
+          />
         </Form>
       </Modal.Content>
       <Modal.Actions>
@@ -66,8 +79,8 @@ const EditPasswordModal = (props) => {
 };
 
 EditPasswordModal.propTypes = {
-  isEditModalOpen: PropTypes.bool.isRequired,
-  setIsEditModalOpen: PropTypes.func.isRequired,
+  isEditPasswordModalOpen: PropTypes.bool.isRequired,
+  setIsEditPasswordModalOpen: PropTypes.func.isRequired,
 };
 
 export default EditPasswordModal;

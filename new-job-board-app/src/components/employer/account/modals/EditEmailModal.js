@@ -32,7 +32,7 @@ const EditEmailModal = (props) => {
         </Form>
       </Modal.Content>
       <Modal.Actions>
-      <Container textAlign="center">
+        <Container textAlign="center">
           <Button.Group attached="bottom">
             <Button positive>Confirm</Button>
             <Button.Or />

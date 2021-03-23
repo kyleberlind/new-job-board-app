@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import EmployerSignup from "./signup/EmployerSignup.js";
 import EmployerConsole from "./console/EmployerConsole.js";
 import EmployerConsoleNavBar from "./console/EmployerConsoleNavBar.js";
 import EmployerAccount from "./account/EmployerAccount";
@@ -52,7 +51,6 @@ function Employer() {
         console.log(error);
       });
   };
-  var hashHistory = require("react-router").hashHistory;
 
   //this component will render before the useEffect has fired so employer will be null, is there a better way to load the employer and pass it down
   return (
@@ -90,7 +88,6 @@ function Employer() {
         employer={employer}
         jobPostingFields={jobPostingFields}
       />
-
     </Container>
   );
 }

@@ -1,10 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Modal, Form, Container, Button } from "semantic-ui-react";
 import { EMPLOYER_SIZE_OPTIONS } from "../../../../constants/employer/EmployerConstants";
+import { useMutation } from "@apollo/client";
+import { UPDATE_EMPLOYER_SIZE_MUTATION } from "../../../../services/graphql/mutations/EmployerMutations";
 
 const EditSizeModal = (props) => {
-  const [newEmployerSize, setNewEmployerSize] = useState("");
+  const [newEmployerSize, setNewEmployerSize] = useState(props.employerSize);
+  const [updateEmployerSize, { mutationData }] = useMutation(
+    UPDATE_EMPLOYER_SIZE_MUTATION
+  );
+
+  useEffect(() => {
+    setNewEmployerSize(props.employerSize);
+  }, [props.employerSize]);
+
+  const handleUpdateSize = () => {
+    updateEmployerSize({
+      variables: {
+        employerId: props.employerId,
+        newSize: newEmployerSize,
+      },
+    });
+    //TODO update the redux state 
+    //TODO include confirmation toast
+    props.setIsEditSizeModalOpen(false)
+  };
+
   return (
     <Modal
       size="small"
@@ -28,8 +50,8 @@ const EditSizeModal = (props) => {
             label="Company Size"
             options={EMPLOYER_SIZE_OPTIONS}
             value={newEmployerSize}
-            onChange={(event) => {
-              setNewEmployerSize(event.target.value);
+            onChange={(event, data) => {
+              setNewEmployerSize(data.value);
             }}
           />
         </Form>
@@ -37,7 +59,9 @@ const EditSizeModal = (props) => {
       <Modal.Actions>
         <Container textAlign="center">
           <Button.Group attached="bottom">
-            <Button positive>Confirm</Button>
+            <Button positive onClick={handleUpdateSize}>
+              Confirm
+            </Button>
             <Button.Or />
             <Button
               negative
@@ -57,6 +81,8 @@ const EditSizeModal = (props) => {
 EditSizeModal.propTypes = {
   isEditSizeModalOpen: PropTypes.bool.isRequired,
   setIsEditSizeModalOpen: PropTypes.func.isRequired,
+  employerId: PropTypes.number.isRequired,
+  employerSize: PropTypes.string.isRequired,
 };
 
 export default EditSizeModal;

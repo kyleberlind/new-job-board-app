@@ -245,7 +245,7 @@ const CreateJobPostingModal = (props) => {
                       value={jobPostingGeneralInfo.description}
                       required
                       name="description"
-                      control="textArea"
+                      control="textarea"
                       onChange={(event) => {
                         handleJobPostingChange(
                           event,
