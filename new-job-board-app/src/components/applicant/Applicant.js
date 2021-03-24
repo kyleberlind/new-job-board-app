@@ -24,7 +24,7 @@ function Applicant(props) {
 
   return (
     <Container fluid>
-      <ApplicantConsoleNavBar handleLogout={handleLogout} />
+      <ApplicantConsoleNavBar handleLogout={handleLogout} jobCartCount={props.jobCart.length}/>
       <Router>
         <Switch>
           <Route path="/applicant" exact>

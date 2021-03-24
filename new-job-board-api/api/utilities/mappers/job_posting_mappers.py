@@ -11,6 +11,10 @@ def map_job_posting_info(job_postings: list):
     """Mapper to format job postings"""
     return list(map(format_job_posting_info, job_postings))
 
+def map_job_posting_info_json(job_postings: list):
+    """Mapper to format job postings as json objects"""
+    return list(map(format_job_posting_info_json, job_postings))
+
 def format_job_posting_info(job_posting):
     """Formatting function for the job posting"""
     return {
@@ -18,6 +22,16 @@ def format_job_posting_info(job_posting):
         "location": JobPostingLocationModel(
             **job_posting
         ),
+        "job_posting_fields": job_posting["job_posting_fields"] if "job_posting_fields" in job_posting else []
+    }
+
+def format_job_posting_info_json(job_posting):
+    """Formatting function for the job posting as json objects"""
+    return {
+        "general_info": JobPostingGeneralInfoModel(**job_posting).toJSONObject(),
+        "location": JobPostingLocationModel(
+            **job_posting
+        ).toJSONObject(),
         "job_posting_fields": job_posting["job_posting_fields"] if "job_posting_fields" in job_posting else []
     }
 

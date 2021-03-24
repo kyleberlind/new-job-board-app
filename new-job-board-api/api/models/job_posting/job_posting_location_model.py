@@ -2,12 +2,16 @@
 from sqlalchemy import ForeignKey
 from .base_job_model import BaseJobModel
 from ...__init__ import db
+import json
 
 class JobPostingLocationModel(BaseJobModel):
     """Model to represent the job location"""
     city: str
     state: str
     zip_code: str
+
+    def toJSONObject(self):
+        return json.loads(json.dumps(self, default=lambda o: o.__dict__))
 
 
 class JobPostingLocationModelSQLAlchemy(db.Model):
