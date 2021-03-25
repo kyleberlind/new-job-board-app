@@ -23,6 +23,7 @@ class UserModel(BaseModel):
         arbitrary_types_allowed = True
         alias_generator = snake_to_camel_case
         allow_population_by_alias = True
+        allow_reuse = True
 
     @classmethod
     @validator("email_address")
@@ -56,5 +57,9 @@ class UserModelSQLAlchemy(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email_address = db.Column(db.String(64))
+    password = db.Column(db.String(128))
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
+    user_type = db.Column(db.Integer)
+    sign_up_date = db.Column(db.DateTime)
+    salt = db.Column(db.String(128))

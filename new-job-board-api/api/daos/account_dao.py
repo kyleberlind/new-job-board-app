@@ -156,7 +156,8 @@ class AccountDao():
                                employer.employer_name,
                                employer.employer_size,
                                employer.sign_up_date,
-                               user.email_address as employer_email_address
+                               user.email_address as employer_email_address,
+                               user.id as user_id
                     FROM       user.tbl_employer employer
                     INNER JOIN user.tbl_user user
                             ON employer.user_id = user.id

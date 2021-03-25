@@ -203,7 +203,7 @@ const CreateJobPostingModal = (props) => {
             <Card.Content>
               <Card.Header textAlign="left">General Info</Card.Header>
               <Grid>
-                <Grid.Row columns={2} s>
+                <Grid.Row columns={2}>
                   <Grid.Column>
                     <Form.Field
                       label="Job Role"

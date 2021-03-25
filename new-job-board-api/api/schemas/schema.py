@@ -159,25 +159,34 @@ class UpdatePassword(graphene.Mutation):
     class Arguments:
         """Arguments for UpdatePassword"""
         user_id = graphene.Int(required=True)
-        old_password = graphene.String(required=True)
+        current_password = graphene.String(required=True)
         new_password = graphene.String(required=True)
 
     user = graphene.Field(
         lambda: UserObject)
 
-    def mutate(self, info, user_id, old_password, new_password):
+    def mutate(self, info, user_id, current_password, new_password):
         """Mutation for updating the users password"""
         user_query = UserObject.get_query(info)
-        user_query.filter(
-            UserModelSQLAlchemy.id == user_id)
+        user = user_query.filter(
+            UserModelSQLAlchemy.id == user_id).first()
 
-        if generate_hashed_password(old_password, user_query.salt) != user_query.password:
-            raise Exception("Incorrect Password")
+        hashed_current_password = generate_hashed_password(
+            current_password.encode('utf-8'), user.salt.encode('utf-8'))
+
+        hashed_new_password = generate_hashed_password(
+            new_password.encode('utf-8'), user.salt.encode('utf-8'))
+
+        if hashed_current_password != user.password.encode('utf-8'):
+            raise Exception("Incorrect password")
+
+        if hashed_new_password == user.password.encode('utf-8'):
+            raise Exception("New password cannot be the same as old password")
 
         new_salt = generate_salt()
         user_query.update(
             {
-                "password": generate_hashed_password(new_password, new_salt),
+                "password": generate_hashed_password(new_password.encode('utf-8'), new_salt),
                 "salt": new_salt
             }
         )
@@ -189,6 +198,7 @@ class Mutation(graphene.ObjectType):
     """Mutation Object"""
     update_application_status = UpdateApplicationStatus.Field()
     update_employer_size = UpdateEmployerSize.Field()
+    update_password = UpdatePassword.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

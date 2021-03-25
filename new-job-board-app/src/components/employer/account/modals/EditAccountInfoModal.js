@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import EditEmailModal from "./EditEmailModal";
 import EditPasswordModal from "./EditPasswordModal";
 import EditSizeModal from "./EditSizeModal";
-import PropTypes from "prop-types";
+
 
 const EditAccountInfoModal = (props) => {
   switch (props.editType) {
@@ -18,6 +19,7 @@ const EditAccountInfoModal = (props) => {
         <EditPasswordModal
           isEditPasswordModalOpen={props.isEditAccountInfoModalOpen}
           setIsEditPasswordModalOpen={props.setIsEditAccountInfoModalOpen}
+          userId={props.employer.userId}
         />
       );
 

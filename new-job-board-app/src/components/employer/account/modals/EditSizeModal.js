@@ -4,12 +4,15 @@ import { Modal, Form, Container, Button } from "semantic-ui-react";
 import { EMPLOYER_SIZE_OPTIONS } from "../../../../constants/employer/EmployerConstants";
 import { useMutation } from "@apollo/client";
 import { UPDATE_EMPLOYER_SIZE_MUTATION } from "../../../../services/graphql/mutations/EmployerMutations";
+import { useSelector, useDispatch } from "react-redux";
 
 const EditSizeModal = (props) => {
   const [newEmployerSize, setNewEmployerSize] = useState(props.employerSize);
   const [updateEmployerSize, { mutationData }] = useMutation(
     UPDATE_EMPLOYER_SIZE_MUTATION
   );
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setNewEmployerSize(props.employerSize);
@@ -22,9 +25,9 @@ const EditSizeModal = (props) => {
         newSize: newEmployerSize,
       },
     });
-    //TODO update the redux state 
+    //TODO update the redux state
     //TODO include confirmation toast
-    props.setIsEditSizeModalOpen(false)
+    props.setIsEditSizeModalOpen(false);
   };
 
   return (

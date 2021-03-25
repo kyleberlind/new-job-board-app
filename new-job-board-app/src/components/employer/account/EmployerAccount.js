@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, Table, Container, Loader } from "semantic-ui-react";
-import EditAccountInfoModal from "./modals/EditAccountInfoModel";
+import EditAccountInfoModal from "./modals/EditAccountInfoModal";
 const EmployerAccount = (props) => {
   const [isEditAccountInfoModalOpen, setIsEditAccountInfoModalOpen] = useState(
     false
@@ -17,8 +17,12 @@ const EmployerAccount = (props) => {
             <Table definition>
               <Table.Body>
                 <Table.Row>
-                  <Table.Cell width={2}>ID</Table.Cell>
+                  <Table.Cell width={2}>Employer ID</Table.Cell>
                   <Table.Cell>{props.employer.employerId}</Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell width={2}>Account ID</Table.Cell>
+                  <Table.Cell>{props.employer.userId}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell>Email Address</Table.Cell>
