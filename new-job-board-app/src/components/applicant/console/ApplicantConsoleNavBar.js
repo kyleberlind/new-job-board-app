@@ -12,7 +12,7 @@ function ApplicantConsoleNavBar(props) {
       <Menu.Menu position="right">
         <Menu.Item>
           <Button fluid href="/applicant/job-cart">
-            Job Cart
+            {props.jobCartCount > 0 ? "Job Cart (" + props.jobCartCount + ")" : "Job Cart"}
           </Button>
         </Menu.Item>
         <Menu.Item>

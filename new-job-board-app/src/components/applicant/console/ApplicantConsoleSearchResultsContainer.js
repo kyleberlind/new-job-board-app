@@ -6,7 +6,9 @@ import {
 } from "../../../services/applicant/ApplicantServices";
 import { useFormFields } from "../../../libs/hooks/useFormFields.js";
 import PropTypes from 'prop-types';
-import {jobPostingShape} from "../../../shapes/JobPostingShape"
+import {jobPostingShape} from "../../../shapes/JobPostingShape";
+import { connect } from "react-redux";
+
 
 import './css/ApplicantConsole.css';
 
@@ -21,8 +23,10 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
       response.json().then((data) => {
         if (data["hasError"]) {
           console.log("ERROR"); // fix this
+          console.log(data);
         } else {
           console.log(data);
+          props.updateJobCart(data['jobCart']);
         }
       });
     });
@@ -97,9 +101,15 @@ const ApplicantConsoleSearchResultsContainer = (props) => {
   );
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateJobCart: (newJobCart) => { dispatch({type: 'UPDATE_JOB_CART', jobCart: newJobCart }) }
+  }
+}
+
 ApplicantConsoleSearchResultsContainer.propTypes = {
   jobPostings: PropTypes.arrayOf(jobPostingShape).isRequired,
    applicantId: PropTypes.number.isRequired,
 }
 
-export default ApplicantConsoleSearchResultsContainer;
+export default connect( () => {}, mapDispatchToProps)(ApplicantConsoleSearchResultsContainer);

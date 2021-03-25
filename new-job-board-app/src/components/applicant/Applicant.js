@@ -8,8 +8,10 @@ import { logoutService } from "../../services/AccountServices";
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ApplicantConsoleNavBar from "./console/ApplicantConsoleNavBar";
+import { connect } from "react-redux";
 
-function Applicant() {
+function Applicant(props) {
+  console.log(props.jobCart);
   const handleLogout = () => {
     logoutService()
       .then(() => {
@@ -22,7 +24,7 @@ function Applicant() {
 
   return (
     <Container fluid>
-      <ApplicantConsoleNavBar handleLogout={handleLogout} />
+      <ApplicantConsoleNavBar handleLogout={handleLogout} jobCartCount={props.jobCart.length}/>
       <Router>
         <Switch>
           <Route path="/applicant" exact>
@@ -45,4 +47,10 @@ function Applicant() {
   );
 }
 
-export default Applicant;
+const mapStateToProps = (state) => {
+  return {
+    jobCart: state.jobCart
+  }
+}
+
+export default connect(mapStateToProps)(Applicant);

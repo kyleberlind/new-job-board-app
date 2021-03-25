@@ -1,7 +1,7 @@
 """02/14/2021"""
 from ...daos.job_dao import JobDao
 from ...models.job_posting.job_posting_model import JobPostingModel
-from ...utilities.mappers.job_posting_mappers import map_job_posting_info, map_job_applications
+from ...utilities.mappers.job_posting_mappers import map_job_posting_info, map_job_posting_info_json, map_job_applications
 
 
 class JobPostingProcessorModel:
@@ -97,7 +97,7 @@ class JobPostingProcessorModel:
     def load_job_posting_by_job_id(self, job_id: int):
         """Loads a job posting by Job ID"""
         job_postings = self.dao.load_job_posting_by_job_id(job_id)
-        return map_job_posting_info(job_postings)
+        return map_job_posting_info_json(job_postings)
 
     def get_job_posting_fields(self):
         """gets the job posting fields"""

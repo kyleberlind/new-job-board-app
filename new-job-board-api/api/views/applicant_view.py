@@ -85,11 +85,11 @@ def add_posting_to_job_cart():
     """Adds a job posting to the job cart"""
     job_posting_processor = JobPostingProcessorModel()
     job_id = json.loads(request.data)["jobId"]
-
     def job_cart_contains_id(id):
         if 'job_cart' in session:
             for job in session['job_cart']:
-                if job['general_info']['id'] == id:
+                print(job['general_info'])
+                if job['general_info']["id"] == id:
                     return True
         return False
     if 'job_cart' in session:
