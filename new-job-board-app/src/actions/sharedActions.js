@@ -1,4 +1,4 @@
-export const openToast = (content) => ({
+export const openToast = () => ({
   type: "OPEN_TOAST",
-  payload: { content },
+  payload: true,
 });

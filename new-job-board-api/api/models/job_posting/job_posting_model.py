@@ -1,6 +1,7 @@
 """02/14/2021"""
 from typing import List, Optional
 from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
 from .job_posting_general_info_model import JobPostingGeneralInfoModel
 from .job_posting_location_model import JobPostingLocationModel
 from .job_posting_field_model import JobPostingFieldModel
@@ -14,11 +15,13 @@ class JobPostingModel(BaseJobModel):
     location: JobPostingLocationModel
     job_posting_fields: Optional[List[JobPostingFieldModel]]
 
+
 class JobPostingModelSQLAlchemy(db.Model):
     """Model to represent the job posting in SQL Alchemy"""
     __tablename__ = "tbl_job_posting"
+       
     id = db.Column(db.Integer, primary_key=True)
-    employer_id = db.Column(db.Integer)
+    employer_id = db.Column(db.Integer, ForeignKey('tbl_employer.employer_id'))
     role = db.Column(db.String(64))
     team = db.Column(db.String(64))
     description = db.Column(db.String(1024))

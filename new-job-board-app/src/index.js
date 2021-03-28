@@ -7,13 +7,16 @@ import reportWebVitals from "./reportWebVitals";
 import "semantic-ui-css/semantic.min.css";
 
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-import rootReducer from './reducers/rootReducer';
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import rootReducer from "./reducers/rootReducer";
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: "http://localhost:5000/graphql",
+  uri: "http://localhost:3000/graphql",
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
 const store = createStore(rootReducer);

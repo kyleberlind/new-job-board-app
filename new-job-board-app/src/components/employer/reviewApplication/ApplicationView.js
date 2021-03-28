@@ -79,13 +79,15 @@ const ApplicationView = (props) => {
           null && (
           <Header as={"h2"}>
             {`${data.applicationsByEmployerReferenceId[0].applicantInfo.firstName} ${data.applicationsByEmployerReferenceId[0].applicantInfo.lastName}`}
-          </Header>
+          </Header> 
         )}
         <Header as={"h3"}>
           {data.applicationsByEmployerReferenceId[0].applicantInfo.emailAddress}
         </Header>
         Application Date:
         {data.applicationsByEmployerReferenceId[0].dateApplied}
+
+        Status {data.applicationsByEmployerReferenceId[0].status}
       </Segment>
     );
   };

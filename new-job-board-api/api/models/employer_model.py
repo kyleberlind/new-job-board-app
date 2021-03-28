@@ -1,6 +1,8 @@
 """02/14/2021"""
 from typing import Optional
+from sqlalchemy.orm import relationship
 from .user_model import UserModel
+from sqlalchemy import ForeignKey
 from ..__init__ import db
 
 
@@ -17,7 +19,17 @@ class EmployerModelSQLAlchemy(db.Model):
     __bind_key__ = 'user'
 
     employer_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer,  ForeignKey('tbl_user.id'))
     employer_name = db.Column(db.String(64))
     employer_size = db.Column(db.String(64))
     sign_up_date = db.Column(db.DateTime)
+    job_postings = relationship(
+        "JobPostingModelSQLAlchemy",
+        uselist=True,
+        backref="tbl_employer"
+    )
+    user_info = relationship(
+        "UserModelSQLAlchemy",
+        uselist=False,
+        backref="tbl_employer"
+    )

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Card, Button, Table, Container, Loader } from "semantic-ui-react";
 import EditAccountInfoModal from "./modals/EditAccountInfoModal";
 const EmployerAccount = (props) => {
@@ -26,7 +27,9 @@ const EmployerAccount = (props) => {
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell>Email Address</Table.Cell>
-                  <Table.Cell>{props.employer.employerEmailAddress}</Table.Cell>
+                  <Table.Cell>
+                    {props.employer.userInfo.emailAddress}
+                  </Table.Cell>
                   <Table.Cell width={2}>
                     <Button
                       fluid
@@ -90,8 +93,10 @@ const EmployerAccount = (props) => {
   );
 };
 
-EmployerAccount.propTypes = {
-  employer: PropTypes.object.isRequired,
+const mapStateToProps = (state) => {
+  return {
+    employer: state.employer,
+  };
 };
 
-export default EmployerAccount;
+export default connect(mapStateToProps)(EmployerAccount);

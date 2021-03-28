@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Modal, Form, Button, Container, Message } from "semantic-ui-react";
 import { useMutation } from "@apollo/client";
+import { Modal, Form, Button, Container, Message } from "semantic-ui-react";
 import { UPDATE_PASSWORD_MUTATION } from "../../../../services/graphql/mutations/SharedMutations";
+import { getSuccessToastWithMessage } from "../../../shared/toast/ToastOptions";
 
 const EditPasswordModal = (props) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -13,7 +15,9 @@ const EditPasswordModal = (props) => {
     UPDATE_PASSWORD_MUTATION
   );
 
-  const handleEditPassword = () => {
+  const handleEditPassword = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (newPassword === confirmNewPassword) {
       updatePassword({
         variables: {
@@ -22,16 +26,17 @@ const EditPasswordModal = (props) => {
           newPassword,
         },
       })
-        .then(({ data }) => {
-          console.log(data);
+        .then(() => {
+          props.setIsEditPasswordModalOpen(false);
+          props.openToast(
+            getSuccessToastWithMessage("Successfully updated password!")
+          );
         })
         .catch((error) => {
           setValidationMessage(error.message);
         });
-      //TODO update the redux state
-      //TODO include confirmation toast
     } else {
-      setValidationMessage("Passwords must match.");
+      setValidationMessage("New passwords must match.");
     }
   };
 
@@ -48,7 +53,7 @@ const EditPasswordModal = (props) => {
     >
       <Modal.Header>Edit Password?</Modal.Header>
       <Modal.Content>
-        <Form>
+        <Form onSubmit={handleEditPassword}>
           <Form.Field
             label="Current Password"
             name="currentPassword"
@@ -85,31 +90,39 @@ const EditPasswordModal = (props) => {
               setConfirmNewPassword(event.target.value);
             }}
           />
+          <Container textAlign="center">
+            <Button.Group attached="bottom">
+              <Button type="submit" positive>
+                Confirm
+              </Button>
+              <Button.Or />
+              <Button
+                negative
+                onClick={() => {
+                  props.setIsEditPasswordModalOpen(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </Button.Group>
+          </Container>
         </Form>
         {validationMessage.length !== 0 && (
-          <Message error header="Sign Up Failed" content={validationMessage} />
+          <Message
+            error
+            header="Update Password Failed"
+            content={validationMessage}
+          />
         )}
       </Modal.Content>
-      <Modal.Actions>
-        <Container textAlign="center">
-          <Button.Group attached="bottom">
-            <Button onClick={handleEditPassword} positive>
-              Confirm
-            </Button>
-            <Button.Or />
-            <Button
-              negative
-              onClick={() => {
-                props.setIsEditPasswordModalOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-          </Button.Group>
-        </Container>
-      </Modal.Actions>
     </Modal>
   );
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openToast: (toast) => dispatch({ type: "OPEN_TOAST", payload: toast }),
+  };
 };
 
 EditPasswordModal.propTypes = {
@@ -118,4 +131,4 @@ EditPasswordModal.propTypes = {
   userId: PropTypes.number.isRequired,
 };
 
-export default EditPasswordModal;
+export default connect(null, mapDispatchToProps)(EditPasswordModal);

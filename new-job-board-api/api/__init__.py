@@ -24,7 +24,8 @@ def create_app():
     app.register_blueprint(account_view)
     app.register_blueprint(employer_view)
     app.register_blueprint(applicant_view)
-    CORS(app)
+
+    app.config["SESSION_COOKIE_NAME"] = 'session'
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config["SQLALCHEMY_DATABASE_URI"] = BASE_DB_PATH + "job"
@@ -49,6 +50,7 @@ def create_app():
         )
     )
 
+    CORS(app)
     return app
 
 

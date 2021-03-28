@@ -1,9 +1,11 @@
 """02/14/2021"""
 from typing import Optional
+from sqlalchemy import ForeignKey
 from datetime import datetime
 from .base_job_model import BaseJobModel
 from ...__init__ import db
 import json
+
 
 class JobPostingGeneralInfoModel(BaseJobModel):
     """Model to represent the general info for the job posting"""
@@ -11,7 +13,7 @@ class JobPostingGeneralInfoModel(BaseJobModel):
     employer_id: int
     role: str
     team: Optional[str]
-    description:str
+    description: str
     date_created: Optional[datetime]
     applied: Optional[bool]
 

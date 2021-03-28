@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { useMutation } from "@apollo/client";
 import { Modal, Form, Container, Button } from "semantic-ui-react";
 import { EMPLOYER_SIZE_OPTIONS } from "../../../../constants/employer/EmployerConstants";
-import { useMutation } from "@apollo/client";
 import { UPDATE_EMPLOYER_SIZE_MUTATION } from "../../../../services/graphql/mutations/EmployerMutations";
-import { useSelector, useDispatch } from "react-redux";
+import {
+  getSuccessToastWithMessage,
+  getFailureToastWithMessage,
+} from "../../../shared/toast/ToastOptions";
 
 const EditSizeModal = (props) => {
   const [newEmployerSize, setNewEmployerSize] = useState(props.employerSize);
   const [updateEmployerSize, { mutationData }] = useMutation(
     UPDATE_EMPLOYER_SIZE_MUTATION
   );
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     setNewEmployerSize(props.employerSize);
@@ -24,9 +26,21 @@ const EditSizeModal = (props) => {
         employerId: props.employerId,
         newSize: newEmployerSize,
       },
-    });
-    //TODO update the redux state
-    //TODO include confirmation toast
+    })
+      .then(() => {
+        props.updateEmployerField(newEmployerSize);
+        props.openToast(
+          getSuccessToastWithMessage("Successfully updated company size!")
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+        props.openToast(
+          getFailureToastWithMessage(
+            "Failed to updated company size, please try again."
+          )
+        );
+      });
     props.setIsEditSizeModalOpen(false);
   };
 
@@ -81,11 +95,22 @@ const EditSizeModal = (props) => {
   );
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openToast: (toast) => dispatch({ type: "OPEN_TOAST", payload: toast }),
+    updateEmployerField: (newEmployerSize) =>
+      dispatch({
+        type: "UPDATE_EMPLOYER_FIELD",
+        payload: { field: "employerSize", value: newEmployerSize },
+      }),
+  };
+};
+
 EditSizeModal.propTypes = {
   isEditSizeModalOpen: PropTypes.bool.isRequired,
   setIsEditSizeModalOpen: PropTypes.func.isRequired,
-  employerId: PropTypes.number.isRequired,
+  employerId: PropTypes.string.isRequired,
   employerSize: PropTypes.string.isRequired,
 };
 
-export default EditSizeModal;
+export default connect(null, mapDispatchToProps)(EditSizeModal);

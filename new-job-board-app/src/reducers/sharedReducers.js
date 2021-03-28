@@ -3,6 +3,6 @@ const isToastOpen = (state = [], action) => {
     case "OPEN_TOAST":
       return { isToastOpen: action.data.isToastOpen };
     default:
-      return;
+      return state;
   }
 };

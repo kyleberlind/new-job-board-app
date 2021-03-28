@@ -31,3 +31,39 @@ export const GET_APPLICATION_BY_REFERENCE_ID = gql`
     }
   }
 `;
+
+export const GET_EMPLOYER = gql`
+  query Query {
+    employer {
+      employerId
+      userId
+      employerName
+      employerSize
+      signUpDate
+      userInfo {
+        emailAddress
+      }
+      jobPostings {
+        id
+        role
+        description
+        team
+        location {
+          city
+          state
+          zipCode
+        }
+        fields {
+          field {
+            id
+            title
+            value
+            type
+            dateCreated
+            description
+          }
+        }
+      }
+    }
+  }
+`;

@@ -16,9 +16,15 @@ import {
 const EditJobPostingModal = (props) => {
   const [validationMessageType, setValidationMessageType] = useState("success");
   const [validationMessage, setValidationMessage] = useState("");
-  const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState(
-    props.jobPosting.generalInfo
-  );
+
+  const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState({
+    id: props.jobPosting.id,
+    employerId: props.jobPosting.employerId,
+    role: props.jobPosting.role,
+    team: props.jobPosting.team,
+    description: props.jobPosting.description,
+    dateCreated: props.jobPosting.dateCreated,
+  });
   const [jobPostingLocation, setJobPostingLocation] = useState(
     props.jobPosting.location
   );
@@ -28,18 +34,25 @@ const EditJobPostingModal = (props) => {
     setJobPostingFieldIdsMappedToRequiredFlag,
   ] = useState(() => {
     const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
-    props.jobPosting.jobPostingFields.map((field) => {
+    props.jobPosting.fields.map((field) => {
       selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] = field.required;
     });
     return selectedJobPostingFieldIdsMappedToRequiredFlag;
   });
 
   useEffect(() => {
-    setJobPostingGeneralInfo(props.jobPosting.generalInfo);
+    setJobPostingGeneralInfo({
+      id: props.jobPosting.id,
+      employerId: props.jobPosting.employerId,
+      role: props.jobPosting.role,
+      team: props.jobPosting.team,
+      description: props.jobPosting.description,
+      dateCreated: props.jobPosting.dateCreated,
+    });
     setJobPostingLocation(props.jobPosting.location);
     setJobPostingFieldIdsMappedToRequiredFlag(() => {
       const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
-      props.jobPosting.jobPostingFields.map((field) => {
+      props.jobPosting.fields.map((field) => {
         selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] =
           field.required;
       });
@@ -316,8 +329,6 @@ EditJobPostingModal.propTypes = {
   jobPosting: jobPostingShape.isRequired,
 };
 
-EditJobPostingModal.defaultProps = {
-
-};
+EditJobPostingModal.defaultProps = {};
 
 export default EditJobPostingModal;
