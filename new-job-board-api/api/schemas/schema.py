@@ -1,4 +1,6 @@
 """03/04/2021"""
+# pylint: disable=no-member
+from datetime import datetime
 from flask import session
 import graphene
 from sqlalchemy.orm.session import close_all_sessions
@@ -11,6 +13,7 @@ from ..models.job_posting.job_posting_field_model import JobPostingFieldModelSQL
 from ..models.employer_model import EmployerModelSQLAlchemy
 from ..models.user_model import UserModelSQLAlchemy
 from ..utilities.hash_engine import generate_hashed_password, generate_salt
+from .job_posting.job_posting_input import JobPostingInput
 from ..__init__ import db
 
 
@@ -43,7 +46,6 @@ class JobPostingModelObject(SQLAlchemyObjectType):
     class Meta:
         """JobPostingModelObject meta object"""
         model = JobPostingModelSQLAlchemy
-
 
 
 class JobPostingLocationModelObject(SQLAlchemyObjectType):
@@ -170,23 +172,29 @@ class UpdateEmployerSize(graphene.Mutation):
         db.session.commit()
         db.session.close()
 
+
 class AddJobPosting(graphene.Mutation):
     """Mutation to update the employer size"""
     class Arguments:
         """Arguments for UpdateEmployerSize"""
-        employer_id = graphene.Int(required=True)
-        new_size = graphene.String(required=True)
+        job_posting_input = JobPostingInput(required=True)
 
-    employer = graphene.Field(
-        lambda: EmployerObject)
+    job_posting = graphene.Field(
+        lambda: JobPostingModelObject)
 
-    def mutate(self, info, employer_id, new_size):
+    def mutate(self, info, job_posting_input):
         """Mutation for updating the employer size"""
-        employer_query = EmployerObject.get_query(info)
-        employer_query.filter(
-            EmployerModelSQLAlchemy.employer_id == employer_id).update({"employer_size": new_size})
+        job_posting = JobPostingModelSQLAlchemy(
+            employer_id=job_posting_input["employer_id"],
+            role=job_posting_input["role"],
+            team=job_posting_input["team"],
+            description=job_posting_input["description"],
+            date_created=datetime.now()
+        )
+        db.session.add(job_posting)
+        db.session.refresh(job_posting)
         db.session.commit()
-        db.session.close()
+        return AddJobPosting(job_posting=job_posting)
 
 
 class UpdatePassword(graphene.Mutation):
@@ -234,6 +242,7 @@ class Mutation(graphene.ObjectType):
     update_application_status = UpdateApplicationStatus.Field()
     update_employer_size = UpdateEmployerSize.Field()
     update_password = UpdatePassword.Field()
+    add_job_posting = AddJobPosting.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
