@@ -1,28 +1,43 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Button, Container, Modal, Segment } from "semantic-ui-react";
 import { deleteJobPostingService } from "../../../services/employer/EmployerServices";
+import {
+  getFailureToastWithMessage,
+  getSuccessToastWithMessage,
+} from "../../shared/toast/ToastOptions";
 
 const DeleteJobPostingConfirmationModal = (props) => {
   const formattedJobLocation = `${props.jobPosting.location.city}, ${props.jobPosting.location.state}, ${props.jobPosting.location.zipCode}`;
   const handleConfirmDeleteButtonClick = () => {
-    deleteJobPostingService(props.jobPosting.generalInfo.id)
+    deleteJobPostingService(props.jobPosting.id)
       .then((response) => {
         response.json().then((data) => {
           if (data["hasError"]) {
-            props.setShowDeleteJobPostingConfirmationModal(false);
-            console.log(data["errorMessage"]);
+            props.openToast(getFailureToastWithMessage(data["errorMessage"]));
           } else if (data["success"]) {
-            console.log("Deleted job posting");
-            window.location.assign("employer-console");
+            props.deleteJobPosting(props.jobPosting.id);
+            props.openToast(
+              getSuccessToastWithMessage("Successfully deleted job posting!")
+            );
           } else {
-            console.log("Failed to delete job posting");
+            props.openToast(
+              getFailureToastWithMessage(
+                data["Failed to delete job posting, please try again."]
+              )
+            );
           }
           props.setShowDeleteJobPostingConfirmationModal(false);
         });
       })
       .catch((error) => {
-        console.log("Failed to delete job posting");
+        props.setShowDeleteJobPostingConfirmationModal(false);
+        props.openToast(
+          getFailureToastWithMessage(
+            "Failed to delete job posting, please try again."
+          )
+        );
       });
   };
   return (
@@ -39,9 +54,9 @@ const DeleteJobPostingConfirmationModal = (props) => {
     >
       <Modal.Header>Delete Job Posting</Modal.Header>
       <Modal.Content>
-        <Segment vertical>ID: {props.jobPosting.generalInfo.id}</Segment>
-        <Segment vertical>Role: {props.jobPosting.generalInfo.role}</Segment>
-        <Segment vertical>Team: {props.jobPosting.generalInfo.team}</Segment>
+        <Segment vertical>ID: {props.jobPosting.id}</Segment>
+        <Segment vertical>Role: {props.jobPosting.role}</Segment>
+        <Segment vertical>Team: {props.jobPosting.team}</Segment>
         <Segment vertical>Location: {formattedJobLocation}</Segment>
       </Modal.Content>
       <Modal.Actions>
@@ -75,4 +90,15 @@ DeleteJobPostingConfirmationModal.propTypes = {
   jobPosting: PropTypes.object.isRequired,
 };
 
-export default DeleteJobPostingConfirmationModal;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openToast: (toast) => dispatch({ type: "OPEN_TOAST", payload: toast }),
+    deleteJobPosting: (jobPostingId) =>
+      dispatch({ type: "DELETE_JOB_POSTING", payload: jobPostingId }),
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(DeleteJobPostingConfirmationModal);

@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
 from .base_job_model import BaseJobModel
 from ..applicant.applicant_info_model import ApplicantInfoModel
+from ...models.user_model import UserModelSQLAlchemy
 from ...__init__ import db
 
 
@@ -29,7 +30,7 @@ class JobPostingApplicationModelSQLAlchemy(db.Model):
     employer_reference_id = db.Column(db.String(36))
     status=db.Column(db.String(124))
     applicant_info = relationship(
-        "ApplicantInfoModelSQLAlchemy",
+        "UserModelSQLAlchemy",
         backref="tbl_job_posting_applications"
     )
     job_posting = relationship(

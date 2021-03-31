@@ -1,23 +1,29 @@
 import React from "react";
 import { Menu, Button } from "semantic-ui-react";
-import { createBrowserHistory } from "history";
 import { Link } from "react-router-dom";
 function EmployerConsoleNavBar(props) {
-  const browserHistory = createBrowserHistory();
-
   return (
     <Menu inverted>
-      <Menu.Item name="My Job Postings" as={Link} to="employer-console" />
-      <Menu.Item name="Account" as={Link} to="account"></Menu.Item>
       <Menu.Item
-        name="Create Job Posting"
-        onClick={() => {
-          props.setShowCreateJobPostingModal(true);
-        }}
+        name="My Job Postings"
+        as={Link}
+        to="/employer/employer-console"
       />
+      <Menu.Item name="Account" as={Link} to="/employer/account"></Menu.Item>
+      <Menu.Item>
+        <Button
+          inverted="black"
+          fluid
+          onClick={() => {
+            props.setShowCreateJobPostingModal(true);
+          }}
+        >
+          Create Job Posting
+        </Button>
+      </Menu.Item>
       <Menu.Menu position="right">
         <Menu.Item>
-          <Button fluid onClick={props.handleLogout}>
+          <Button inverted="black" fluid onClick={props.handleLogout}>
             Logout
           </Button>
         </Menu.Item>

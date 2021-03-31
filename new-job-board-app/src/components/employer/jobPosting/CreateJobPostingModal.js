@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
-import PropTypes from "prop-types";
-import JobPostingQuestionLabel from "./JobPostingQuestionLabel";
+import { useMutation } from "@apollo/client";
+import { connect } from "react-redux";
 import {
   Button,
   Container,
@@ -11,17 +10,20 @@ import {
   Grid,
   Form,
 } from "semantic-ui-react";
+import JobPostingQuestionLabel from "./JobPostingQuestionLabel";
+import {
+  getSuccessToastWithMessage,
+  getFailureToastWithMessage,
+} from "../../shared/toast/ToastOptions";
+import { ADD_JOB_POSTING_MUTATION } from "../../../services/graphql/mutations/EmployerMutations";
 
 const CreateJobPostingModal = (props) => {
-  const [validationMessage, setValidationMessage] = useState("");
-  const [validationMessageType, setValidationMessageType] = useState("");
+  const [addJobPosting, { mutationData }] = useMutation(
+    ADD_JOB_POSTING_MUTATION
+  );
 
-  const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState(
-    props.jobPosting.generalInfo
-  );
-  const [jobPostingLocation, setJobPostingLocation] = useState(
-    props.jobPosting.location
-  );
+  const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState({});
+  const [jobPostingLocation, setJobPostingLocation] = useState({});
   const [
     jobPostingFieldIdsMappedToRequiredFlag,
     setJobPostingFieldIdsMappedToRequiredFlag,
@@ -75,31 +77,32 @@ const CreateJobPostingModal = (props) => {
     event.preventDefault();
     event.stopPropagation();
 
-    saveNewJobPostingService({
+    const newJobPostingInput = {
+      ...jobPostingGeneralInfo,
+      employerId: props.employer.employerId,
       location: jobPostingLocation,
-      generalInfo: {
-        employerId: props.employer.employerId,
-        ...jobPostingGeneralInfo,
+      fields: formatJobPostingFields(),
+    };
+
+    addJobPosting({
+      variables: {
+        jobPostingInput: newJobPostingInput,
       },
-      jobPostingFields: formatJobPostingFields(),
     })
-      .then((response) => {
-        response.json().then((data) => {
-          if (data["hasError"]) {
-            setValidationMessage(data["errorMessage"]);
-            props.setShowCreateJobPostingModal(false);
-          } else if (data["success"]) {
-            setValidationMessageType("success");
-            setValidationMessage("Successfully saved job posting!");
-            window.location.assign("employer-console");
-          } else {
-            setValidationMessageType("danger");
-            setValidationMessage("Failed to save job posting");
-          }
-        });
+      .then(({ data }) => {
+        props.addJobPosting(data.addJobPosting.jobPosting);
+        props.setShowCreateJobPostingModal(false);
+        props.openToast(
+          getSuccessToastWithMessage("Successfully created job posting!")
+        );
       })
       .catch((error) => {
-        setValidationMessage(error["errorMessage"]);
+        props.setShowCreateJobPostingModal(false);
+        props.openToast(
+          getFailureToastWithMessage(
+            "Failed to created job posting, please try again."
+          )
+        );
       });
   };
 
@@ -203,7 +206,7 @@ const CreateJobPostingModal = (props) => {
             <Card.Content>
               <Card.Header textAlign="left">General Info</Card.Header>
               <Grid>
-                <Grid.Row columns={2} s>
+                <Grid.Row columns={2}>
                   <Grid.Column>
                     <Form.Field
                       label="Job Role"
@@ -245,7 +248,7 @@ const CreateJobPostingModal = (props) => {
                       value={jobPostingGeneralInfo.description}
                       required
                       name="description"
-                      control="textArea"
+                      control="textarea"
                       onChange={(event) => {
                         handleJobPostingChange(
                           event,
@@ -298,40 +301,22 @@ const CreateJobPostingModal = (props) => {
   );
 };
 
-CreateJobPostingModal.propTypes = {
-  employer: PropTypes.object.isRequired,
-  jobPostingFields: PropTypes.array.isRequired,
-  jobPosting: PropTypes.shape({
-    jobPostingInfo: PropTypes.shape({
-      generalInfo: PropTypes.shape({
-        role: PropTypes.string,
-        team: PropTypes.string,
-        description: PropTypes.string,
-      }),
-      location: PropTypes.shape({
-        city: PropTypes.string,
-        state: PropTypes.string,
-        zipCode: PropTypes.string,
-      }),
-      jobPostingFields: PropTypes.array,
-    }),
-  }),
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openToast: (toast) => dispatch({ type: "OPEN_TOAST", payload: toast }),
+    addJobPosting: (jobPosting) =>
+      dispatch({ type: "ADD_JOB_POSTING", payload: jobPosting }),
+  };
 };
 
-CreateJobPostingModal.defaultProps = {
-  jobPosting: {
-    generalInfo: {
-      role: "",
-      team: "",
-      description: "",
-    },
-    location: {
-      city: "",
-      state: "",
-      zipCode: "",
-    },
-    jobPostingFields: [],
-  },
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    employer: state.employer,
+  };
 };
 
-export default CreateJobPostingModal;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CreateJobPostingModal);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { updateJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
+import { updateJobPostingService } from "../../../services/employer/EmployerServices";
 import { jobPostingShape } from "../../../shapes/JobPostingShape";
 import JobPostingQuestionLabel from "./JobPostingQuestionLabel";
 import {
@@ -16,9 +16,15 @@ import {
 const EditJobPostingModal = (props) => {
   const [validationMessageType, setValidationMessageType] = useState("success");
   const [validationMessage, setValidationMessage] = useState("");
-  const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState(
-    props.jobPosting.generalInfo
-  );
+
+  const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState({
+    id: props.jobPosting.id,
+    employerId: props.employerId,
+    role: props.jobPosting.role,
+    team: props.jobPosting.team,
+    description: props.jobPosting.description,
+    dateCreated: props.jobPosting.dateCreated,
+  });
   const [jobPostingLocation, setJobPostingLocation] = useState(
     props.jobPosting.location
   );
@@ -28,19 +34,28 @@ const EditJobPostingModal = (props) => {
     setJobPostingFieldIdsMappedToRequiredFlag,
   ] = useState(() => {
     const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
-    props.jobPosting.jobPostingFields.map((field) => {
-      selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] = field.required;
+    props.jobPosting.fields.map((field) => {
+      selectedJobPostingFieldIdsMappedToRequiredFlag[
+        field.fieldId
+      ] = !!field.required;
     });
     return selectedJobPostingFieldIdsMappedToRequiredFlag;
   });
 
   useEffect(() => {
-    setJobPostingGeneralInfo(props.jobPosting.generalInfo);
+    setJobPostingGeneralInfo({
+      id: props.jobPosting.id,
+      employerId: props.employerId,
+      role: props.jobPosting.role,
+      team: props.jobPosting.team,
+      description: props.jobPosting.description,
+      dateCreated: props.jobPosting.dateCreated,
+    });
     setJobPostingLocation(props.jobPosting.location);
     setJobPostingFieldIdsMappedToRequiredFlag(() => {
       const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
-      props.jobPosting.jobPostingFields.map((field) => {
-        selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] =
+      props.jobPosting.fields.map((field) => {
+        selectedJobPostingFieldIdsMappedToRequiredFlag[field.fieldId] =
           field.required;
       });
       return selectedJobPostingFieldIdsMappedToRequiredFlag;
@@ -167,8 +182,6 @@ const EditJobPostingModal = (props) => {
                   label="City"
                   required
                   control="input"
-                  validators={["required"]}
-                  errorMessages={["Please enter a city"]}
                   value={jobPostingLocation.city}
                   onChange={(event) => {
                     handleJobPostingChange(
@@ -316,10 +329,9 @@ EditJobPostingModal.propTypes = {
   showEditJobPostingModal: PropTypes.bool.isRequired,
   setShowEditJobPostingModal: PropTypes.func.isRequired,
   jobPosting: jobPostingShape.isRequired,
+  employerId: PropTypes.number.isRequired,
 };
 
-EditJobPostingModal.defaultProps = {
-
-};
+EditJobPostingModal.defaultProps = {};
 
 export default EditJobPostingModal;

@@ -19,7 +19,7 @@ const JobPostingAccordion = (props) => {
 
   useEffect(() => {
     setAreApplicantsLoading(true);
-    loadJobApplicantsService(props.jobPosting.generalInfo.id)
+    loadJobApplicantsService(props.jobPosting.id)
       .then((response) => {
         response.json().then((data) => {
           if (data["hasError"]) {
@@ -82,9 +82,9 @@ const JobPostingAccordion = (props) => {
   const formattedJobLocation = `${props.jobPosting.location.city}, ${props.jobPosting.location.state}, ${props.jobPosting.location.zipCode}`;
   const getJobPostingHeader = () => {
     return (
-      props.jobPosting.generalInfo.role +
-      (props.jobPosting.generalInfo.team !== null ? " | " : "") +
-      props.jobPosting.generalInfo.team
+      props.jobPosting.role +
+      (props.jobPosting.team !== null ? " | " : "") +
+      props.jobPosting.team
     );
   };
 
@@ -150,9 +150,9 @@ const JobPostingAccordion = (props) => {
               </Grid>
             </Container>
             <Card fluid>
-              <Card.Content>ID: {props.jobPosting.generalInfo.id}</Card.Content>
+              <Card.Content>ID: {props.jobPosting.id}</Card.Content>
               <Card.Content textAlign="left">
-                {props.jobPosting.generalInfo.description}
+                {props.jobPosting.description}
               </Card.Content>
             </Card>
           </Grid.Column>

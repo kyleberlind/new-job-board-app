@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { EMPLOYER_USER_TYPE } from "../../../constants/employer/EmployerConstants";
 import { signUpEmployerService } from "../../../services/AccountServices";
-import {
-  Card,
-  Form,
-  Container,
-  Message,
-} from "semantic-ui-react";
+import { Card, Form, Container, Message } from "semantic-ui-react";
+import {EMPLOYER_SIZE_OPTIONS} from "../../../constants/employer/EmployerConstants"
 
 function EmployerSignup() {
   const [fields, setFields] = useState({
@@ -57,15 +53,6 @@ function EmployerSignup() {
     return true;
   };
 
-  const options = [
-    { key: "0-10", text: "0-10", value: "0-10" },
-    { key: "10-500", text: "10-500", value: "10-500" },
-    { key: "500-1000", text: " 500-1000", value: "500-1000" },
-    { key: "1000-3000", text: "1000-3000", value: "1000-3000" },
-    { key: "3000-10000", text: "3000-10000", value: "3000-10000" },
-    { key: ">10000", text: ">10000", value: ">10000" },
-  ];
-
   return (
     <Container centered>
       <Card fluid>
@@ -91,7 +78,7 @@ function EmployerSignup() {
                 name="employerName"
                 label="Company Size"
                 onChange={handleFieldChange}
-                options={options}
+                options={EMPLOYER_SIZE_OPTIONS}
               ></Form.Dropdown>
             </Form.Group>
             <Form.Group widths="equal">

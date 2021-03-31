@@ -4,7 +4,9 @@ from typing import Optional
 from pydantic import BaseModel, validator
 from ..utilities.hashed_password_data import HashedPasswordData
 from ..utilities.alias_generators import snake_to_camel_case
-from ..constants.account_constants import EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE, PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE
+from ..constants.account_constants import (
+    EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE, PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE)
+from ..__init__ import db
 
 
 class UserModel(BaseModel):
@@ -21,6 +23,7 @@ class UserModel(BaseModel):
         arbitrary_types_allowed = True
         alias_generator = snake_to_camel_case
         allow_population_by_alias = True
+        allow_reuse = True
 
     @classmethod
     @validator("email_address")
@@ -45,3 +48,18 @@ class UserModel(BaseModel):
         """
         if not self.hashed_password_data:
             self.hashed_password_data = HashedPasswordData(self.password, salt)
+
+
+class UserModelSQLAlchemy(db.Model):
+    """Model to represent the user"""
+    __tablename__ = "tbl_user"
+    __bind_key__ = 'user'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email_address = db.Column(db.String(64))
+    password = db.Column(db.String(128))
+    first_name = db.Column(db.String(64))
+    last_name = db.Column(db.String(64))
+    user_type = db.Column(db.Integer)
+    sign_up_date = db.Column(db.DateTime)
+    salt = db.Column(db.String(128))
