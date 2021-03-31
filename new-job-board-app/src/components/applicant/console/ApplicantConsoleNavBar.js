@@ -11,12 +11,12 @@ function ApplicantConsoleNavBar(props) {
       <Menu.Item name="My Applications" href="/applicant/applicant-console" />
       <Menu.Menu position="right">
         <Menu.Item>
-          <Button fluid href="/applicant/job-cart">
+          <Button inverted fluid href="/applicant/job-cart">
             {props.jobCartCount > 0 ? "Job Cart (" + props.jobCartCount + ")" : "Job Cart"}
           </Button>
         </Menu.Item>
         <Menu.Item>
-          <Button fluid onClick={props.handleLogout}>
+          <Button inverted fluid onClick={props.handleLogout}>
             Logout
           </Button>
         </Menu.Item>

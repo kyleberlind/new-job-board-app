@@ -207,11 +207,9 @@ class AddJobPosting(graphene.Mutation):
             field_id=job_posting_field["id"]
         ), job_posting_input["fields"])
         db.session.bulk_save_objects(job_posting_fields)
-        
+
         db.session.commit()
         return AddJobPosting(job_posting=job_posting)
-
-
 
 
 class UpdatePassword(graphene.Mutation):
