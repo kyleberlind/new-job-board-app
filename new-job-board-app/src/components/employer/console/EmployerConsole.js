@@ -60,7 +60,7 @@ const EmployerConsole = (props) => {
                       <Header as="h2" content={MY_JOB_POSTINGS_TITLE} />
                     </Container>
                   </Grid.Column>
-                  <Grid.Column width={9}>
+                  <Grid.Column width={11}>
                     <Search input={{ fluid: true }} fluid></Search>
                   </Grid.Column>
                 </Grid.Row>
@@ -73,6 +73,7 @@ const EmployerConsole = (props) => {
       {Object.keys(selectedJobPosting).length !== 0 && (
         <Grid>
           <EditJobPostingModal
+            employerId={props.employer.employerId}
             jobPosting={selectedJobPosting}
             jobPostingFields={props.jobPostingFields}
             showEditJobPostingModal={showEditJobPostingModal}
@@ -94,7 +95,6 @@ const EmployerConsole = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log("kyle", state)
   return {
     jobPostings: state.employer.jobPostings,
     employer: state.employer,

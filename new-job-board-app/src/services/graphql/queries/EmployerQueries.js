@@ -54,14 +54,8 @@ export const GET_EMPLOYER = gql`
           zipCode
         }
         fields {
-          field {
-            id
-            title
-            value
-            type
-            dateCreated
-            description
-          }
+          fieldId
+          required
         }
       }
     }

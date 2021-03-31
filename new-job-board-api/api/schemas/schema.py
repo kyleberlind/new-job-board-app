@@ -192,9 +192,26 @@ class AddJobPosting(graphene.Mutation):
             date_created=datetime.now()
         )
         db.session.add(job_posting)
-        db.session.refresh(job_posting)
+
+        db.session.flush()
+
+        job_posting_location = JobPostingLocationModelSQLAlchemy(
+            job_id=job_posting.id,
+            **job_posting_input["location"]
+        )
+        db.session.add(job_posting_location)
+
+        job_posting_fields = map(lambda job_posting_field: JobPostingFieldMappingModel(
+            job_id=job_posting.id,
+            required=job_posting_field["required"],
+            field_id=job_posting_field["id"]
+        ), job_posting_input["fields"])
+        db.session.bulk_save_objects(job_posting_fields)
+        
         db.session.commit()
         return AddJobPosting(job_posting=job_posting)
+
+
 
 
 class UpdatePassword(graphene.Mutation):

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
+import { useMutation } from "@apollo/client";
 import { connect } from "react-redux";
 import {
   Button,
@@ -10,14 +10,18 @@ import {
   Grid,
   Form,
 } from "semantic-ui-react";
-import { saveNewJobPostingService } from "../../../services/employer/EmployerServices";
 import JobPostingQuestionLabel from "./JobPostingQuestionLabel";
 import {
   getSuccessToastWithMessage,
   getFailureToastWithMessage,
 } from "../../shared/toast/ToastOptions";
+import { ADD_JOB_POSTING_MUTATION } from "../../../services/graphql/mutations/EmployerMutations";
 
 const CreateJobPostingModal = (props) => {
+  const [addJobPosting, { mutationData }] = useMutation(
+    ADD_JOB_POSTING_MUTATION
+  );
+
   const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState({});
   const [jobPostingLocation, setJobPostingLocation] = useState({});
   const [
@@ -72,40 +76,33 @@ const CreateJobPostingModal = (props) => {
   const handleSubmitButtonClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const newJobPosting = {
-      location: jobPostingLocation,
-      generalInfo: {
-        employerId: props.employer.employerId,
-        ...jobPostingGeneralInfo,
-      },
-      jobPostingFields: formatJobPostingFields(),
-    };
-    const something = {
+
+    const newJobPostingInput = {
       ...jobPostingGeneralInfo,
+      employerId: props.employer.employerId,
       location: jobPostingLocation,
-      jobPostingFields: formatJobPostingFields(),
+      fields: formatJobPostingFields(),
     };
-    saveNewJobPostingService(newJobPosting)
-      .then((response) => {
-        response.json().then((data) => {
-          if (data["hasError"]) {
-            props.openToast(getFailureToastWithMessage(data["message"]));
-          } else if (data["success"]) {
-            props.addJobPosting(something);
-            props.openToast(
-              getSuccessToastWithMessage("Successfully created job posting!")
-            );
-          } else {
-            getFailureToastWithMessage(
-              "Failed to created job posting, please try again."
-            );
-          }
-          props.setShowCreateJobPostingModal(false);
-        });
+
+    addJobPosting({
+      variables: {
+        jobPostingInput: newJobPostingInput,
+      },
+    })
+      .then(({ data }) => {
+        props.addJobPosting(data.addJobPosting.jobPosting);
+        props.setShowCreateJobPostingModal(false);
+        props.openToast(
+          getSuccessToastWithMessage("Successfully created job posting!")
+        );
       })
       .catch((error) => {
-        props.openToast(getFailureToastWithMessage(error.message));
         props.setShowCreateJobPostingModal(false);
+        props.openToast(
+          getFailureToastWithMessage(
+            "Failed to created job posting, please try again."
+          )
+        );
       });
   };
 
@@ -313,6 +310,7 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
+  console.log(state);
   return {
     employer: state.employer,
   };

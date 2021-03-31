@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { updateJobPostingService } from "../../../services/employer/EmployerServices";
 import PropTypes from "prop-types";
+import { updateJobPostingService } from "../../../services/employer/EmployerServices";
 import { jobPostingShape } from "../../../shapes/JobPostingShape";
 import JobPostingQuestionLabel from "./JobPostingQuestionLabel";
 import {
@@ -19,7 +19,7 @@ const EditJobPostingModal = (props) => {
 
   const [jobPostingGeneralInfo, setJobPostingGeneralInfo] = useState({
     id: props.jobPosting.id,
-    employerId: props.jobPosting.employerId,
+    employerId: props.employerId,
     role: props.jobPosting.role,
     team: props.jobPosting.team,
     description: props.jobPosting.description,
@@ -35,7 +35,9 @@ const EditJobPostingModal = (props) => {
   ] = useState(() => {
     const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
     props.jobPosting.fields.map((field) => {
-      selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] = field.required;
+      selectedJobPostingFieldIdsMappedToRequiredFlag[
+        field.fieldId
+      ] = !!field.required;
     });
     return selectedJobPostingFieldIdsMappedToRequiredFlag;
   });
@@ -43,7 +45,7 @@ const EditJobPostingModal = (props) => {
   useEffect(() => {
     setJobPostingGeneralInfo({
       id: props.jobPosting.id,
-      employerId: props.jobPosting.employerId,
+      employerId: props.employerId,
       role: props.jobPosting.role,
       team: props.jobPosting.team,
       description: props.jobPosting.description,
@@ -53,7 +55,7 @@ const EditJobPostingModal = (props) => {
     setJobPostingFieldIdsMappedToRequiredFlag(() => {
       const selectedJobPostingFieldIdsMappedToRequiredFlag = {};
       props.jobPosting.fields.map((field) => {
-        selectedJobPostingFieldIdsMappedToRequiredFlag[field.id] =
+        selectedJobPostingFieldIdsMappedToRequiredFlag[field.fieldId] =
           field.required;
       });
       return selectedJobPostingFieldIdsMappedToRequiredFlag;
@@ -327,6 +329,7 @@ EditJobPostingModal.propTypes = {
   showEditJobPostingModal: PropTypes.bool.isRequired,
   setShowEditJobPostingModal: PropTypes.func.isRequired,
   jobPosting: jobPostingShape.isRequired,
+  employerId: PropTypes.number.isRequired,
 };
 
 EditJobPostingModal.defaultProps = {};

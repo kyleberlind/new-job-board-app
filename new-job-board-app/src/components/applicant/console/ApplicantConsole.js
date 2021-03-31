@@ -78,7 +78,6 @@ const ApplicantConsole = () => {
 
   return (
     <Container className="container" fluid>
-      {userId}
         <Form className="searchBar" onSubmit={handleSubmitButtonClick}>
           <Form.Group controlId="jobSearchQuery" className="searchInput">
             <InputGroup>

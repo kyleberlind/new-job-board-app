@@ -9,3 +9,25 @@ export const UPDATE_EMPLOYER_SIZE_MUTATION = gql`
     }
   }
 `;
+
+export const ADD_JOB_POSTING_MUTATION = gql`
+  mutation Mutation($jobPostingInput: JobPostingInput!) {
+    addJobPosting(jobPostingInput: $jobPostingInput) {
+      jobPosting {
+        id
+        role
+        description
+        team
+        location {
+          city
+          state
+          zipCode
+        }
+        fields {
+          fieldId
+          required
+        }
+      }
+    }
+  }
+`;
