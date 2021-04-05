@@ -38,7 +38,6 @@ class JobPostingApplicationObject(SQLAlchemyObjectType):
     class Meta:
         """JobPostingApplicationObject meta object"""
         model = JobPostingApplicationModelSQLAlchemy
-        interfaces = (graphene.relay.Node,)
 
 
 class JobPostingModelObject(SQLAlchemyObjectType):
@@ -58,7 +57,6 @@ class JobPostingLocationModelObject(SQLAlchemyObjectType):
 
 class JobPostingFieldMappingObject(SQLAlchemyObjectType):
     """GQL Object to represent the mapping between job postings and fields"""
-
     class Meta:
         """JobPostingFieldMappingObject meta object"""
         model = JobPostingFieldMappingModel
@@ -83,6 +81,10 @@ class Query(graphene.ObjectType):
         JobPostingApplicationObject, applicant_id=graphene.Int())
     employer = graphene.Field(
         EmployerObject)
+    user = graphene.Field(
+        UserObject)
+    job_postings = graphene.List(
+        JobPostingModelObject)
 
     @staticmethod
     def resolve_applications_by_employer_id(parent, info, **args):
@@ -131,6 +133,29 @@ class Query(graphene.ObjectType):
             ).first()
         else:
             raise Exception("No User Logged in")
+
+    @staticmethod
+    def resolve_user(parent, info, **args):
+        """Resolves the employer info"""
+        if "token" in session:
+            user_query = UserObject.get_query(info)
+            close_all_sessions()
+            return user_query.filter(
+                UserModelSQLAlchemy.id.contains(
+                    session["token"]
+                )
+            ).first()
+        else:
+            raise Exception("No User Logged in")
+
+    @staticmethod
+    def resolve_job_postings(parent, info, **args):
+        """Resolve the job postings"""
+        job_posting_query = JobPostingModelObject.get_query(info)
+        close_all_sessions()
+        return job_posting_query.filter(
+            JobPostingModelSQLAlchemy.status == "active"
+        ).all()
 
 
 class UpdateApplicationStatus(graphene.Mutation):

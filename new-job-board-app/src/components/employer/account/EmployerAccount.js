@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Card, Button, Table, Container, Loader } from "semantic-ui-react";
 import EditAccountInfoModal from "./modals/EditAccountInfoModal";

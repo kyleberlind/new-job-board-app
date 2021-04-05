@@ -1,14 +1,15 @@
 import React from "react";
 import "./css/HomeNavBar.css";
-import { Menu, Button } from "semantic-ui-react";
+import { Menu, Button, Icon } from "semantic-ui-react";
 
 const HomeNavBar = (props) => {
   return (
     <Menu inverted>
       <Menu.Item name="Applomb" href="/" />
       <Menu.Menu position="right">
-      <Menu.Item>
+        <Menu.Item>
           <Button inverted fluid href="/signup">
+            <Icon name="signup"></Icon>
             Sign Up
           </Button>
         </Menu.Item>

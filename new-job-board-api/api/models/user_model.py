@@ -7,6 +7,7 @@ from ..utilities.alias_generators import snake_to_camel_case
 from ..constants.account_constants import (
     EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE, PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE)
 from ..__init__ import db
+from sqlalchemy.orm import relationship
 
 
 class UserModel(BaseModel):
@@ -24,22 +25,6 @@ class UserModel(BaseModel):
         alias_generator = snake_to_camel_case
         allow_population_by_alias = True
         allow_reuse = True
-
-    @classmethod
-    @validator("email_address")
-    def validate_email_address_length(cls, value):
-        """validates the length of the email address"""
-        if len(value) > 64:
-            raise ValueError(EMAIL_LENGTH_VALIDATION_ERROR_MESSAGE)
-        return value
-
-    @classmethod
-    @validator("password")
-    def validate_password_length(cls, value):
-        """validates the length of the password"""
-        if len(value) > 128:
-            raise ValueError(PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE)
-        return value
 
     def load_hashed_password_data(self, salt=None):
         """
@@ -63,3 +48,8 @@ class UserModelSQLAlchemy(db.Model):
     user_type = db.Column(db.Integer)
     sign_up_date = db.Column(db.DateTime)
     salt = db.Column(db.String(128))
+    applications = relationship(
+        "JobPostingApplicationModelSQLAlchemy",
+        uselist=True,
+        backref="tbl_user"
+    )

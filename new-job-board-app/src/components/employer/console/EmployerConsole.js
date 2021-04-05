@@ -15,8 +15,6 @@ import {
   Container,
   Header,
 } from "semantic-ui-react";
-
-//TODO refactor all of the crud functionality to update a centralized redux state, then create toast confirmational messages
 const EmployerConsole = (props) => {
   const [showEditJobPostingModal, setShowEditJobPostingModal] = useState(false);
   const [

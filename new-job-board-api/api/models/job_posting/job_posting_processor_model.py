@@ -10,22 +10,6 @@ class JobPostingProcessorModel:
     def __init__(self):
         self.dao = JobDao()
 
-    def save_new_job_posting(self, job_posting: JobPostingModel):
-        """Saves a new job posting"""
-        try:
-            new_job_id = self.dao.save_job_posting_general_info(
-                job_posting.general_info)
-
-            result = self.dao.save_job_posting_location(
-                new_job_id, job_posting.location)
-
-            if job_posting.job_posting_fields:
-                result = result and self.dao.save_job_posting_fields(
-                    new_job_id, job_posting.job_posting_fields)
-            return result
-        except Exception as error:
-            raise error
-
     def update_job_posting(self, job_posting: JobPostingModel):
         """Updates an existing job posting"""
         try:
@@ -34,48 +18,6 @@ class JobPostingProcessorModel:
                     job_posting.general_info.id, job_posting.location) and\
                 self.dao.update_job_posting_fields(
                     job_posting.general_info.id, job_posting.job_posting_fields)
-        except Exception as error:
-            raise error
-
-    def load_job_postings_by_employer_id(self, employer_id: int):
-        """Loads the job postings for an employer ID"""
-        try:
-            job_postings = self.dao.load_job_postings_by_employer_id(
-                employer_id)
-            job_posting_fields_for_employer = self.dao.load_job_posting_fields_by_employer_id(
-                employer_id)
-            job_posting_field_dict = self.build_job_posting_field_dict(
-                job_posting_fields_for_employer)
-            merged_job_postings = self.merge_job_posting_with_fields(
-                job_postings, job_posting_field_dict)
-            return map_job_posting_info(merged_job_postings)
-        except Exception as error:
-            raise error
-
-    def build_job_posting_field_dict(self, job_posting_fields_list: list) -> dict:
-        """Builds the mapping dict between the job id and the job posting fields"""
-        try:
-            job_posting_field_dict = {}
-            for record in job_posting_fields_list:
-                if record["job_id"] not in job_posting_field_dict:
-                    job_posting_field_dict[record["job_id"]] = []
-                job_posting_field_dict[record["job_id"]].append(record)
-            return job_posting_field_dict
-        except Exception as error:
-            raise error
-
-    def merge_job_posting_with_fields(
-        self,
-        job_postings: list,
-        job_posting_field_dict: dict
-    ) -> list:
-        """Merges the job postings list with the job posting fields for each job id"""
-        try:
-            for record in job_postings:
-                record["job_posting_fields"] = job_posting_field_dict[record["id"]]\
-                    if record["id"] in job_posting_field_dict\
-                    else []
-            return job_postings
         except Exception as error:
             raise error
 

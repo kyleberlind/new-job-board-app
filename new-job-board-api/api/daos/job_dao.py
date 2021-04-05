@@ -33,76 +33,6 @@ class JobDao():
         except Exception as error:
             raise error
 
-    def save_job_posting_general_info(self, job_posting_general_info: JobPostingGeneralInfoModel):
-        """Saves new job posting"""
-        try:
-            cursor = self.connection.cursor()
-            cursor.execute(
-                """
-                    INSERT INTO job.tbl_job_posting (
-                                    employer_id,
-                                    role,
-                                    description,
-                                    team
-                                )
-                    VALUES (%s, %s, %s, %s)
-                """,
-                (
-                    job_posting_general_info.employer_id,
-                    job_posting_general_info.role,
-                    job_posting_general_info.description,
-                    job_posting_general_info.team
-                )
-            )
-            new_job_id = cursor.lastrowid
-            cursor.close()
-            self.connection.commit()
-            return new_job_id
-        except Exception as error:
-            raise error
-
-    def save_job_posting_location(self, job_id: int, job_location: JobPostingLocationModel):
-        """Saves new job posting"""
-        try:
-            cursor = self.connection.cursor()
-            cursor.execute(
-                """
-                    INSERT INTO job.tbl_job_posting_location (
-                                    job_id,
-                                    city,
-                                    state,
-                                    zip_code
-                                )
-                    VALUES (%s, %s, %s, %s)
-                """,
-                (
-                    job_id,
-                    job_location.city,
-                    job_location.state,
-                    job_location.zip_code,
-                )
-            )
-            cursor.close()
-            self.connection.commit()
-            return True
-        except Exception as error:
-            raise error
-
-    def save_job_posting_fields(self, job_id: int, job_posting_fields: list) -> bool:
-        """Maps the job posting ID to its fields """
-        try:
-            query = self.get_insert_job_posting_fields_statement(
-                job_id, job_posting_fields)
-            cursor = self.connection.cursor(self.db.cursors.DictCursor)
-            cursor.execute(
-                query
-            )
-            cursor.close()
-            self.connection.commit()
-            return True
-        except Exception as error:
-            raise error
-
     def update_job_posting_general_info(self, job_posting_general_info: JobPostingGeneralInfoModel) -> bool:
         """Updates a job postings general information by ID"""
         try:
@@ -263,34 +193,6 @@ class JobDao():
         except Exception as error:
             raise error
 
-    def load_job_postings_by_employer_id(self, employer_id: int):
-        """Loads the job postings for the employer by their ID"""
-        try:
-            cursor = self.connection.cursor(self.db.cursors.DictCursor)
-            cursor.execute(
-                """
-                    SELECT     job_posting.id,
-                               job_posting.employer_id,
-                               job_posting.role,
-                               job_posting.description,
-                               job_posting.team,
-                               job_posting.date_created,
-                               location.city,
-                               location.state,
-                               location.zip_code
-                    FROM       job.tbl_job_posting job_posting
-                    INNER JOIN job.tbl_job_posting_location location
-                            ON job_posting.id = location.job_id
-                    WHERE      job_posting.employer_id = %s
-                """,
-                [employer_id]
-            )
-            results = cursor.fetchall()
-            cursor.close()
-            return list(results)
-        except Exception as error:
-            raise error
-
     def load_job_posting_by_job_id(self, job_id):
         """Loads the job postings for the employer by Job ID"""
         try:
@@ -319,34 +221,6 @@ class JobDao():
             else:
                 raise Exception(
                     "No job postings found for id " + str(job_id))
-        except Exception as error:
-            raise error
-
-    def load_job_posting_fields_by_employer_id(self, employer_id: int):
-        """Loads the job posting fields for the job by employer ID"""
-        try:
-            cursor = self.connection.cursor(self.db.cursors.DictCursor)
-            cursor.execute(
-                """
-                    SELECT     field_mapping.job_id,
-                               field_mapping.field_id as id,
-                               field_mapping.required,
-                               fields.title,
-                               fields.value,
-                               fields.type,
-                               fields.description
-                    FROM       job.tbl_job_posting_field_mapping field_mapping
-                    INNER JOIN job.tbl_job_posting job_posting
-                            ON job_posting.id = field_mapping.job_id
-                    INNER JOIN job.tbl_job_posting_fields fields
-                            ON fields.id = field_mapping.field_id
-                    WHERE      job_posting.employer_id = %s
-                """,
-                [employer_id]
-            )
-            results = cursor.fetchall()
-            cursor.close()
-            return list(results)
         except Exception as error:
             raise error
 

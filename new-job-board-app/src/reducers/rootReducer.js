@@ -6,10 +6,13 @@ const initState = {
   employer: {
     jobPostings: [],
   },
+  applicant: {
+    applications: [],
+  },
 };
 
 const rootReducer = (state = initState, action) => {
-  console.log(action)
+  console.log(action);
   switch (action.type) {
     case "UPDATE_JOB_CART":
       return {
@@ -29,6 +32,8 @@ const rootReducer = (state = initState, action) => {
       return { ...state, toast: { ...state.toast, open: false } };
     case "LOAD_EMPLOYER":
       return { ...state, employer: action.payload };
+    case "LOAD_APPLICANT":
+      return { ...state, applicant: action.payload };
     case "UPDATE_EMPLOYER_FIELD":
       return {
         ...state,

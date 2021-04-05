@@ -17,24 +17,6 @@ from ..models.applicant.applicant_info_model import ApplicantInfoModel
 employer_view = Blueprint("employer_view", __name__)
 
 
-@employer_view.route("/load_employer_info", methods=["GET"])
-def load_employer_info():
-    """Loads the employer Information"""
-    account_dao = AccountDao()
-    try:
-        if "token" in session:
-            employer_info = account_dao.load_employer_info(session["token"])
-            return EmployerInfoResponse(
-                **employer_info
-            ).json(by_alias=True)
-        raise Exception("No User Logged in")
-    except Exception as error:
-        return EmployerInfoResponse(
-            has_error=True,
-            error_message=str(error)
-        ).json(by_alias=True)
-
-
 @employer_view.route("/get_job_posting_fields", methods=["GET"])
 def get_job_posting_fields():
     """Gets the fields for a job posting"""
@@ -49,25 +31,6 @@ def get_job_posting_fields():
             has_error=True,
             error_message=str(error)
         )
-
-
-@employer_view.route("/save_new_job_posting", methods=['POST'])
-def save_new_job_posting():
-    """Saves a job posting for an employer"""
-    job_posting_data = json.loads(request.data)
-    job_posting_processor = JobPostingProcessorModel()
-    try:
-        job_posting = JobPostingModel(
-            **job_posting_data
-        )
-        result = job_posting_processor.save_new_job_posting(job_posting)
-        return BaseSaveResponse(success=result).json(by_alias=True)
-    except Exception as error:
-        return BaseSaveResponse(
-            success=False,
-            has_error=True,
-            error_message=str(error)
-        ).json(by_alias=True)
 
 
 @employer_view.route("/update_job_posting", methods=['POST'])

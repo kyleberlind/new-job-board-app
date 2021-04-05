@@ -36,7 +36,7 @@ const JobPostingAccordion = (props) => {
         setAreApplicantsLoading(false);
         console.log(error);
       });
-  }, []);
+  }, [props.jobPosting.id]);
 
   const generateJobApplications = () => {
     let index = 0;
@@ -83,8 +83,7 @@ const JobPostingAccordion = (props) => {
   const getJobPostingHeader = () => {
     return (
       props.jobPosting.role +
-      (props.jobPosting.team !== null ? " | " : "") +
-      props.jobPosting.team
+      (props.jobPosting.team !== null ? " | " + props.jobPosting.team : "")
     );
   };
 

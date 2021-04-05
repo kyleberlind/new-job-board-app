@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import EmployerConsole from "./console/EmployerConsole.js";
@@ -21,7 +20,13 @@ function Employer(props) {
     false
   );
 
+  const { loading, error, data } = useQuery(GET_EMPLOYER);
+
   useEffect(() => {
+    if (data) {
+      props.loadEmployer(data.employer);
+    }
+
     loadJobPostingFieldsService().then((response) => {
       response.json().then((data) => {
         if (!data["hasError"]) {
@@ -29,7 +34,7 @@ function Employer(props) {
         }
       });
     });
-  }, []);
+  }, [data]);
 
   const handleLogout = () => {
     logoutService()
@@ -43,16 +48,11 @@ function Employer(props) {
       });
   };
 
-  const { loading, error, data } = useQuery(GET_EMPLOYER);
-
   if (loading) {
     return <Loader active></Loader>;
   } else if (error) {
-    return (
-      <Message content="Error loading your information!" negative/>
-    );
+    return <Message content="Error loading your information!" negative />;
   } else {
-    props.loadEmployer(data.employer);
     return (
       <Container fluid>
         <Router>

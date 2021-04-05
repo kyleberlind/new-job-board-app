@@ -329,7 +329,7 @@ EditJobPostingModal.propTypes = {
   showEditJobPostingModal: PropTypes.bool.isRequired,
   setShowEditJobPostingModal: PropTypes.func.isRequired,
   jobPosting: jobPostingShape.isRequired,
-  employerId: PropTypes.number.isRequired,
+  employerId: PropTypes.string.isRequired,
 };
 
 EditJobPostingModal.defaultProps = {};

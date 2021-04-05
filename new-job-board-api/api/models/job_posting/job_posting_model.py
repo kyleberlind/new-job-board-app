@@ -19,13 +19,19 @@ class JobPostingModel(BaseJobModel):
 class JobPostingModelSQLAlchemy(db.Model):
     """Model to represent the job posting in SQL Alchemy"""
     __tablename__ = "tbl_job_posting"
-  
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     employer_id = db.Column(db.Integer, ForeignKey('tbl_employer.employer_id'))
     role = db.Column(db.String(64))
     team = db.Column(db.String(64))
     description = db.Column(db.String(1024))
     date_created = db.Column(db.DateTime)
+    status = db.Column(db.String(64))
+    employer = relationship(
+        "EmployerModelSQLAlchemy",
+        viewonly=True,
+        uselist=False,
+    )
     location = relationship(
         "JobPostingLocationModelSQLAlchemy",
         uselist=False,

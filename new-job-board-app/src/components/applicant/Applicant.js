@@ -1,56 +1,85 @@
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { useQuery } from "@apollo/client";
+import { Container, Loader, Message } from "semantic-ui-react";
 import ApplicantLogin from "./login/ApplicantLogin.js";
-import ApplicantSignup from "./signup/ApplicantSignup.js";
 import ApplicantConsole from "./console/ApplicantConsole";
 import ApplicantAccount from "./account/ApplicantAccount";
 import ApplicantJobCart from "./job_cart/ApplicantJobCart";
-import { Container } from "react-bootstrap";
 import { logoutService } from "../../services/AccountServices";
-import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ApplicantConsoleNavBar from "./console/ApplicantConsoleNavBar";
-import { connect } from "react-redux";
+import { GET_USER } from "../../services/graphql/queries/ApplicantQueries";
+import MyApplicationsView from "../applicant/MyApplicationsView";
+import { getFailureToastWithMessage } from "../shared/toast/ToastOptions.js";
 
 function Applicant(props) {
-  console.log(props.jobCart);
+  const { loading, error, data } = useQuery(GET_USER);
+
+  useEffect(() => {
+    if (data) {
+      props.loadApplicant(data.user);
+    }
+  }, [data]);
+
   const handleLogout = () => {
     logoutService()
       .then(() => {
         window.location.assign("/");
       })
       .catch((error) => {
-        console.log(error);
+        props.openToast(
+          getFailureToastWithMessage("Failed to logout, please try again.")
+        );
       });
   };
 
-  return (
-    <Container fluid>
-      <ApplicantConsoleNavBar handleLogout={handleLogout} jobCartCount={props.jobCart.length}/>
-      <Router>
-        <Switch>
-          <Route path="/applicant" exact>
-            <h2>Hello Applicant</h2>
-          </Route>
-          <Route path="/applicant/account" component={ApplicantAccount} />
-          <Route path="/applicant/signup" component={ApplicantSignup} />
-          <Route path="/applicant/login" component={ApplicantLogin} />
-          <Route
-            path="/applicant/applicant-console"
-            component={ApplicantConsole}
+  if (loading) {
+    return <Loader active></Loader>;
+  } else if (error) {
+    return <Message content="Error loading your information!" negative />;
+  } else {
+    return (
+      <Container fluid>
+        <Router>
+          <ApplicantConsoleNavBar
+            handleLogout={handleLogout}
+            jobCartCount={props.jobCart.length}
           />
-          <Route
-            path="/applicant/job-cart"
-            component={ApplicantJobCart}
-          />
-        </Switch>
-      </Router>
-    </Container>
-  );
-}
-
-const mapStateToProps = (state) => {
-  return {
-    jobCart: state.jobCart
+          <Switch>
+            <Route path="/applicant" exact>
+              <h2>Hello Applicant</h2>
+            </Route>
+            <Route path="/applicant/account" component={ApplicantAccount} />
+            <Route path="/applicant/login" component={ApplicantLogin} />
+            <Route
+              path="/applicant/applicant-console"
+              component={ApplicantConsole}
+            />
+            <Route
+              path="/applicant/applications"
+              component={MyApplicationsView}
+            />
+            <Route path="/applicant/job-cart" component={ApplicantJobCart} />
+          </Switch>
+        </Router>
+      </Container>
+    );
   }
 }
 
-export default connect(mapStateToProps)(Applicant);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadApplicant: (applicant) =>
+      dispatch({ type: "LOAD_APPLICANT", payload: applicant }),
+    openToast: (toast) => dispatch({ type: "OPEN_TOAST", payload: toast }),
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    jobCart: state.jobCart,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Applicant);

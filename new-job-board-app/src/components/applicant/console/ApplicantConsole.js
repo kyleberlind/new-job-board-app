@@ -1,126 +1,159 @@
-import { Button, Container, InputGroup, Form, FormControl, ListGroup, Tab, Col, Row} from "react-bootstrap";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { useQuery } from "@apollo/client";
 import {
-  loadApplicantInfoService,
-  loadJobCart,
-  searchJobPostings,
-  loadApplicantJobApplicationsFromId
-} from "../../../services/applicant/ApplicantServices";
-import { useFormFields } from "../../../libs/hooks/useFormFields.js";
-import ApplicantConsoleJobApplicationsContainer from "./ApplicantConsoleJobApplicationsContainer.js"
-import ApplicantConsoleSearchResultsContainer from "./ApplicantConsoleSearchResultsContainer.js"
+  Segment,
+  Input,
+  Message,
+  Loader,
+  Item,
+  Grid,
+  Header,
+  Divider,
+  Button,
+  Container,
+  Icon,
+  Pagination,
+} from "semantic-ui-react";
+import { GET_JOB_POSTINGS } from "../../../services/graphql/queries/ApplicantQueries";
 
-import './css/ApplicantConsole.css';
-
-
-const ApplicantConsole = () => {
-  const [userId, setUserId] = useState(null);
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [fields, handleFieldChange] = useFormFields({
-    jobSearchQuery: "",
-    jobSearchLocationQuery: "",
-  });
-  const [jobApplications, setJobApplications] = useState([]);
-  const handleSubmitButtonClick = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    searchJobPostings(fields)
-      .then((response) => {
-        // TODO: add actual error handling
-        response.json().then((data) => {
-          if (data["hasError"]) {
-            console.log("ERROR"); // fix this
-          } else {
-            setSearchResults(data["jobPostings"]);
-          }
-        });
-      });
-    setShowSearchResults(true);
-  };
-
+const ApplicantConsole = (props) => {
+  const { loading, error, data } = useQuery(GET_JOB_POSTINGS);
+  const [selectedJobPosting, setSelectedJobPosting] = useState({});
   useEffect(() => {
-    loadApplicantInfoService().then((response) => {
-      response.json().then((data) => {
-        if (!data["applicantData"]) {
-          window.location.assign("login");
-        } else {
-          setUserId(data["applicantData"]);
-          console.log(userId);
-        }
+    props.loadJobPostings(data);
+  }, [data]);
+
+  if (loading) {
+    return <Loader active></Loader>;
+  } else if (error) {
+    return <Message content="Error loading your information!" negative />;
+  } else {
+    const getJobPostingHeader = (jobPosting) => {
+      return (
+        jobPosting.role +
+        (jobPosting.team !== null ? " | " + jobPosting.team : "")
+      );
+    };
+
+    const formattedJobLocation = (jobPosting) =>
+      `${jobPosting.location?.city}, ${jobPosting.location?.state}, ${jobPosting.location?.zipCode}`;
+
+    const generatJobPostingList = () => {
+      console.log(selectedJobPosting);
+      return data.jobPostings.map((jobPosting) => {
+        return (
+          <Item
+            key={jobPosting.id}
+            onClick={() => {
+              setSelectedJobPosting(jobPosting);
+            }}
+          >
+            <Item.Content>
+              <Item.Header>{getJobPostingHeader(jobPosting)}</Item.Header>
+              <Item.Meta>
+                {jobPosting.employer.employerName} |{" "}
+                {formattedJobLocation(jobPosting)}
+              </Item.Meta>
+            </Item.Content>
+          </Item>
+        );
       });
-    });
-  });
+    };
 
-  useEffect(() => {
-    loadApplicantJobApplicationsFromId(userId).then((response) => {
-      response.json().then((data) => {
-        if (data["hasError"]) {
-          console.log(data["errorMessage"]);
-        }
-        else {
-          const applications = data["applications"].map(application => {
-            return {
-              applicationId: application.applicationId,
-              dateApplied: application.dateApplied,
-              employerName: application.employerName,
-              description: application.description,
-              role: application.role,
-              city: application.city,
-              state: application.state,
-            }
-          });
-          setJobApplications(applications);
-        }
-      })
-    });
-  }, [userId])
-
-  return (
-    <Container className="container" fluid>
-        <Form className="searchBar" onSubmit={handleSubmitButtonClick}>
-          <Form.Group controlId="jobSearchQuery" className="searchInput">
-            <InputGroup>
-              <InputGroup.Prepend>
-                <InputGroup.Text>What</InputGroup.Text>
-              </InputGroup.Prepend>
-              <FormControl
-                placeholder="Job title, keywords, or company"
-                value={fields.jobSearchQuery}
-                onChange={handleFieldChange}
-                />
-            </InputGroup>
-          </Form.Group>
-          <Form.Group controlId="jobSearchLocationQuery" className="searchInput">
-            <InputGroup>
-              <InputGroup.Prepend>
-                <InputGroup.Text>Where</InputGroup.Text>
-              </InputGroup.Prepend>
-              <FormControl
-                placeholder='City, state, zip code, or "remote"'
-                value={fields.jobSearchLocationQuery}
-                onChange={handleFieldChange}
+    return (
+      <Container fluid>
+        <Segment>
+          <Grid>
+            <Grid.Column width={7}>
+              <Input
+                fluid
+                labelPosition="left"
+                label="What"
+                placeholder="Search for Jobs"
               />
-            </InputGroup>
-          </Form.Group>
-          <Button className="submitButton" type="submit" variant="primary">
-            Find Jobs
-          </Button>
-        </Form>
-        {
-          showSearchResults ?
-            <div>
-              <div className="header">
-                {'Search results for "'.concat(fields.jobSearchQuery, '" in "', fields.jobSearchLocationQuery, '"')}
-              </div>
-              <ApplicantConsoleSearchResultsContainer applicantId={userId} jobPostings={searchResults} />
-            </div>
-
-          :
-          <ApplicantConsoleJobApplicationsContainer jobApplications={jobApplications} />
-        }
-    </Container>
-  );
+            </Grid.Column>
+            <Grid.Column width={7}>
+              <Input
+                fluid
+                labelPosition="left"
+                label="Where"
+                placeholder="Search for Job Locations"
+              />
+            </Grid.Column>
+            <Grid.Column width={2}>
+              <Button fluid>
+                <Icon name="search"></Icon>
+                Search
+              </Button>
+            </Grid.Column>
+          </Grid>
+        </Segment>
+        <Segment>
+          <Grid columns={2} relaxed="very">
+            <Grid.Column>
+              <Item.Group
+                style={{ overflow: "auto", maxHeight: "80vh" }}
+                link
+                divided
+              >
+                {generatJobPostingList()}
+                <Container textAlign="center">
+                  <Pagination defaultActivePage={5} totalPages={5} />
+                </Container>
+              </Item.Group>
+            </Grid.Column>
+            <Grid.Column>
+              {Object.keys(selectedJobPosting).length > 0 ? (
+                <Item>
+                  <Item.Content>
+                    <Item.Header>
+                      {getJobPostingHeader(selectedJobPosting)}
+                    </Item.Header>
+                    <Item.Meta>
+                      {selectedJobPosting.employer.employerName} |{" "}
+                      {formattedJobLocation(selectedJobPosting)} | Type
+                    </Item.Meta>
+                    <Item.Meta>
+                      <Button compact basic primary>
+                        Apply
+                      </Button>
+                      <Button compact basic secondary>
+                        <Icon name="cart plus" />
+                        Add to Cart
+                      </Button>
+                    </Item.Meta>
+                    <Divider />
+                    <Item.Description>
+                      {selectedJobPosting.description}
+                    </Item.Description>
+                  </Item.Content>
+                </Item>
+              ) : (
+                <Header textAlign="center">Select a Job</Header>
+              )}
+            </Grid.Column>
+          </Grid>
+          <Divider vertical>
+            <Icon name="chevron right" />
+          </Divider>
+        </Segment>
+      </Container>
+    );
+  }
 };
 
-export default ApplicantConsole;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadJobPostings: (jobPostings) =>
+      dispatch({ type: "LOAD_JOB_POSTINGS", payload: jobPostings }),
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    jobPostings: state.jobPostings,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApplicantConsole);

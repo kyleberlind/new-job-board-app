@@ -5,7 +5,8 @@ create table tbl_job_posting (
 	role NVARCHAR(64) NOT NULL,
     description NVARCHAR(1024) NOT NULL,
     date_created datetime Default Now(),
-    team  NVARCHAR(64) NOT NULL
+    team  NVARCHAR(64) NOT NULL,
+    status NVARCHAR(64) NOT NULL,
     primary key (id)
 );
 
