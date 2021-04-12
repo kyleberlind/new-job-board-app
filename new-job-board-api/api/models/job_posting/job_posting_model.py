@@ -21,7 +21,7 @@ class JobPostingModelSQLAlchemy(db.Model):
     __tablename__ = "tbl_job_posting"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    employer_id = db.Column(db.Integer, ForeignKey('tbl_employer.employer_id'))
+    employer_id = db.Column(db.Integer, ForeignKey('user.tbl_employer.employer_id'))
     role = db.Column(db.String(64))
     team = db.Column(db.String(64))
     description = db.Column(db.String(1024))

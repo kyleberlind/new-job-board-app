@@ -24,13 +24,16 @@ export const GET_USER = gql`
 `;
 
 export const GET_JOB_POSTINGS = gql`
-  query Query {
-    jobPostings {
+  query Query($whatSearchFilter: String!, $locationFilters: [String!]) {
+    jobPostings(
+      whatSearchFilter: $whatSearchFilter,
+      locationFilters: $locationFilters
+    ) {
       id
       role
       team
       description
-      employer { 
+      employer {
         employerName
       }
       fields {
@@ -45,6 +48,16 @@ export const GET_JOB_POSTINGS = gql`
         state
         zipCode
       }
+    }
+  }
+`;
+
+export const GET_LOCATIONS = gql`
+  query Query($filter: String!) {
+    locations(filter: $filter) {
+      id
+      city
+      stateId
     }
   }
 `;

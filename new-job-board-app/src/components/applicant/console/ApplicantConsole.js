@@ -14,20 +14,41 @@ import {
   Container,
   Icon,
   Pagination,
+  Dropdown,
+  Label,
 } from "semantic-ui-react";
 import { GET_JOB_POSTINGS } from "../../../services/graphql/queries/ApplicantQueries";
+import JobLocationSearchDropdown from "./JobLocationSearchDropdown";
 
 const ApplicantConsole = (props) => {
-  const { loading, error, data } = useQuery(GET_JOB_POSTINGS);
+  const [whatSearchFilter, setWhatSearchFilter] = useState("");
+  const [currentWhatSearchFilter, setCurrentWhatSearchFilter] = useState("");
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [currentSelectedLocations, setCurrentSelectedLocations] = useState([]);
   const [selectedJobPosting, setSelectedJobPosting] = useState({});
+
+  //initial load pulls top 15 results
+  const { loading, error, data } = useQuery(GET_JOB_POSTINGS, {
+    variables: {
+      whatSearchFilter: whatSearchFilter,
+      locationFilters: selectedLocations,
+    },
+  });
+
   useEffect(() => {
     props.loadJobPostings(data);
   }, [data]);
 
-  if (loading) {
-    return <Loader active></Loader>;
-  } else if (error) {
+  const handleSearch = () => {
+    setWhatSearchFilter(currentWhatSearchFilter);
+    setSelectedLocations(currentSelectedLocations);
+  };
+
+  if (error) {
     return <Message content="Error loading your information!" negative />;
+  } else if (loading) {
+    //TODO figure out how to make the location options load async at same time as job postings without breaking
+    return <Loader active></Loader>;
   } else {
     const getJobPostingHeader = (jobPosting) => {
       return (
@@ -37,10 +58,9 @@ const ApplicantConsole = (props) => {
     };
 
     const formattedJobLocation = (jobPosting) =>
-      `${jobPosting.location?.city}, ${jobPosting.location?.state}, ${jobPosting.location?.zipCode}`;
+      `${jobPosting.location?.city}, ${jobPosting.location?.state}`;
 
     const generatJobPostingList = () => {
-      console.log(selectedJobPosting);
       return data.jobPostings.map((jobPosting) => {
         return (
           <Item
@@ -61,6 +81,31 @@ const ApplicantConsole = (props) => {
       });
     };
 
+    const removeSelectedLocation = (targetLocation) => {
+      let currentLocations = [...currentSelectedLocations];
+      currentLocations = currentLocations.filter((location) => {
+        return location !== targetLocation;
+      });
+      setCurrentSelectedLocations(currentLocations);
+    };
+
+    const getJobPostingLocationFilters = () => {
+      return currentSelectedLocations.map((location) => {
+        return (
+          <Label key={location}>
+            {location}
+            <Icon
+              name="delete"
+              link
+              onClick={() => {
+                removeSelectedLocation(location);
+              }}
+            />
+          </Label>
+        );
+      });
+    };
+
     return (
       <Container fluid>
         <Segment>
@@ -69,25 +114,27 @@ const ApplicantConsole = (props) => {
               <Input
                 fluid
                 labelPosition="left"
-                label="What"
+                value={currentWhatSearchFilter}
+                onChange={(event) => {
+                  setCurrentWhatSearchFilter(event.target.value);
+                }}
                 placeholder="Search for Jobs"
               />
             </Grid.Column>
             <Grid.Column width={7}>
-              <Input
-                fluid
-                labelPosition="left"
-                label="Where"
-                placeholder="Search for Job Locations"
+              <JobLocationSearchDropdown
+                setSelectedLocations={setCurrentSelectedLocations}
+                selectedLocations={currentSelectedLocations}
               />
             </Grid.Column>
             <Grid.Column width={2}>
-              <Button fluid>
+              <Button fluid onClick={handleSearch}>
                 <Icon name="search"></Icon>
                 Search
               </Button>
             </Grid.Column>
           </Grid>
+          {getJobPostingLocationFilters()}
         </Segment>
         <Segment>
           <Grid columns={2} relaxed="very">
