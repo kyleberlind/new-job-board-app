@@ -17,6 +17,7 @@ class EmployerModelSQLAlchemy(db.Model):
     """Model to represent the employer"""
     __tablename__ = "tbl_employer"
     __bind_key__ = 'user'
+    __table_args__ = {'schema': 'user'}
 
     employer_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer,  ForeignKey('tbl_user.id'))

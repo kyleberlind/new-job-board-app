@@ -11,19 +11,6 @@ function UserLogin() {
   const [validated, setValidated] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
 
-  useEffect(() => {
-    getSessionService().then((response) => {
-      response.json().then((data) => {
-        if (data["session"]) {
-          if (data["session"]["user_type"] === 1) {
-            window.location.assign("/applicant/applicant-console");
-          } else {
-            window.location.assign("/employer/employer-console");
-          }
-        }
-      });
-    });
-  }, []);
 
   const onEmailChange = (input) => {
     setEmail(input.target.value);

@@ -3,6 +3,7 @@
 from datetime import datetime
 from flask import session
 import graphene
+from sqlalchemy import or_
 from sqlalchemy.orm.session import close_all_sessions
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from ..models.job_posting.job_posting_application_model import JobPostingApplicationModelSQLAlchemy
@@ -11,6 +12,7 @@ from ..models.job_posting.job_posting_location_model import JobPostingLocationMo
 from ..models.job_posting.job_posting_field_mapping_model import JobPostingFieldMappingModel
 from ..models.job_posting.job_posting_field_model import JobPostingFieldModelSQLAlchemy
 from ..models.employer_model import EmployerModelSQLAlchemy
+from ..models.location_model import LocationModel
 from ..models.user_model import UserModelSQLAlchemy
 from ..utilities.hash_engine import generate_hashed_password, generate_salt
 from .job_posting.job_posting_input import JobPostingInput
@@ -70,6 +72,13 @@ class JobPostingFieldModelObject(SQLAlchemyObjectType):
         interfaces = (graphene.relay.Node,)
 
 
+class LocationModelObject(SQLAlchemyObjectType):
+    """GQL Object to represent a location"""
+    class Meta:
+        """JobPostingFieldModelObject meta object"""
+        model = LocationModel
+
+
 class Query(graphene.ObjectType):
     """Query object"""
     node = graphene.relay.Node.Field()
@@ -84,7 +93,11 @@ class Query(graphene.ObjectType):
     user = graphene.Field(
         UserObject)
     job_postings = graphene.List(
-        JobPostingModelObject)
+        JobPostingModelObject,
+        whatSearchFilter=graphene.String(),
+        locationFilters=graphene.List(graphene.String))
+    locations = graphene.List(
+        LocationModelObject, filter=graphene.String())
 
     @staticmethod
     def resolve_applications_by_employer_id(parent, info, **args):
@@ -151,11 +164,49 @@ class Query(graphene.ObjectType):
     @staticmethod
     def resolve_job_postings(parent, info, **args):
         """Resolve the job postings"""
+        whatSearchFilter = args.get('whatSearchFilter')
+        locationFilters = args.get('locationFilters')
         job_posting_query = JobPostingModelObject.get_query(info)
+
+        cities = [location.split(",")[0] for location in locationFilters]
+        state_ids = [location.split(",")[1][1:]
+                     for location in locationFilters]
+
         close_all_sessions()
-        return job_posting_query.filter(
-            JobPostingModelSQLAlchemy.status == "active"
-        ).all()
+        if not whatSearchFilter and not locationFilters:
+            return job_posting_query.filter(
+                JobPostingModelSQLAlchemy.status == "active"
+            ).limit(15).all()
+        if not locationFilters:
+            return job_posting_query.join(EmployerModelSQLAlchemy).join(JobPostingLocationModelSQLAlchemy).filter(
+                or_(
+                    EmployerModelSQLAlchemy.employer_name.contains(
+                        whatSearchFilter),
+                    JobPostingModelSQLAlchemy.role.contains(whatSearchFilter)
+                ),
+                JobPostingModelSQLAlchemy.status == "active").limit(15).all()
+        else:
+            return job_posting_query.join(EmployerModelSQLAlchemy).join(JobPostingLocationModelSQLAlchemy).filter(
+                or_(
+                    EmployerModelSQLAlchemy.employer_name.contains(
+                        whatSearchFilter),
+                    JobPostingModelSQLAlchemy.role.contains(whatSearchFilter)
+                ),
+                JobPostingLocationModelSQLAlchemy.city.in_(cities),
+                JobPostingLocationModelSQLAlchemy.state.in_(state_ids),
+                JobPostingModelSQLAlchemy.status == "active").limit(15).all()
+
+    @staticmethod
+    def resolve_locations(parent, info, **args):
+        """Resolve the job postings"""
+        try:
+            filter = args.get('filter')
+            location_query = LocationModelObject.get_query(info)
+            result = location_query.filter(
+                LocationModel.city.contains(filter)).limit(15).all()
+            return result
+        finally:
+            db.session.close()
 
 
 class UpdateApplicationStatus(graphene.Mutation):
