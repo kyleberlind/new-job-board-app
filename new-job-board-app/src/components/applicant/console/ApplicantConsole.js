@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import {
   Segment,
   Input,
@@ -14,11 +14,12 @@ import {
   Container,
   Icon,
   Pagination,
-  Dropdown,
   Label,
 } from "semantic-ui-react";
 import { GET_JOB_POSTINGS } from "../../../services/graphql/queries/ApplicantQueries";
 import JobLocationSearchDropdown from "./JobLocationSearchDropdown";
+import { ADD_JOB_POSTING_TO_CART_MUTATION } from "../../../services/graphql/mutations/ApplicantMutations";
+import { getFailureToastWithMessage } from "../../shared/toast/ToastOptions";
 
 const ApplicantConsole = (props) => {
   const [whatSearchFilter, setWhatSearchFilter] = useState("");
@@ -34,6 +35,10 @@ const ApplicantConsole = (props) => {
       locationFilters: selectedLocations,
     },
   });
+
+  const [addJobPostingToCart, { mutationData }] = useMutation(
+    ADD_JOB_POSTING_TO_CART_MUTATION
+  );
 
   useEffect(() => {
     props.loadJobPostings(data);
@@ -106,6 +111,23 @@ const ApplicantConsole = (props) => {
       });
     };
 
+    const handleAddJobToCart = () => {
+      addJobPostingToCart({
+        variables: {
+          jobPostingId: selectedJobPosting.id,
+        },
+      })
+        .then(() => {
+          props.addJobToCart(selectedJobPosting);
+        })
+        .catch((error) => {
+          console.log(error);
+          props.openToast(
+            getFailureToastWithMessage("Failed to add job to cart")
+          );
+        });
+    };
+
     return (
       <Container fluid>
         <Segment>
@@ -118,7 +140,7 @@ const ApplicantConsole = (props) => {
                 onChange={(event) => {
                   setCurrentWhatSearchFilter(event.target.value);
                 }}
-                placeholder="Search for Jobs"
+                placeholder="Search for a Company or Role"
               />
             </Grid.Column>
             <Grid.Column width={7}>
@@ -162,13 +184,33 @@ const ApplicantConsole = (props) => {
                       {formattedJobLocation(selectedJobPosting)} | Type
                     </Item.Meta>
                     <Item.Meta>
-                      <Button compact basic primary>
+                      <Button
+                        compact
+                        basic
+                        primary
+                        href={`/applicant/apply/job-id=${selectedJobPosting.id}`}
+                      >
                         Apply
                       </Button>
-                      <Button compact basic secondary>
-                        <Icon name="cart plus" />
-                        Add to Cart
-                      </Button>
+                      {props.jobCartIds.includes(selectedJobPosting.id) ? (
+                        <Button disabled={true} compact color="green">
+                          <Icon name="check" />
+                          Added to cart
+                        </Button>
+                      ) : (
+                        <Button
+                          disabled={props.jobCartIds.includes(
+                            selectedJobPosting.id
+                          )}
+                          compact
+                          basic
+                          secondary
+                          onClick={handleAddJobToCart}
+                        >
+                          <Icon name="cart plus" />
+                          Add to Cart
+                        </Button>
+                      )}
                     </Item.Meta>
                     <Divider />
                     <Item.Description>
@@ -194,12 +236,18 @@ const mapDispatchToProps = (dispatch) => {
   return {
     loadJobPostings: (jobPostings) =>
       dispatch({ type: "LOAD_JOB_POSTINGS", payload: jobPostings }),
+    addJobToCart: (jobPosting) =>
+      dispatch({ type: "ADD_JOB_TO_CART", payload: { jobPosting } }),
+    openToast: (toast) => dispatch({ type: "OPEN_TOAST", payload: toast }),
   };
 };
 
 const mapStateToProps = (state) => {
   return {
     jobPostings: state.jobPostings,
+    jobCartIds: state.applicant.jobCart.map((entry) => {
+      return entry.jobPosting.id;
+    }),
   };
 };
 

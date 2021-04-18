@@ -5,16 +5,24 @@ import { Container, Loader, Message } from "semantic-ui-react";
 import ApplicantLogin from "./login/ApplicantLogin.js";
 import ApplicantConsole from "./console/ApplicantConsole";
 import ApplicantAccount from "./account/ApplicantAccount";
-import ApplicantJobCart from "./job_cart/ApplicantJobCart";
+import ApplicantJobCart from "./jobCart/ApplicantJobCart";
 import { logoutService } from "../../services/AccountServices";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ApplicantConsoleNavBar from "./console/ApplicantConsoleNavBar";
 import { GET_USER } from "../../services/graphql/queries/ApplicantQueries";
 import MyApplicationsView from "../applicant/MyApplicationsView";
 import { getFailureToastWithMessage } from "../shared/toast/ToastOptions.js";
+import { loadJobCart } from "../../services/applicant/ApplicantServices";
+import ApplicationView from "../applicant/application/ApplicationView"
 
 function Applicant(props) {
   const { loading, error, data } = useQuery(GET_USER);
+
+  useEffect(() => {
+    loadJobCart().then((result) => {
+      console.log(result);
+    });
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -42,10 +50,7 @@ function Applicant(props) {
     return (
       <Container fluid>
         <Router>
-          <ApplicantConsoleNavBar
-            handleLogout={handleLogout}
-            jobCartCount={props.jobCart.length}
-          />
+          <ApplicantConsoleNavBar handleLogout={handleLogout} />
           <Switch>
             <Route path="/applicant" exact>
               <h2>Hello Applicant</h2>
@@ -60,6 +65,7 @@ function Applicant(props) {
               path="/applicant/applications"
               component={MyApplicationsView}
             />
+            <Route path="/applicant/apply/job-id=:jobId" component={ApplicationView} />
             <Route path="/applicant/job-cart" component={ApplicantJobCart} />
           </Switch>
         </Router>
@@ -76,10 +82,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const mapStateToProps = (state) => {
-  return {
-    jobCart: state.jobCart,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Applicant);
+export default connect(null, mapDispatchToProps)(Applicant);

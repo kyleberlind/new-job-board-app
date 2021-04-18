@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Menu, Button, Icon } from "semantic-ui-react";
 
@@ -35,4 +36,9 @@ function ApplicantConsoleNavBar(props) {
   );
 }
 
-export default ApplicantConsoleNavBar;
+const mapStateToProps = (state) => {
+  return {
+    jobCartCount: state.applicant.jobCart.length,
+  };
+};
+export default connect(mapStateToProps)(ApplicantConsoleNavBar);

@@ -5,6 +5,7 @@ import Home from "./components/home/Home.js";
 import ApplicantSignup from "./components/applicant/signup/ApplicantSignup";
 import EmployerSignup from "./components/employer/signup/EmployerSignup";
 import UserLogin from "./components/shared/login/UserLogin.js";
+import Toast from "./components/shared/toast/Toast"
 // css
 import "./App.css";
 
@@ -17,15 +18,14 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 function App() {
   return (
     <Router>
-      <div>
-        <Route exact path="/" component={Home} />
-        <Route path="/employer" component={Employer} />
-        <Route path="/applicant" component={Applicant} />
-        <Route path="/about" component={About} />
-        <Route path="/signup" component={ApplicantSignup} />
-        <Route path="/employer-signup" component={EmployerSignup} />
-        <Route path="/login" component={UserLogin} />
-      </div>
+      <Route exact path="/" component={Home} />
+      <Route path="/employer" component={Employer} />
+      <Route path="/applicant" component={Applicant} />
+      <Route path="/about" component={About} />
+      <Route path="/signup" component={ApplicantSignup} />
+      <Route path="/employer-signup" component={EmployerSignup} />
+      <Route path="/login" component={UserLogin} />
+      <Toast />
     </Router>
   );
 }

@@ -1349,14 +1349,6 @@
             ],
             "version": "==2020.11"
         },
-        "pylint": {
-            "hashes": [
-                "sha256:0e21d3b80b96740909d77206d741aa3ce0b06b41be375d92e1f3244a274c1f8a",
-                "sha256:d09b0b07ba06bcdff463958f53f23df25e740ecd81895f7d2699ec04bbd8dc3b"
-            ],
-            "markers": "python_version ~= '3.6'",
-            "version": "==2.7.2"
-        },
         "python-dateutil": {
             "hashes": [
                 "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c",

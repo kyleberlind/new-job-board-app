@@ -53,3 +53,8 @@ class UserModelSQLAlchemy(db.Model):
         uselist=True,
         backref="tbl_user"
     )
+    job_cart = relationship(
+        "JobCartEntryModel",
+        uselist=True,
+        backref="tbl_user"
+    )

@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import { useQuery } from "@apollo/client";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import EmployerConsole from "./console/EmployerConsole.js";
 import EmployerConsoleNavBar from "./console/EmployerConsoleNavBar.js";
 import EmployerAccount from "./account/EmployerAccount";
 import CreateJobPostingModal from "./jobPosting/CreateJobPostingModal";
-import ApplicationView from "./reviewApplication/ApplicationView";
+import ApplicationView from "./reviewApplication/ReviewApplicationView";
 import { logoutService } from "../../services/AccountServices";
-import Toast from "../shared/toast/Toast";
 import { loadJobPostingFieldsService } from "../../services/employer/EmployerServices";
 import { Container, Loader, Message } from "semantic-ui-react";
 import { getFailureToastWithMessage } from "../shared/toast/ToastOptions";
-import { useQuery } from "@apollo/client";
 import { GET_EMPLOYER } from "../../services/graphql/queries/EmployerQueries";
 
 function Employer(props) {
@@ -42,6 +41,7 @@ function Employer(props) {
         window.location.assign("/");
       })
       .catch((error) => {
+        console.log(error)
         props.openToast(
           getFailureToastWithMessage("Logout failed, please try again.")
         );
@@ -84,7 +84,6 @@ function Employer(props) {
           showCreateJobPostingModal={showCreateJobPostingModal}
           jobPostingFields={jobPostingFields}
         />
-        <Toast />
       </Container>
     );
   }

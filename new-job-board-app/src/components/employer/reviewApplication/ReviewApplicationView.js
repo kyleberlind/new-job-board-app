@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Card,
@@ -15,6 +16,10 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_APPLICATION_BY_REFERENCE_ID } from "../../../services/graphql/queries/EmployerQueries";
 import { UPDATE_JOB_POSTING_APPLICATION_STATUS_MUTATION } from "../../../services/graphql/mutations/UpdateJobPostingApplicationStatusMutation";
 import ApplicantOutreachModal from "./ApplicantOutreachModal";
+import {
+  getFailureToastWithMessage,
+  getSuccessToastWithMessage,
+} from "../../shared/toast/ToastOptions";
 
 const ApplicationView = (props) => {
   const employerReferenceId = props.match.params.employer_reference_id;
@@ -44,7 +49,14 @@ const ApplicationView = (props) => {
         employerReferenceId: employerReferenceId,
         newStatus: "rejected",
       },
-    });
+    })
+      .then(() => {
+        props.openToast(getSuccessToastWithMessage("Successfully rejected applicant."));
+      })
+      .catch((error) => {
+        console.log(error);
+        props.openToast(getFailureToastWithMessage("Failed to reject applicant."));
+      });
     setIsRejectApplicantModalOpen(false);
   };
 
@@ -187,4 +199,10 @@ const ApplicationView = (props) => {
   }
 };
 
-export default ApplicationView;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    openToast: (toast) => dispatch({ type: "OPEN_TOAST", payload: toast }),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ApplicationView);

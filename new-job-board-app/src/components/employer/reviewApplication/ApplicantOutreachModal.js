@@ -16,6 +16,7 @@ const ApplicantOutreachModal = (props) => {
       },
     });
     window.location.href = `mailto:${props.applicantEmailAddress}`;
+    props.setIsApplicantOutReachModalOpen(false);
   };
 
   return (
