@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { Dropdown, Message, Loader } from "semantic-ui-react";
+import { Dropdown, Message } from "semantic-ui-react";
 import { GET_LOCATIONS } from "../../../services/graphql/queries/ApplicantQueries";
 
 const JobLocationSearchDropdown = (props) => {
@@ -8,7 +8,6 @@ const JobLocationSearchDropdown = (props) => {
   const { loading, error, data, refetch } = useQuery(GET_LOCATIONS, {
     variables: { filter: whereSearchInput },
   });
-  const [selectedLocations, setSelectedLocations] = useState([]);
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
@@ -28,7 +27,6 @@ const JobLocationSearchDropdown = (props) => {
   if (error) {
     return <Message content="Error loading locations" negative />;
   } else {
-
     const handleLocationSelect = (event, data) => {
       let currentSelectedLocations = [...props.selectedLocations];
       currentSelectedLocations = currentSelectedLocations.concat(data.value);
@@ -47,7 +45,7 @@ const JobLocationSearchDropdown = (props) => {
         selection
         search
         labeled
-        value={[]}
+        value={[]}//keep the selected values empty so they don't build up in the search bar
         onChange={handleLocationSelect}
         onSearchChange={(event) => setWhereSearchInput(event.target.value)}
         searchQuery={whereSearchInput}

@@ -1,5 +1,4 @@
 """03/04/2021"""
-# pylint: disable=no-member
 from datetime import datetime
 from flask import session
 import graphene
@@ -13,6 +12,7 @@ from ..models.job_posting.job_posting_field_mapping_model import JobPostingField
 from ..models.job_posting.job_posting_field_model import JobPostingFieldModelSQLAlchemy
 from ..models.employer_model import EmployerModelSQLAlchemy
 from ..models.location_model import LocationModel
+from ..models.job_posting.job_cart_entry_model import JobCartEntryModel
 from ..models.user_model import UserModelSQLAlchemy
 from ..utilities.hash_engine import generate_hashed_password, generate_salt
 from .job_posting.job_posting_input import JobPostingInput
@@ -79,6 +79,13 @@ class LocationModelObject(SQLAlchemyObjectType):
         model = LocationModel
 
 
+class JobCartEntryModelObject(SQLAlchemyObjectType):
+    """GQL Object to represent single job cart mapping"""
+    class Meta:
+        """JobCartModelObject meta object"""
+        model = JobCartEntryModel
+
+
 class Query(graphene.ObjectType):
     """Query object"""
     node = graphene.relay.Node.Field()
@@ -86,18 +93,18 @@ class Query(graphene.ObjectType):
         JobPostingApplicationObject, employer_id=graphene.Int())
     applications_by_employer_reference_id = graphene.List(
         JobPostingApplicationObject, employer_reference_id=graphene.String())
-    applications_by_employer_applicant_id = graphene.List(
-        JobPostingApplicationObject, applicant_id=graphene.Int())
     employer = graphene.Field(
         EmployerObject)
     user = graphene.Field(
         UserObject)
     job_postings = graphene.List(
         JobPostingModelObject,
-        whatSearchFilter=graphene.String(),
-        locationFilters=graphene.List(graphene.String))
+        what_search_filter=graphene.String(),
+        location_filters=graphene.List(graphene.String))
     locations = graphene.List(
         LocationModelObject, filter=graphene.String())
+    job_posting_by_id = graphene.Field(
+        JobPostingModelObject, job_posting_id=graphene.Int())
 
     @staticmethod
     def resolve_applications_by_employer_id(parent, info, **args):
@@ -118,18 +125,6 @@ class Query(graphene.ObjectType):
         return applications_query.filter(
             JobPostingApplicationModelSQLAlchemy.employer_reference_id.contains(
                 employer_reference_id
-            )
-        ).all()
-
-    @staticmethod
-    def resolve_applications_by_employer_applicant_id(parent, info, **args):
-        """Resolves the job posting applications by the applicant ID"""
-        applicant_id = args.get('applicant_id')
-        applications_query = JobPostingApplicationObject.get_query(info)
-        close_all_sessions()
-        return applications_query.filter(
-            JobPostingApplicationModelSQLAlchemy.applicant_id.contains(
-                applicant_id
             )
         ).all()
 
@@ -158,39 +153,40 @@ class Query(graphene.ObjectType):
                     session["token"]
                 )
             ).first()
+
         else:
             raise Exception("No User Logged in")
 
     @staticmethod
     def resolve_job_postings(parent, info, **args):
         """Resolve the job postings"""
-        whatSearchFilter = args.get('whatSearchFilter')
-        locationFilters = args.get('locationFilters')
+        what_search_filrer = args.get('what_search_filter')
+        location_filters = args.get('location_filters')
         job_posting_query = JobPostingModelObject.get_query(info)
 
-        cities = [location.split(",")[0] for location in locationFilters]
+        cities = [location.split(",")[0] for location in location_filters]
         state_ids = [location.split(",")[1][1:]
-                     for location in locationFilters]
+                     for location in location_filters]
 
         close_all_sessions()
-        if not whatSearchFilter and not locationFilters:
+        if not what_search_filrer and not location_filters:
             return job_posting_query.filter(
                 JobPostingModelSQLAlchemy.status == "active"
             ).limit(15).all()
-        if not locationFilters:
+        if not location_filters:
             return job_posting_query.join(EmployerModelSQLAlchemy).join(JobPostingLocationModelSQLAlchemy).filter(
                 or_(
                     EmployerModelSQLAlchemy.employer_name.contains(
-                        whatSearchFilter),
-                    JobPostingModelSQLAlchemy.role.contains(whatSearchFilter)
+                        what_search_filrer),
+                    JobPostingModelSQLAlchemy.role.contains(what_search_filrer)
                 ),
                 JobPostingModelSQLAlchemy.status == "active").limit(15).all()
         else:
             return job_posting_query.join(EmployerModelSQLAlchemy).join(JobPostingLocationModelSQLAlchemy).filter(
                 or_(
                     EmployerModelSQLAlchemy.employer_name.contains(
-                        whatSearchFilter),
-                    JobPostingModelSQLAlchemy.role.contains(whatSearchFilter)
+                        what_search_filrer),
+                    JobPostingModelSQLAlchemy.role.contains(what_search_filrer)
                 ),
                 JobPostingLocationModelSQLAlchemy.city.in_(cities),
                 JobPostingLocationModelSQLAlchemy.state.in_(state_ids),
@@ -198,15 +194,22 @@ class Query(graphene.ObjectType):
 
     @staticmethod
     def resolve_locations(parent, info, **args):
-        """Resolve the job postings"""
+        """Resolve locations (cites and state IDs) where jobs can be"""
         try:
             filter = args.get('filter')
             location_query = LocationModelObject.get_query(info)
-            result = location_query.filter(
+            return location_query.filter(
                 LocationModel.city.contains(filter)).limit(15).all()
-            return result
         finally:
             db.session.close()
+
+    @staticmethod
+    def resolve_job_posting_by_id(parent, info, **args):
+        job_posting_id = args.get('job_posting_id')
+        job_posting_query = JobPostingModelObject.get_query(info)
+        close_all_sessions()
+        return job_posting_query.filter(
+            JobPostingModelSQLAlchemy.id == job_posting_id).first()
 
 
 class UpdateApplicationStatus(graphene.Mutation):
@@ -265,6 +268,7 @@ class AddJobPosting(graphene.Mutation):
             role=job_posting_input["role"],
             team=job_posting_input["team"],
             description=job_posting_input["description"],
+            status="active",
             date_created=datetime.now()
         )
         db.session.add(job_posting)
@@ -328,12 +332,60 @@ class UpdatePassword(graphene.Mutation):
         db.session.close()
 
 
+class AddJobPostingToCart(graphene.Mutation):
+    """Mutation to update the adding job posting to cart"""
+    class Arguments:
+        """Arguments for AddJobPostingToCart"""
+        job_posting_id = graphene.Int(required=True)
+
+    job_cart_entry = graphene.Field(
+        lambda: JobCartEntryModelObject)
+
+    def mutate(self, info, job_posting_id):
+        """Mutation for adding a job posting to cart"""
+        if "token" in session:
+            job_cart_entry = JobCartEntryModel(
+                job_id=job_posting_id,
+                user_id=session["token"]
+            )
+            db.session.add(job_cart_entry)
+            db.session.commit()
+            db.session.close()
+        else:
+            raise Exception("No User Logged in")
+
+
+class RemoveJobPostingFromCart(graphene.Mutation):
+    """Mutation to remove job posting from cart"""
+    class Arguments:
+        """Arguments for removing job posting from cart"""
+        job_posting_id = graphene.Int(required=True)
+
+    job_cart_entry = graphene.Field(
+        lambda: JobCartEntryModelObject)
+
+    def mutate(self, info, job_posting_id):
+        """Mutation for updating the users password"""
+        if "token" in session:
+            job_cart_query = JobCartEntryModelObject.get_query(info)
+            job_cart_query.filter(
+                JobCartEntryModel.user_id == session["token"],
+                JobCartEntryModel.job_id == job_posting_id
+            ).delete()
+            db.session.commit()
+            db.session.close()
+        else:
+            raise Exception("No User Logged in")
+
+
 class Mutation(graphene.ObjectType):
     """Mutation Object"""
     update_application_status = UpdateApplicationStatus.Field()
     update_employer_size = UpdateEmployerSize.Field()
     update_password = UpdatePassword.Field()
     add_job_posting = AddJobPosting.Field()
+    add_job_posting_to_cart = AddJobPostingToCart.Field()
+    remove_job_posting_from_cart = RemoveJobPostingFromCart.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

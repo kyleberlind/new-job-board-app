@@ -19,6 +19,22 @@ export const GET_USER = gql`
           }
         }
       }
+      jobCart {
+        jobPosting {
+          id
+          role
+          team
+          description
+          employer {
+            employerName
+          }
+          location {
+            city
+            state
+            zipCode
+          }
+        }
+      }
     }
   }
 `;
@@ -26,9 +42,35 @@ export const GET_USER = gql`
 export const GET_JOB_POSTINGS = gql`
   query Query($whatSearchFilter: String!, $locationFilters: [String!]) {
     jobPostings(
-      whatSearchFilter: $whatSearchFilter,
+      whatSearchFilter: $whatSearchFilter
       locationFilters: $locationFilters
     ) {
+      id
+      role
+      team
+      description
+      employer {
+        employerName
+      }
+      fields {
+        field {
+          title
+          type
+          value
+        }
+      }
+      location {
+        city
+        state
+        zipCode
+      }
+    }
+  }
+`;
+
+export const GET_JOB_POSTING_BY_ID = gql`
+  query Query($jobPostingId: Int!) {
+    jobPostingById(jobPostingId: $jobPostingId) {
       id
       role
       team

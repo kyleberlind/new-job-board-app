@@ -1,23 +1,36 @@
 import { loadJobCart } from "../services/applicant/ApplicantServices.js";
 
 const initState = {
-  jobCart: [], // TODO: load jobcart from server for initstate
   toast: { open: false, color: "grey", message: "" },
   employer: {
     jobPostings: [],
   },
   applicant: {
     applications: [],
+    jobCart: [],
   },
 };
 
 const rootReducer = (state = initState, action) => {
   console.log(action);
   switch (action.type) {
-    case "UPDATE_JOB_CART":
+    case "REMOVE_JOB_FROM_CART":
       return {
         ...state,
-        jobCart: action.jobCart,
+        applicant: {
+          ...state.applicant,
+          jobCart: state.applicant.jobCart.filter(
+            (entry) => entry.jobPosting.id !== action.payload
+          ),
+        },
+      };
+    case "ADD_JOB_TO_CART":
+      return {
+        ...state,
+        applicant: {
+          ...state.applicant,
+          jobCart: [...state.applicant.jobCart, action.payload],
+        },
       };
     case "OPEN_TOAST":
       return {
