@@ -79,6 +79,7 @@ export const GET_JOB_POSTING_BY_ID = gql`
         employerName
       }
       fields {
+        required
         field {
           title
           type

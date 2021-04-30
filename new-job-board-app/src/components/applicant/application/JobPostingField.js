@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { Input } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 const JobPostingField = (props) => {
-  return <Input />;
+  switch (props.field.type) {
+    case "free_text":
+      return <Form.Input width={7} required={props.required} label={props.field.value} />;
+  }
 };
 
 export default JobPostingField;

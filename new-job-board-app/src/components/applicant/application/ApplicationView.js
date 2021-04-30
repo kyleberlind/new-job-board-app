@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Container,
@@ -14,8 +14,10 @@ import {
 } from "semantic-ui-react";
 import { GET_JOB_POSTING_BY_ID } from "../../../services/graphql/queries/ApplicantQueries";
 import JobPostingField from "./JobPostingField";
+import EducationFormGroup from "./EducationFormGroup";
 
 const ApplicationView = (props) => {
+  const [numEducations, setNumEducations] = useState(1);
   const jobId = props.match.params.jobId;
   const { loading, error, data } = useQuery(GET_JOB_POSTING_BY_ID, {
     variables: {
@@ -45,15 +47,20 @@ const ApplicationView = (props) => {
     };
 
     const generateJobPostingFieldQuestions = () => {
-      return jobPosting.fields.map((field) => {
-        return <JobPostingField />;
+      return jobPosting.fields.map((edge) => {
+        return (
+          <JobPostingField required={!!edge.required} field={edge.field} />
+        );
       });
     };
 
-    const degreeOptions = [
-      { key: "BA", text: "BA" },
-      { key: "BS", text: "BS" },
-    ];
+    const generateEducationForm = () => {
+      let educationForms = [];
+      for (let i = 0; i < numEducations; i++) {
+        educationForms.push(<EducationFormGroup key={i} index={i}/>);
+      }
+      return educationForms;
+    };
 
     return (
       <Container>
@@ -72,63 +79,42 @@ const ApplicationView = (props) => {
           <Form>
             <Header>Personal Information</Header>
             <Form.Group widths="equal">
-              <Form.Field>
-                <label>First Name</label>
-                <input placeholder="First Name" />
-              </Form.Field>
-              <Form.Field>
-                <label>Last Name</label>
-                <input placeholder="Last Name" />
-              </Form.Field>
+              <Form.Input
+                required
+                label="First Name"
+                placeholder="First Name"
+              />
+              <Form.Input required label="Last Name" placeholder="Last Name" />
             </Form.Group>
             <Form.Group widths="equal">
-              <Form.Field>
-                <label>Email Address</label>
-                <input placeholder="Email Address" />
-              </Form.Field>
-              <Form.Field>
-                <label>Phone Number</label>
-                <input placeholder="Phone Number" />
-              </Form.Field>
+              <Form.Input
+                required
+                label="Email Address"
+                placeholder="Email Address"
+              />
+              <Form.Input
+                required
+                label="Phone Number"
+                placeholder="Phone Number"
+              />
             </Form.Group>
             <Button>Resume</Button>
             <Divider />
             <Header>Education</Header>
-            <Form.Group widths="equal">
-              <Form.Input
-                required
-                label="School"
-                placeholder="Select a School"
-              />
-              <Form.Dropdown
-                options={degreeOptions}
-                label="Degree"
-                placeholder="Select a Degree"
-                search
-                selection
-              />
-              <Form.Input
-                label="Discipline"
-                placeholder="Select a Discipline"
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Field width="2">
-                <label>Start Date</label>
-                <input placeholder="Start Date" />
-              </Form.Field>
-              <Form.Field width="2">
-                <label>End Date</label>
-                <input placeholder="End Date" />
-              </Form.Field>
-            </Form.Group>
-            <Button>Add Another Education</Button>
+            {generateEducationForm()}
+            <Button
+              onClick={() => {
+                setNumEducations(numEducations + 1);
+              }}
+            >
+              Add Another Education
+            </Button>
             <Divider />
             {jobPosting.fields.length > 0 ? (
-              <Container>
+              <Segment>
                 <Header>{jobPosting.employer.employerName} Questions</Header>
-                <Form.Group>{generateJobPostingFieldQuestions()}</Form.Group>
-              </Container>
+                {generateJobPostingFieldQuestions()}
+              </Segment>
             ) : null}
             <Button primary fluid type="submit">
               Apply

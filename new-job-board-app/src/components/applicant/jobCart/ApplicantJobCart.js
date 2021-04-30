@@ -52,7 +52,6 @@ const ApplicantJobCart = (props) => {
               </Item.Meta>
             </Item.Content>
             <Button
-              compact
               floated="right"
               basic
               color="red"
